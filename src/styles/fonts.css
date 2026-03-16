@@ -1,0 +1,23 @@
+/* Fonts Configuration */
+/* Pretendard 폰트는 CDN 또는 로컬에서 불러올 수 있습니다 */
+
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-style: normal;
+  src: local('Pretendard');
+}
+
+@font-face {
+  font-family: 'Pretendard:SemiBold';
+  font-weight: 600;
+  font-style: normal;
+  src: local('Pretendard SemiBold');
+}
+
+@font-face {
+  font-family: 'Pretendard:Bold';
+  font-weight: 700;
+  font-style: normal;
+  src: local('Pretendard Bold');
+}

@@ -1,0 +1,227 @@
+@startuml 여행예약 챗봇 사용자 흐름
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam handwritten false
+skinparam sequenceMessageAlign center
+skinparam defaultFontSize 11
+
+title H-AI 여행 예약 챗봇 - 사용자 흐름
+
+actor 사용자 as User
+participant "MainPage\n(랜딩)" as Main
+participant "H-AI\n챗봇" as Bot
+participant "PreferenceInput\n(선호도 입력)" as Pref
+participant "Agent\nReasoning" as Agent
+database "목업\n상품 데이터" as DB
+
+== 1. 앱 진입 & 채팅 시작 ==
+User -> Main: 앱 실행
+activate Main
+Main -> User: 랜딩 화면 표시\n(칩: 퀴즈쇼, 오늘의 운세, 상품 추천받고 결제하기 등)
+User -> Main: [상품 추천받고 결제하기] 클릭
+Main -> Bot: step = initial, 채팅 화면 전환
+deactivate Main
+activate Bot
+Bot -> Bot: "상품 추천해줘" 자동 전송
+Bot -> User: 채팅 입력창 + 헤더(H-AI 하이) 표시
+deactivate Bot
+
+== 2. 사용자 질문 & 페르소나 확인 ==
+User -> Bot: (이미 "상품 추천해줘" 전송됨) / 또는 "여행 추천해줘", "패키지 찾아줘" 등
+activate Bot
+
+alt 사용자 페르소나 존재
+    Bot -> User: 페르소나 기반 개인화 질문\n"[아이 동반] + [4성급] + [도쿄] + [9월] + [패키지] 찾으시죠?"
+    User -> Bot: 선택: [추천 검색하기] or [직접 검색하기]
+    
+    alt 추천 검색하기
+        Bot -> User: "이전 검색 기록을 기반으로 정보를 미리 채워드렸어요."
+        Bot -> Pref: 선호도 폼 표시 (Smart-Fill 적용)
+        note right: 목적지, 예산, 테마 등\n페르소나 값으로 초기화
+    else 직접 검색하기
+        Bot -> User: 여행 타입 선택 요청\n"자유여행 or 패키지 상품?"
+    end
+else 페르소나 없음
+    Bot -> User: 여행 타입 선택 요청\n"자유여행 or 패키지 상품?"
+end
+deactivate Bot
+
+== 3. 여행 타입 선택 ==
+User -> Bot: 여행 타입 선택
+activate Bot
+
+alt 패키지 상품 선택
+    Bot -> User: "원하시는 여행 정보를 입력해 주시면 맞춤 패키지를 추천해 드릴게요!"
+    Bot -> Pref: 선호도 입력 폼 활성화
+    activate Pref
+    User -> Pref: 목적지, 테마, 예산 입력
+    Pref -> Bot: 선호도 데이터 전송
+    deactivate Pref
+    
+    Bot -> Agent: PACKAGE_SEARCH 추론 시작
+    activate Agent
+    Agent -> User: "사용자 선호도 분석 중..."
+    Agent -> DB: 패키지 상품 검색
+    activate DB
+    DB -> Agent: 검색 결과 반환 (목업)
+    deactivate DB
+    Agent -> User: "상품 데이터베이스 검색 중..."
+    Agent -> Agent: 예산 필터링\n(100만원 이하 / 100-200만원 / 200-300만원)
+    Agent -> User: "최적 상품 매칭 및 랭킹 중..."
+    Agent -> Bot: 검색 완료
+    deactivate Agent
+    
+    Bot -> User: 추천 패키지 상품 카드 표시 (최대 3개)\n+ [상품 비교하기] / [추천 다시받기] 버튼
+    Bot -> User: 액션 유도 메시지\n"마음에 드는 패키지가 있으신가요? ..."
+    
+else 자유여행 선택
+    Bot -> User: "여행지와 예산을 알려주시면 최적의 항공+숙소 조합을 찾아드릴게요!"
+    Bot -> Pref: 선호도 입력 폼 활성화\n(검색 모드: 항공+숙소 조합 / 항공만 / 숙소만)
+    activate Pref
+    User -> Pref: 목적지, 예산, 검색 모드 입력
+    Pref -> Bot: 선호도 데이터 전송
+    deactivate Pref
+    
+    alt 항공+숙소 조합 검색
+        Bot -> Agent: FIT_SEARCH_COMBO 추론 시작
+        activate Agent
+        Agent -> User: "항공편 실시간 조회 중..."
+        Agent -> DB: 항공편 검색
+        activate DB
+        DB -> Agent: 항공편 데이터 (목업)
+        deactivate DB
+        Agent -> User: "숙소 검색 중..."
+        Agent -> DB: 호텔 검색
+        activate DB
+        DB -> Agent: 호텔 데이터 (목업)
+        deactivate DB
+        Agent -> User: "최적 조합 계산 중..."
+        Agent -> Bot: 조합 검색 완료
+        deactivate Agent
+        Bot -> User: FIT 패키지 카드 표시 (최대 3개)\n+ [조합 비교하기] / [추천 다시받기] 버튼
+        Bot -> User: 액션 유도 메시지\n"마음에 드는 조합이 있으신가요? ..."
+        
+    else 항공만 검색
+        Bot -> Agent: FIT_SEARCH_FLIGHT 추론 시작
+        activate Agent
+        Agent -> User: "항공편 실시간 조회 중..."
+        Agent -> DB: 항공편 검색
+        activate DB
+        DB -> Agent: 항공편 데이터 (목업)
+        deactivate DB
+        Agent -> User: "최적 항공편 매칭 중..."
+        Agent -> Bot: 항공편 검색 완료
+        deactivate Agent
+        Bot -> User: 항공편 카드 표시 (최대 3개)\n+ [항공편 비교하기] / [추천 다시받기] 버튼
+        Bot -> User: 액션 유도 메시지\n"원하는 항공편을 찾으셨나요? ..."
+        
+    else 숙소만 검색
+        Bot -> Agent: FIT_SEARCH_HOTEL 추론 시작
+        activate Agent
+        Agent -> User: "숙소 실시간 검색 중..."
+        Agent -> DB: 호텔 검색
+        activate DB
+        DB -> Agent: 호텔 데이터 (목업)
+        deactivate DB
+        Agent -> User: "최적 숙소 매칭 중..."
+        Agent -> Bot: 숙소 검색 완료
+        deactivate Agent
+        Bot -> User: 호텔 카드 표시 (최대 3개)\n+ [숙소 비교하기] / [추천 다시받기] 버튼
+        Bot -> User: 액션 유도 메시지\n"다음 중 어떤 기준이 가장 중요하신가요? ..."
+    end
+end
+deactivate Bot
+
+== 4. 상품 탐색 & 비교 ==
+alt 상품/조합/항공/숙소 상세보기
+    User -> Bot: 카드 클릭
+    activate Bot
+    Bot -> User: 바텀시트로 상세 정보 표시\n(PackageDetail / FITPackageDetail / FlightDetail / HotelDetail)
+    deactivate Bot
+    
+else 상품 비교하기
+    User -> Bot: [비교하기] 버튼 클릭\n(또는 채팅에 "비교" 입력)
+    activate Bot
+    Bot -> Agent: COMPARISON 추론 시작
+    activate Agent
+    Agent -> User: "상품 비교 agent를 확인하고 있습니다."
+    Agent -> User: "상품정보를 확인하여 비교하고 있습니다."
+    Agent -> User: "상품비교 및 요약정보를 생성하고 있습니다."
+    Agent -> Bot: 비교 분석 완료
+    deactivate Agent
+    Bot -> User: 비교 테이블 바텀시트 표시\n(PackageComparison / FITComparison / FlightComparison / HotelComparison)
+    deactivate Bot
+    
+else 추천 다시받기
+    User -> Bot: [추천 다시받기] 버튼 클릭
+    activate Bot
+    Bot -> User: 기존 카드 삭제
+    Bot -> Agent: 재검색 추론 시작\n(PACKAGE_SEARCH / FIT_SEARCH_*)
+    activate Agent
+    Agent -> DB: 다른 상품 검색 (목업 셔플)
+    activate DB
+    DB -> Agent: 새로운 검색 결과
+    deactivate DB
+    Agent -> Bot: 검색 완료
+    deactivate Agent
+    Bot -> User: 새로운 추천 카드 표시 (최대 3개)
+    deactivate Bot
+end
+
+== 5. 예약 프로세스 분기 ==
+User -> Bot: [예약하기] 버튼 클릭 (카드 또는 상세에서)
+activate Bot
+
+alt 패키지 상품 예약
+    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)
+    
+else FIT 조합 예약
+    Bot -> User: 룸타입 선택 바텀시트 표시 (RoomTypeSelector)
+    User -> Bot: 룸타입 선택
+    Bot -> Bot: 총 가격 업데이트\n= FIT 조합 가격 + 룸타입 추가 가격
+    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)
+    note right: 액티비티 티켓(ActivityTicketSelector)은\n선택 경로로 확장 가능
+    
+else 항공만 예약
+    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)
+    
+else 숙소만 예약
+    Bot -> User: 룸타입 선택 바텀시트 표시 (RoomTypeSelector)
+    User -> Bot: 룸타입 선택
+    Bot -> Bot: 총 가격 업데이트\n= 호텔 가격 + 룸타입 추가 가격
+    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)
+end
+deactivate Bot
+
+== 6. 예약 정보 입력 ==
+User -> Bot: 예약자 정보 입력 (BookingForm)\n이름, 연락처, 여행자 수 등
+activate Bot
+Bot -> Bot: 예약 데이터 저장 (bookingData)
+Bot -> User: "예약 정보를 확인했습니다. 결제를 진행해 주세요."
+Bot -> User: 결제 모달 표시 (PaymentModal)
+deactivate Bot
+
+== 7. 결제 진행 ==
+User -> Bot: 결제 방법 선택 및 [결제하기] 클릭
+activate Bot
+Bot -> DB: 결제 처리 요청 (현재 목업)
+activate DB
+DB -> Bot: 결제 완료
+deactivate DB
+Bot -> Bot: 예약 번호 생성\n(HAI + timestamp 8자리)
+Bot -> User: "🎉 결제가 완료되었습니다! 예약이 확정되었습니다."
+deactivate Bot
+
+== 8. 예약 확정 ==
+User -> Bot: 예약 확인
+activate Bot
+Bot -> User: 예약 확정 모달 표시 (BookingConfirmation)\n- 예약 번호\n- 상품명\n- 여행자 수\n- 총 결제 금액
+User -> Bot: [확인] 버튼 클릭
+Bot -> Bot: step = initial, 추천 목록 초기화
+Bot -> User: 채팅 화면으로 복귀
+alt FIT 예약 완료 시
+    Bot -> User: 완료 제안 메시지\n(AI 추천 일정, 체크리스트, 환율 예산 등)
+end
+deactivate Bot
+
+@enduml

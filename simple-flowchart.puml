@@ -1,0 +1,89 @@
+@startuml H-AI 여행 예약 챗봇 - 간소화 플로차트
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 12
+skinparam BoxPadding 10
+
+skinparam activity {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+  FontSize 11
+}
+
+skinparam decision {
+  BackgroundColor #FFE082
+  BorderColor #F57C00
+  FontSize 11
+}
+
+title H-AI 여행 예약 챗봇 - 핵심 흐름 (간소화)
+
+start
+
+:🏠 **앱 실행**;
+:📱 **MainPage 랜딩**\n칩 메뉴 (퀴즈쇼, 상품 추천받고 결제하기 등);
+
+:👆 **[상품 추천받고 결제하기]** 클릭;
+
+:💬 **채팅 화면 전환**\n"상품 추천해줘" 자동 전송;
+
+if (📋 페르소나 있음?) then (yes)
+  :✨ **개인화 제안**\n[추천 검색하기] / [직접 검색하기];
+else (no)
+endif
+
+:❓ **여행 타입 선택**\n[패키지 상품] or [자유여행];
+
+if (여행 타입?) then (패키지)
+  #E3F2FD:📦 **패키지**;
+else (자유여행)
+  #F3E5F5:✈️ **자유여행 (FIT)**;
+  if (검색 모드?) then (조합)
+    :항공+숙소 조합;
+  else if (항공만)
+    :항공만;
+  else (숙소만)
+    :숙소만;
+  endif
+endif
+
+:📝 **선호도 입력**\n목적지 / 예산 / 테마\n(FIT 시 검색 모드, Smart-Fill 가능);
+
+partition "🤖 AI 검색 (AgentReasoningBlock)" {
+  :1️⃣ 사용자 선호도 분석;
+  :2️⃣ DB 검색 (목업);
+  :3️⃣ 매칭 & 랭킹;
+}
+
+:📋 **추천 카드 표시**\n(최대 3개)\n[비교하기] [추천 다시받기];
+
+repeat
+  if (사용자 액션?) then (👁️ 상세보기)
+    :바텀시트 상세 정보;
+  else if (⚖️ 비교하기)
+    :비교 테이블 바텀시트;
+  else if (🔄 추천 다시받기)
+    :새 추천 카드 표시;
+  else (✅ 예약하기)
+    :예약하기 선택;
+  endif
+repeat while (더 탐색?) is (yes) not (no)
+
+if (FIT 조합 or 숙소만?) then (yes)
+  :🏨 **룸타입 선택**\n(RoomTypeSelector 바텀시트);
+endif
+
+:👤 **예약자 정보 입력**\n(BookingForm)\n이름 / 연락처 / 여행자 수;
+
+:💳 **결제 진행**\n(PaymentModal)\n결제 방법 선택 → 결제하기;
+
+if (결제 성공?) then (✅ 성공)
+  :🎉 **예약 확정**\n(BookingConfirmation)\n예약 번호 HAI + timestamp;
+  :FIT 시 완료 제안 메시지\n(일정, 체크리스트 등);
+  stop
+else (❌ 취소)
+  :결제 취소 → 이전 단계;
+  stop
+endif
+
+@enduml
