@@ -36,10 +36,11 @@ initial --> preference : 여행 타입 선택
 
 state preference {
   [*] --> PrefForm
-  PrefForm : 목적지, 테마, 예산
-  PrefForm : 자유여행 시 검색 모드
-  PrefForm : 조합 / 항공만 / 숙소만
-  PrefForm : Smart-Fill (페르소나 시)
+  PrefForm : 목적지, 테마, 예산, 여행 시기
+  PrefForm : **인원**: 패키지(직접)=성인/아동/유아
+  PrefForm : FIT·추천검색=성인+아동만 + 아동 나이(만0~17)
+  PrefForm : 자유여행 시 검색 모드: 조합/항공만/숙소만
+  PrefForm : Smart-Fill (추천 검색 시)
 }
 
 preference --> packages : 패키지 선호도 제출\n+ Agent 검색 완료

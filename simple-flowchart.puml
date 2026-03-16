@@ -29,6 +29,7 @@ start
 
 if (📋 페르소나 있음?) then (yes)
   :✨ **개인화 제안**\n[추천 검색하기] / [직접 검색하기];
+  note right: 추천 검색 시 Smart-Fill\n+ **인원: 성인+아동만**\n+ 아동 나이(만0~17) 선택
 else (no)
 endif
 
@@ -47,7 +48,7 @@ else (자유여행)
   endif
 endif
 
-:📝 **선호도 입력**\n목적지 / 예산 / 테마\n(FIT 시 검색 모드, Smart-Fill 가능);
+:📝 **선호도 입력**\n목적지·예산·테마·여행 시기\n**인원**: 패키지=성인/아동/유아\nFIT·추천=성인+아동+아동 나이(만0~17);
 
 partition "🤖 AI 검색 (AgentReasoningBlock)" {
   :1️⃣ 사용자 선호도 분석;

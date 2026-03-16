@@ -1,6 +1,7 @@
 # Agentic Commerce - H-AI 여행 예약 챗봇
 
-> React + Vite 기반 여행 예약 AI 챗봇 UI (버전 0.0.1)
+> React + Vite 기반 여행 예약 AI 챗봇 UI (버전 0.0.1)  
+> **라이브 데모**: [agentic-commerce-blush.vercel.app](https://agentic-commerce-blush.vercel.app)
 
 ## 📋 프로젝트 개요
 

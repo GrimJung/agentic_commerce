@@ -147,7 +147,7 @@ export function PackageBookingSheet({
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-h-[90vh] flex flex-col rounded-t-[24px]"
+        className="bg-white w-full max-h-[90vh] flex flex-col justify-center items-center rounded-t-[24px]"
       >
         {/* 헤더: 예약하기 타이틀 + 우측 닫기 */}
         <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-[#eee]">

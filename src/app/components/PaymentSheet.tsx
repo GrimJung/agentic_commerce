@@ -110,7 +110,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-h-[90vh] flex flex-col rounded-t-[24px]"
+        className="bg-white w-full max-h-[90vh] flex flex-col justify-center items-center rounded-t-[24px]"
       >
         {isPaymentComplete ? (
           /* 결제완료 화면 — 캡처와 동일 구성 */

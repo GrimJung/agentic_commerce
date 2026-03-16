@@ -38,7 +38,7 @@ export function BookingConfirmation({
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="bg-white w-full max-h-[90vh] flex flex-col rounded-t-[24px] overflow-hidden"
+        className="bg-white w-full max-h-[90vh] flex flex-col justify-center items-center rounded-t-[24px] overflow-hidden"
       >
         {/* 헤더: 결제완료 */}
         <div className="shrink-0 flex items-center px-4 py-3 border-b border-[#eee]">
