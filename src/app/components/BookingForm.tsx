@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { X, Plus, ArrowLeft, User, Clock, Info } from "lucide-react";
+import { X, Plus, User, Clock, Info, Building2 } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
-const DEFAULT_HOTEL_IMAGE_URL =
-  "https://lh3.googleusercontent.com/gps-cs-s/AHVAwepoaCHW5pxQo_UoIDNb-k_Qgv8UODBBXHE4gz_LqsUhNd9cnb66_SsBMa6TDGbaQ51frdMxpo5qwdU9lhp9Teoc7eDeQXeoGaK7z7BIttqyJg7s_59UO2qzrbOS6KM-eY7DZBmQng=w324-h312-n-k-no";
+/** 이미지 URL 없거나 로드 실패 시 사용할 플레이스홀더 (만료 없는 data URI) */
+const DEFAULT_HOTEL_IMAGE_PLACEHOLDER =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect fill='%23e5e5e5' width='120' height='120'/%3E%3Cpath fill='%23999' d='M60 32L28 52v36h64V52L60 32zm0 8l24 16v24H36V56l24-16z'/%3E%3C/svg%3E";
 
 export interface BookingFormData {
   name: string;
@@ -75,6 +77,7 @@ export function BookingForm({
   hotelInfo,
   isFitCombo = false,
 }: BookingFormProps) {
+  useLockBodyScroll();
   const [selectedTravelers, setSelectedTravelers] = useState<string[]>([]);
   const [agreeAllTerms, setAgreeAllTerms] = useState(true);
   const [requestChecks, setRequestChecks] = useState<Record<string, boolean>>(
@@ -93,6 +96,7 @@ export function BookingForm({
   const [guest2LastNameEn, setGuest2LastNameEn] = useState(isFitCombo ? "KIM" : "");
   const [guest2FirstNameEn, setGuest2FirstNameEn] = useState(isFitCombo ? "HANA" : "");
   const [guest2Birth, setGuest2Birth] = useState(isFitCombo ? "1992.05.15" : "");
+  const [hotelImageError, setHotelImageError] = useState(false);
 
   const handleSameAsPassenger = (checked: boolean) => {
     setSameAsPassenger(checked);
@@ -175,19 +179,12 @@ export function BookingForm({
           <div className="px-4 py-3 flex items-center gap-2">
             {isHotel ? (
               <>
-                {!isFitCombo && (
-                  <button type="button" onClick={onCancel} className="p-2 -ml-1 rounded-full hover:bg-[#f5f5f5]">
-                    <ArrowLeft className="size-5 text-[#111]" />
-                  </button>
-                )}
                 <h1 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111] flex-1">
                   {isFitCombo ? "호텔 예약하기" : "예약하기"}
                 </h1>
-                {isFitCombo && (
-                  <button type="button" onClick={onCancel} className="p-2 -mr-1 rounded-full hover:bg-[#f5f5f5]">
-                    <X className="size-5 text-[#111]" />
-                  </button>
-                )}
+                <button type="button" onClick={onCancel} className="p-2 -mr-1 rounded-full hover:bg-[#f5f5f5]" aria-label="닫기">
+                  <X className="size-5 text-[#111]" />
+                </button>
               </>
             ) : (
               <>
@@ -230,12 +227,17 @@ export function BookingForm({
               {/* 호텔 정보 */}
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <div className="w-[60px] h-[60px] rounded-[10px] bg-[#eee] overflow-hidden shrink-0">
-                    <img
-                      src={hotelInfo.hotelImage || DEFAULT_HOTEL_IMAGE_URL}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-[60px] h-[60px] rounded-[10px] bg-[#eee] overflow-hidden shrink-0 flex items-center justify-center">
+                    {hotelImageError ? (
+                      <Building2 className="size-7 text-[#999]" aria-hidden />
+                    ) : (
+                      <img
+                        src={hotelInfo.hotelImage || DEFAULT_HOTEL_IMAGE_PLACEHOLDER}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        onError={() => setHotelImageError(true)}
+                      />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111] leading-tight">

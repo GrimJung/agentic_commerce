@@ -2109,7 +2109,7 @@ export default function App() {
     <div className="size-full flex flex-col bg-white max-w-[390px] mx-auto relative">
       <Header onBack={() => setStep("main")} />
 
-      <div className="flex-1 overflow-y-auto px-0 py-4 pb-20">
+      <div className="flex-1 overflow-y-auto px-0 py-4 pb-20" data-sheet-scroll-root>
         {messages.map((msg, index) => (
           <ChatMessage
             key={index}

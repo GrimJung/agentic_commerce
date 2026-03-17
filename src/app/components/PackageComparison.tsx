@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { PackageData } from "./PackageCard";
 import { X } from "lucide-react";
 
@@ -9,6 +10,7 @@ interface PackageComparisonProps {
 }
 
 export function PackageComparison({ packages, onClose, onSelect }: PackageComparisonProps) {
+  useLockBodyScroll();
   // 최대 3개까지만 비교
   const displayPackages = packages.slice(0, 3);
   const labels = ["A", "B", "C"];
@@ -18,7 +20,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-50 flex items-end"
+      className="fixed inset-0 w-full bg-black/50 z-50 flex items-end"
       onClick={onClose}
     >
       <motion.div
@@ -27,30 +29,28 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-h-[90vh] overflow-y-auto rounded-t-[24px]"
+        className="bg-white w-full min-w-full max-h-[90vh] flex flex-col justify-center items-center rounded-t-[24px]"
       >
         {/* 헤더 */}
-        <div className="sticky top-0 bg-gradient-to-b from-[#eed6ff] to-[#f7f5fe] border-b border-[#f0f0f0] z-10">
-          <div className="px-5 pt-4 pb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="size-6">
-                <svg className="size-full" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" fill="#7b3ff2"/>
-                  <text x="12" y="16" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">AI</text>
-                </svg>
-              </div>
-              <h2 className="font-['Pretendard:Bold',sans-serif] text-[20px] text-[#101828]">AI 비교 브리핑</h2>
-            </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/50 rounded-full transition-colors">
-              <X className="size-5" />
-            </button>
+        <div className="flex-shrink-0 sticky top-0 w-full bg-white border-b border-gray-200 z-10 px-5 pt-4 pb-3 flex items-center justify-between">
+          <div>
+            <h1 className="text-[16px] font-semibold text-gray-900">AI 비교 브리핑</h1>
+            <p className="text-[12px] text-[var(--color-gray-400)] mt-0.5 leading-snug">
+              AI가 여행 조건에 맞는 상품을 분석 해드려요.
+            </p>
           </div>
-          <p className="px-5 pb-4 text-[14px] text-[#8e8e93]">
-            AI가 여행 조건에 맞는 상품을 분석 해드려요.
-          </p>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="닫기"
+          >
+            <X className="size-5 text-gray-600" />
+          </button>
         </div>
 
-        <div className="px-5 pt-4">
+        <div className="flex-1 overflow-y-auto min-h-0 w-full">
+          <div className="px-4 pt-2.5 pb-10">
+          <div className="px-5">
           {/* 여행 동반자 / 테마 선택 탭 */}
           <div className="bg-white rounded-[14px] shadow-[0px_4px_7px_0px_rgba(0,0,0,0.1)] border-b border-[#e5e7eb] mb-4">
             <div className="flex h-[65px]">
@@ -261,6 +261,8 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                 </div>
               </div>
             ))}
+          </div>
+          </div>
           </div>
         </div>
       </motion.div>

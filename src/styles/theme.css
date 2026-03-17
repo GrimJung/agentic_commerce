@@ -189,3 +189,11 @@
     display: none;
   }
 }
+
+/* 바텀시트 열림 시 배경 스크롤 방지 */
+body.sheet-open {
+  overflow: hidden !important;
+}
+body.sheet-open [data-sheet-scroll-root] {
+  overflow: hidden !important;
+}

@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 interface BookingConfirmationProps {
   bookingNumber: string;
@@ -24,6 +25,7 @@ export function BookingConfirmation({
   travelPeriod,
   remainingAmount = 0,
 }: BookingConfirmationProps) {
+  useLockBodyScroll();
   const displayName = bookerName.endsWith("님") ? bookerName : `${bookerName}님`;
 
   return (
@@ -47,7 +49,7 @@ export function BookingConfirmation({
           </h1>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto w-full">
           {/* 파란 성공 배너 */}
           <div className="bg-[#3780ff] px-4 pt-6 pb-10 flex items-start justify-between gap-4">
             <div>

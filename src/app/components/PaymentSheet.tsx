@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, CreditCard, Check, ChevronDown, ChevronUp, X } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { cn } from "./ui/utils";
 
 /** 결제완료 화면에 표시할 예약 상세 (캡처 기준) */
@@ -50,6 +51,7 @@ type PaymentMethod = "card" | "kakao" | "payco" | "naver";
 type CardOption = "samsung" | "hana" | null;
 
 export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객", reservationTitle, completionDetails, isFitCombo = false, skipPayment = false, skipCompletion = false }: PaymentSheetProps) {
+  useLockBodyScroll();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [selectedCard, setSelectedCard] = useState<CardOption>(null);
   const [rememberPaymentMethod, setRememberPaymentMethod] = useState(true);
@@ -115,8 +117,8 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
         {isPaymentComplete ? (
           /* 결제완료 화면 — 캡처와 동일 구성 */
           <>
-            <div className="shrink-0 border-b border-[#eee]">
-              <div className="flex items-center justify-between px-4 py-3">
+            <div className="w-full self-stretch shrink-0 border-b border-[#eee]">
+              <div className="w-full max-w-none flex items-center justify-between px-4 py-3">
                 <h1 className="font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">
                   {isFitCombo ? "호텔 결제완료" : "결제완료"}
                 </h1>
@@ -154,7 +156,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
                 </div>
               )}
             </div>
-            <div className="flex-1 min-h-0 overflow-y-auto px-4 py-6 pb-48">
+            <div className="w-full self-stretch flex-1 min-h-0 overflow-y-auto px-4 py-6 pb-48">
               {/* 확인 헤더: 회색 원 + 검정 체크, 이름, 완료 문구 — 왼쪽 정렬 */}
               <div className="flex flex-col justify-start items-start text-left mb-6 pb-6 border-b border-[#eee]">
                 <span className="size-12 rounded-full border-2 border-[#c8c8c8] bg-white flex items-center justify-center text-[#111] mb-4">
@@ -247,7 +249,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
         ) : (
           <>
         {/* 헤더 */}
-        <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-[#eee]">
+        <div className="shrink-0 w-full flex items-center gap-3 px-4 py-3 border-b border-[#eee]">
           <button
             type="button"
             onClick={onClose}
@@ -260,7 +262,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
           </h1>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-28">
+        <div className="flex-1 w-full overflow-y-auto pb-28">
           {/* 결제 상세 내역 */}
           <section className="p-4 border-b border-[#f0f0f0]">
             <h2 className="text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#111] mb-3">
@@ -331,8 +333,8 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
               {paymentMethod === "card" && (
                 <>
                   <div className="px-4 pb-3">
-                    <div className="text-center mb-4">
-                      <p className="text-[13px] text-[#666] mb-1">
+                    <div className="text-center mb-[5px]">
+                      <p className="text-[13px] text-[#666] mt-[10px] mb-0">
                         오늘도 [하나]같이 특별한 혜택!
                       </p>
                       <button type="button" className="text-[13px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
@@ -381,7 +383,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
 
                     <div className="flex items-center justify-between text-[12px] text-[#666] py-2 mb-2">
                       <span>신용카드정보 제공 항목</span>
-                      <button type="button" className="text-[#666] underline font-medium">무이자 할부 / 제휴 안내</button>
+                      <button type="button" className="text-[12px] text-[#666] underline font-medium">무이자 할부 / 제휴 안내</button>
                     </div>
                     <div className="space-y-2 mb-2">
                       <div className="flex items-center justify-between px-4 py-3 border border-[#e8e8e8] rounded-[10px] bg-white">

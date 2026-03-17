@@ -144,16 +144,16 @@ export function HotelDetailContent({
                   {(selectedRoom ? selectedRoom.priceFrom : hotel.price).toLocaleString()}원
                 </span>
               </div>
-              {onChangeRoom && (
-                <button
-                  type="button"
-                  onClick={onChangeRoom}
-                  className="shrink-0 py-2.5 px-4 border border-[#e0e0e0] rounded-[10px] text-[14px] text-[#666] font-['Pretendard:Medium',sans-serif] bg-white hover:bg-[#f0f0f0] transition-colors"
-                >
-                  객실 변경
-                </button>
-              )}
             </div>
+            {onChangeRoom && (
+              <button
+                type="button"
+                onClick={onChangeRoom}
+                className="w-full py-3 px-4 border border-[#e0e0e0] rounded-[10px] text-[14px] text-[#666] font-['Pretendard:Medium',sans-serif] bg-white hover:bg-[#f0f0f0] transition-colors"
+              >
+                객실 변경
+              </button>
+            )}
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { X, User, HelpCircle, Camera, CircleAlert, Info } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { MyTravelerNotebookModal } from "./MyTravelerNotebookModal";
 
 interface PassengerFormSheetProps {
@@ -21,6 +22,7 @@ export function PassengerFormSheet({
   bookerPhone = "010-0000-0000",
   bookerEmail = "hana@hanatour.com",
 }: PassengerFormSheetProps) {
+  useLockBodyScroll();
   const [sameAsBooker, setSameAsBooker] = useState(true);
   const [gender, setGender] = useState<"male" | "female">("male");
   const [passportLater, setPassportLater] = useState(true);

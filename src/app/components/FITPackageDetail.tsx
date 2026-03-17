@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useMemo } from "react";
 import { motion } from "motion/react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { FITPackageData } from "./FITPackageCard";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
 import { cn, formatSeatClass } from "./ui/utils";
@@ -62,6 +63,7 @@ function toHotelData(pkg: FITPackageData): HotelData {
 }
 
 export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoom, onChangeFlight, selectedRoomType }: FITPackageDetailProps) {
+  useLockBodyScroll();
   const flightSectionRef = useRef<HTMLDivElement>(null);
   const hotelSectionRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);

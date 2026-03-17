@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { X, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { PackageData } from "./PackageCard";
 
 const COMPANION_OPTIONS = [
@@ -163,6 +164,7 @@ interface AIPackageComparisonProps {
 }
 
 export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageComparisonProps) {
+  useLockBodyScroll();
   const [selectedCompanion, setSelectedCompanion] = useState<string>("couple");
   const [selectedPurpose, setSelectedPurpose] = useState<string>("");
   const [selectedStyle, setSelectedStyle] = useState<string>("");
@@ -211,7 +213,7 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
 
         {/* 스크롤 영역: 테이블 (스티키 플로팅 헤더 비표시) */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto min-h-0">
-          <div className="px-4 pb-4">
+          <div className="px-4 pt-2.5 pb-10">
           <div className="flex flex-col items-stretch bg-white overflow-hidden w-full">
             {/* 테이블 헤더 행 */}
             <div ref={tableHeaderRef} className="w-full" style={{ ...TABLE_GRID, background: "#FFFFFF" }}>
@@ -231,20 +233,26 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                     >
                       {id}
                     </div>
-                    <p className="text-center font-semibold mt-1.5 text-[12px] text-[#101828] line-clamp-1 truncate w-full">
+                    <p className="text-center font-bold mt-1.5 text-[12px] text-[#101828] line-clamp-1 truncate w-full">
                       {row.name}
                     </p>
-                    <p className="text-[13px] font-semibold mt-0.5" style={{ color: "#5E2BB8" }}>
+                    <p className="text-[14px] font-semibold mt-0" style={{ color: "#5E2BB8" }}>
                       {row.priceStr}
                       <span className="text-[11px] text-gray-500 font-medium ml-0.5">원</span>
                     </p>
+                    <span
+                      className="inline-block mt-0.5 px-2 py-0.5 rounded-[20px] text-[10px] font-medium border border-[#3B82F6] text-[#2563EB]"
+                      aria-label="예약 가능 여부"
+                    >
+                      {index === 0 ? "출발확정" : "예약가능"}
+                    </span>
                   </div>
                 );
               })}
             </div>
 
             <div className="flex justify-center w-full">
-              <div className="w-[95%] border-b-2 border-gray-300" aria-hidden />
+              <div className="w-[95%] border-b border-gray-300" aria-hidden />
             </div>
 
             {/* 기본 비교 행 */}
@@ -317,7 +325,7 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
             />
 
             {/* 상세정보 펼치기/접기 버튼: 후기 밑에 위치 */}
-            <div className="flex justify-center w-full py-2 mt-1 mb-1">
+            <div className="flex justify-center w-full mt-1 mb-1">
               <button
                 type="button"
                 onClick={() => setIsDetailsExpanded((prev) => !prev)}
@@ -507,7 +515,7 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
               >
                 TIP
               </span>
-              <p className="text-[14px] text-[#1e3a8a] leading-relaxed flex-1 min-w-0" style={{ lineHeight: "1.6" }}>
+              <p className="text-[14px] font-medium text-[#1e3a8a] leading-relaxed flex-1 min-w-0" style={{ lineHeight: "1.6" }}>
                 {tipText}
               </p>
             </div>

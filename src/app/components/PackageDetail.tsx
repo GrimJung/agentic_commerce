@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { PackageData } from "./PackageCard";
 import { X } from "lucide-react";
 
@@ -9,6 +10,7 @@ interface PackageDetailProps {
 }
 
 export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetailProps) {
+  useLockBodyScroll();
   return (
     <motion.div
       initial={{ opacity: 0 }}

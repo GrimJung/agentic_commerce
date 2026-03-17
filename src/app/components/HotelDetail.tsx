@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { X } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { HotelData } from "./HotelCard";
 import { HotelDetailContent } from "./HotelDetailContent";
 
@@ -12,6 +13,7 @@ interface HotelDetailProps {
 }
 
 export function HotelDetail({ hotel, onClose, onBooking }: HotelDetailProps) {
+  useLockBodyScroll();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
       <motion.div

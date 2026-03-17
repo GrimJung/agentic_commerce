@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { FlightReservationSheet } from "./FlightReservationSheet";
 import { FlightPaymentSheet } from "./FlightPaymentSheet";
 import { FlightReservationComplete } from "./FlightReservationComplete";
@@ -41,6 +42,7 @@ export function FlightBookingSheet({
   onFinalSubmit,
   onProceedToHotel,
 }: FlightBookingSheetProps) {
+  useLockBodyScroll();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={onClose}>
       <motion.div
@@ -74,6 +76,7 @@ export function FlightBookingSheet({
             flight={flight}
             bookingData={bookingData}
             onBack={onBack}
+            onClose={onClose}
             onProceedToPayment={onFinalSubmit}
             isFitCombo={isFitCombo}
           />

@@ -5,6 +5,7 @@ import { DayPicker } from "react-day-picker";
 import { ko } from "date-fns/locale";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 const WEEKDAY_KO = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -44,6 +45,7 @@ export function TravelDatePickerSheet({
   endStr,
   onSelect,
 }: TravelDatePickerSheetProps) {
+  useLockBodyScroll(open);
   const [range, setRange] = useState<{ from?: Date; to?: Date } | undefined>(undefined);
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ChevronRight, Bed } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 /** 객실 이미지 기본 URL (미지정 시 사용) */
 const DEFAULT_ROOM_IMAGES = [
@@ -104,6 +105,7 @@ interface RoomTypeSelectorProps {
 }
 
 export function RoomTypeSelector({ hotelName, roomTypes, stayDateRange = "06.07~06.09 2박", roomGuestSummary = "객실1, 성인1 아동1", mode, selectedRoomId, onSelect, onClose }: RoomTypeSelectorProps) {
+  useLockBodyScroll();
   const grouped = groupRoomsByType(roomTypes);
   const selectedRoomRef = useRef<HTMLDivElement>(null);
 

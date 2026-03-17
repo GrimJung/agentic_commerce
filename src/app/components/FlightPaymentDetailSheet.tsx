@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, CreditCard, ChevronDown, ChevronUp, CircleAlert, X, Check } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 interface FlightPaymentDetailSheetProps {
   totalAmount: number;
@@ -15,6 +16,7 @@ export function FlightPaymentDetailSheet({
   onBack,
   onComplete,
 }: FlightPaymentDetailSheetProps) {
+  useLockBodyScroll();
   const [amountDetailOpen, setAmountDetailOpen] = useState(false);
   const [cardCompany, setCardCompany] = useState("");
   const [cardNumber, setCardNumber] = useState(["", "", "", ""]);

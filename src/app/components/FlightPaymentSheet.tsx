@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { UserPlus, ChevronUp, ChevronDown, ChevronRight, ArrowLeft, X } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { FlightData } from "./FlightCard";
 import type { BookingFormData } from "./BookingForm";
 import { PassengerFormSheet } from "./PassengerFormSheet";
@@ -10,6 +11,8 @@ interface FlightPaymentSheetProps {
   flight: FlightData;
   bookingData: BookingFormData;
   onBack: () => void;
+  /** 헤더 X 버튼으로 시트 전체 닫기 시 호출 (선택) */
+  onClose?: () => void;
   /** 완료 시 호출. isPayLater true면 나중에 결제 후 예약완료(예약완료 화면 문구 구분용) */
   onProceedToPayment: (isPayLater?: boolean) => void;
   /** true면 바깥 배경/시트 래퍼 없이 내용만 렌더 (통합 시트 내부 삽입용) */
@@ -22,10 +25,12 @@ export function FlightPaymentSheet({
   flight,
   bookingData,
   onBack,
+  onClose,
   onProceedToPayment,
   embedded = false,
   isFitCombo = false,
 }: FlightPaymentSheetProps) {
+  useLockBodyScroll(!embedded);
   const [paymentType, setPaymentType] = useState<"immediate" | "later">("immediate");
   const [usageGuideOpen, setUsageGuideOpen] = useState(false);
   const [paymentInfoOpen, setPaymentInfoOpen] = useState(false);
@@ -38,13 +43,25 @@ export function FlightPaymentSheet({
   const content = (
     <>
         {/* 헤더 */}
-        <div className="sticky top-0 bg-white border-b border-[#f0f0f0] px-4 py-3 flex items-center justify-start gap-2 z-10 shrink-0">
-          <button onClick={onBack} className="p-2 -ml-2" aria-label="뒤로 가기">
-            <ArrowLeft className="size-6 text-[#111]" />
-          </button>
-          <h1 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111]">
-            예약정보입력
-          </h1>
+        <div className="sticky top-0 bg-white border-b border-[#f0f0f0] px-4 py-3 flex items-center justify-between gap-2 z-10 shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <button onClick={onBack} className="p-2 -ml-2 shrink-0" aria-label="뒤로 가기">
+              <ArrowLeft className="size-6 text-[#111]" />
+            </button>
+            <h1 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111] truncate">
+              예약정보입력
+            </h1>
+          </div>
+          {onClose ? (
+            <button
+              type="button"
+              onClick={onClose}
+              className="size-10 flex items-center justify-center rounded-full text-[#666] hover:bg-[#f0f0f0] hover:text-[#111] transition-colors shrink-0"
+              aria-label="닫기"
+            >
+              <X className="size-5" />
+            </button>
+          ) : null}
         </div>
 
         {/* 단계 표시 */}

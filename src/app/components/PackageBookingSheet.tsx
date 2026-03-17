@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { ChevronUp, ChevronDown, X, Info } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { PackageData } from "./PackageCard";
 import type { BookingFormData } from "./BookingForm";
 import {
@@ -90,6 +91,7 @@ export function PackageBookingSheet({
   onSubmit,
   onRequestPayment,
 }: PackageBookingSheetProps) {
+  useLockBodyScroll();
   const [travelerTab, setTravelerTab] = useState<"now" | "later">("now");
   const [sameAsBooker, setSameAsBooker] = useState(true);
   const [travelerGender, setTravelerGender] = useState<"남" | "여" | null>(null);
@@ -150,7 +152,7 @@ export function PackageBookingSheet({
         className="bg-white w-full max-h-[90vh] flex flex-col justify-center items-center rounded-t-[24px]"
       >
         {/* 헤더: 예약하기 타이틀 + 우측 닫기 */}
-        <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-[#eee]">
+        <div className="w-full shrink-0 flex items-center justify-between px-4 py-3 border-b border-[#eee]">
           <h1 className="font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">
             예약하기
           </h1>
@@ -165,14 +167,14 @@ export function PackageBookingSheet({
         </div>
 
         <div
-          className="flex-1 overflow-y-auto pb-32"
+          className="flex-1 w-full overflow-y-auto pb-32"
           onScroll={(e) => {
             const el = e.currentTarget;
             setShowScrollTop(el.scrollTop > 400);
           }}
         >
           {/* 상품 요약 (캡처 화면 기준) */}
-          <div className="p-4 border-b border-[#f0f0f0]">
+          <div className="w-full p-4 border-b border-[#f0f0f0]">
             {/* 패키지 제목 + 해시태그 + 썸네일 */}
             <div className="flex gap-2 items-center min-h-[72px]">
               <div className="flex-1 min-w-0 flex items-center">
@@ -270,7 +272,7 @@ export function PackageBookingSheet({
           </div>
 
           {/* 아코디언: 이용 호텔 / 예약자 / 동반자 / 약관 / 결제상세 */}
-          <Accordion type="multiple" defaultValue={["hotel", "booker", "traveler", "terms", "payment"]} className="px-4">
+          <Accordion type="multiple" defaultValue={["hotel", "booker", "traveler", "terms", "payment"]} className="w-full px-4">
             <AccordionItem value="hotel" className="border-b border-[#eee]">
               <AccordionTrigger className="group py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between w-full [&>svg]:hidden">
                 <span>이용호텔 및 선택관광</span>

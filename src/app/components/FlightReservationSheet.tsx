@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { FlightData } from "./FlightCard";
 import type { BookingFormData } from "./BookingForm";
 import { formatSeatClass } from "./ui/utils";
@@ -47,6 +48,7 @@ export function FlightReservationSheet({
   embedded = false,
   isFitCombo = false,
 }: FlightReservationSheetProps) {
+  useLockBodyScroll(!embedded);
   const [agreeAll, setAgreeAll] = useState(true);
   const [agree1, setAgree1] = useState(true);
   const [agree2, setAgree2] = useState(true);
@@ -101,10 +103,20 @@ export function FlightReservationSheet({
   const content = (
     <>
         {/* 헤더 */}
-        <div className="sticky top-0 bg-white border-b border-[#f0f0f0] px-4 py-3 flex items-center justify-start z-10 shrink-0">
+        <div className="sticky top-0 bg-white border-b border-[#f0f0f0] px-4 py-3 flex items-center justify-between z-10 shrink-0">
           <h1 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111]">
             항공 약관동의
           </h1>
+          <button
+            type="button"
+            onClick={onClose}
+            className="size-10 flex items-center justify-center rounded-full text-[#666] hover:bg-[#f0f0f0] hover:text-[#111] transition-colors"
+            aria-label="닫기"
+          >
+            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         {/* 단계 표시 */}

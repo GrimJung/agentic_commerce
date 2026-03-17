@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ChevronDown, SlidersHorizontal } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { FlightData } from "./FlightCard";
 
 const fallbackFlights: FlightData[] = [
@@ -186,6 +187,7 @@ export function FlightSelectSheet({
   onSelect,
   onClose,
 }: FlightSelectSheetProps) {
+  useLockBodyScroll();
   const [activeFilter, setActiveFilter] = useState<string | null>("직항");
 
   const effectiveFlights = flights.length > 0 ? flights : fallbackFlights;

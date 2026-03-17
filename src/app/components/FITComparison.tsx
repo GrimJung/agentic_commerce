@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { FITPackageData } from "./FITPackageCard";
 import { X } from "lucide-react";
 
@@ -9,6 +10,7 @@ interface FITComparisonProps {
 }
 
 export function FITComparison({ packages, onClose, onSelect }: FITComparisonProps) {
+  useLockBodyScroll();
   const displayPackages = packages.slice(0, 3);
   const labels = ["A", "B", "C"];
 

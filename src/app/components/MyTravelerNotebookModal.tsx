@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 interface MyTravelerNotebookModalProps {
   onClose: () => void;
@@ -14,6 +15,7 @@ export function MyTravelerNotebookModal({
   birthDate = "1990.01.01",
   gender = "여",
 }: MyTravelerNotebookModalProps) {
+  useLockBodyScroll();
   return (
     <div
       className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4"

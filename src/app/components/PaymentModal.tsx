@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { X, CreditCard, Smartphone } from "lucide-react";
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 interface PaymentModalProps {
   amount: number;
@@ -9,6 +10,7 @@ interface PaymentModalProps {
 }
 
 export function PaymentModal({ amount, onSuccess, onCancel }: PaymentModalProps) {
+  useLockBodyScroll();
   const [paymentMethod, setPaymentMethod] = useState<"card" | "mobile" | "">("");
   const [isProcessing, setIsProcessing] = useState(false);
 
