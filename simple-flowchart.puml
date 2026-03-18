@@ -87,4 +87,9 @@ else (❌ 취소)
   stop
 endif
 
+note bottom
+  문서 최종 업데이트: 2026-03-18
+  PackageDetail UI: H-AI 요약 10px, 30% 자유시간 보장 줄바꿈 방지 반영
+end note
+
 @enduml

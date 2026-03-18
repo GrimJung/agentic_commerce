@@ -1,7 +1,8 @@
 # H-AI 프로젝트 가이드라인
 
 - **선호도 입력(PreferenceInput)**: 패키지 직접 검색 시 인원=성인/아동/유아 3종. FIT 또는 추천 검색 시 인원=성인+아동만, 아동 1명 이상 시 아동별 나이(만0~만17세) 선택 박스 표시. `personaRecommendFlow` prop으로 추천 검색 플로우 구분.
-- **문서·다이어그램**: README, mvp.md, research.md, PUML(user-flow, state-diagram, simple-flowchart)은 최신 플로우(추천 검색, 인원 옵션) 반영하여 유지.
+- **문서·다이어그램**: README, mvp.md, research.md, PUML(user-flow, state-diagram, simple-flowchart)은 최신 플로우(추천 검색, 인원 옵션) 및 UI 변경 이력 반영하여 유지.
+- **PackageDetail UI**: "H-AI 요약" 라벨은 `text-[10px]` 유지; "30% 자유시간 보장" 텍스트는 `whitespace-nowrap`으로 줄바꿈 방지 유지. (2026-03-18 반영)
 
 ---
 

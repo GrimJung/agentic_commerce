@@ -102,6 +102,20 @@ function ChatInput({ onSend }: { onSend: (message: string) => void }) {
   );
 }
 
+/** 상품 노출 개수 (추천검색/직접검색/자유여행) */
+const PRODUCT_COUNTS = {
+  /** 추천검색하기: 패키지 2개, 항공+호텔 1개 */
+  recommended: { package: 2, combo: 1 },
+  /** 직접검색 - 패키지: 패키지 3개 */
+  directPackage: 3,
+  /** 자유여행 항공+호텔: FIT 2개 + 에어텔(패키지) 1개 */
+  fitCombo: { fit: 2, airtel: 1 },
+  /** 자유여행 항공: 항공 3개 */
+  fitFlight: 3,
+  /** 자유여행 호텔: 호텔 3개 */
+  fitHotel: 3,
+} as const;
+
 // 목업 패키지 데이터
 const mockPackages: PackageData[] = [
   {
@@ -1639,8 +1653,9 @@ export default function App() {
             completedLabel={completedLabel}
             onAllStepsComplete={() => {
               if (mode === 'combo') {
-                setFitPackages(mockFITPackages);
-                const comboTotalCount = mockFITPackages.length + 1; // FIT 2개 + 에어텔 1개
+                const fitN = PRODUCT_COUNTS.fitCombo.fit;
+                setFitPackages(mockFITPackages.slice(0, fitN));
+                const comboTotalCount = fitN + PRODUCT_COUNTS.fitCombo.airtel;
                 const comboParts = [
                   destText,
                   budgetText && `${budgetText} 예산`,
@@ -1653,19 +1668,21 @@ export default function App() {
                   content: comboMsg
                 }]);
               } else if (mode === 'flight') {
-                setFlights(mockFlights);
+                const flightN = PRODUCT_COUNTS.fitFlight;
+                setFlights(mockFlights.slice(0, flightN));
                 const flightMsg = destText
-                  ? `${destText}행 항공편을 찾았습니다! 총 ${mockFlights.length}개의 추천 항공편을 확인해보세요.`
-                  : `항공편을 찾았습니다! 총 ${mockFlights.length}개의 추천 항공편을 확인해보세요.`;
+                  ? `${destText}행 항공편을 찾았습니다! 총 ${flightN}개의 추천 항공편을 확인해보세요.`
+                  : `항공편을 찾았습니다! 총 ${flightN}개의 추천 항공편을 확인해보세요.`;
                 setMessages(prev => [...prev, {
                   type: "bot",
                   content: flightMsg
                 }]);
               } else {
-                setHotels(mockHotels);
+                const hotelN = PRODUCT_COUNTS.fitHotel;
+                setHotels(mockHotels.slice(0, hotelN));
                 const hotelMsg = destText
-                  ? `${destText}의 호텔을 찾았습니다! 총 ${mockHotels.length}개의 추천 호텔을 확인해보세요.`
-                  : `호텔을 찾았습니다! 총 ${mockHotels.length}개의 추천 호텔을 확인해보세요.`;
+                  ? `${destText}의 호텔을 찾았습니다! 총 ${hotelN}개의 추천 호텔을 확인해보세요.`
+                  : `호텔을 찾았습니다! 총 ${hotelN}개의 추천 호텔을 확인해보세요.`;
                 setMessages(prev => [...prev, {
                   type: "bot",
                   content: hotelMsg
@@ -1709,25 +1726,27 @@ export default function App() {
               }
 
               if (isPackageOnly) {
-                const recommended = filtered.slice(0, 3);
-                const toShow = recommended.length >= 3
+                const n = PRODUCT_COUNTS.directPackage;
+                const recommended = filtered.slice(0, n);
+                const toShow = recommended.length >= n
                   ? recommended
                   : [
                       ...recommended,
-                      ...mockPackages.filter(p => !recommended.some(r => r.id === p.id)).slice(0, 3 - recommended.length)
+                      ...mockPackages.filter(p => !recommended.some(r => r.id === p.id)).slice(0, n - recommended.length)
                     ];
                 setRecommendedPackages(toShow);
               } else {
-                const recommended = filtered.slice(0, 2);
-                const toShow = recommended.length >= 2
+                const n = PRODUCT_COUNTS.recommended.package;
+                const recommended = filtered.slice(0, n);
+                const toShow = recommended.length >= n
                   ? recommended
                   : [
                       ...recommended,
-                      ...mockPackages.filter(p => !recommended.some(r => r.id === p.id)).slice(0, 2 - recommended.length)
+                      ...mockPackages.filter(p => !recommended.some(r => r.id === p.id)).slice(0, n - recommended.length)
                     ];
                 setRecommendedPackages(toShow);
               }
-              const count = isPackageOnly ? 3 : 3; // 패키지만: 3개, 추천믹스: 2패키지+1 FIT
+              const count = isPackageOnly ? PRODUCT_COUNTS.directPackage : PRODUCT_COUNTS.recommended.package + PRODUCT_COUNTS.recommended.combo;
               const packageResultParts = [
                 destText && `${destText}`,
                 themeText && `${themeText} 테마`,
@@ -1755,9 +1774,9 @@ export default function App() {
     setShowDetail(true);
   };
 
-  // 패키지 비교 (최대 3개: A, B, C 모두 표시)
+  // 패키지 비교 (직접검색 3개 / 추천검색 패키지 2개 기준)
   const handleComparePackages = () => {
-    if (recommendedPackages.length >= 2) {
+    if (recommendedPackages.length >= PRODUCT_COUNTS.recommended.package) {
       setPackageMessages([
         { type: "user", content: "상품 비교해주세요" },
         {
@@ -1767,9 +1786,10 @@ export default function App() {
               steps={REASONING_STEPS.COMPARISON}
               completedLabel="비교 분석 완료"
               onAllStepsComplete={() => {
-                const base = recommendedPackages.slice(0, 3);
+                const maxCompare = packageSearchMode === "package-only" ? PRODUCT_COUNTS.directPackage : PRODUCT_COUNTS.recommended.package;
+                const base = recommendedPackages.slice(0, maxCompare);
                 const ids = new Set(base.map((p) => p.id));
-                const need = 3 - base.length;
+                const need = maxCompare - base.length;
                 const filled =
                   need > 0
                     ? [...base, ...mockPackages.filter((p) => !ids.has(p.id)).slice(0, need)]
@@ -1788,27 +1808,26 @@ export default function App() {
     }
   };
 
-  // 추천 다시받기
+  // 추천 다시받기 (직접검색 패키지 3개 / 추천검색 패키지 2개)
   const handleReRecommend = () => {
-    // 새 추천 상품 계산
+    const n = packageSearchMode === "package-only" ? PRODUCT_COUNTS.directPackage : PRODUCT_COUNTS.recommended.package;
     const currentIds = new Set(recommendedPackages.map(p => p.id));
     const remaining = mockPackages.filter(p => !currentIds.has(p.id));
 
     let newRecommendations: PackageData[];
-    if (remaining.length >= 2) {
-      newRecommendations = remaining.slice(0, 2);
+    if (remaining.length >= n) {
+      newRecommendations = remaining.slice(0, n);
     } else {
       const shuffled = [...mockPackages].sort(() => Math.random() - 0.5);
-      newRecommendations = shuffled.slice(0, 2);
+      newRecommendations = shuffled.slice(0, n);
     }
 
-    // 1) 기존 카드 즉시 삭제 + 비교 상태 초기화
     setRecommendedPackages([]);
     setPackageMessages([]);
     setShowComparison(false);
     setComparisonPackages([]);
 
-    // 2) 유저 메시지 + AI 검색 과정을 채팅 흐름에 추가
+    const totalShow = packageSearchMode === "package-only" ? n : n + PRODUCT_COUNTS.recommended.combo;
     setMessages(prev => [...prev,
       { type: "user", content: "다른 상품 추천해주세요" },
       {
@@ -1818,11 +1837,10 @@ export default function App() {
             steps={REASONING_STEPS.PACKAGE_SEARCH}
             completedLabel="새로운 상품 검색 완료"
             onAllStepsComplete={() => {
-              // 3) 검색 완료 후 새 카드 세팅 + 안내 메시지
               setRecommendedPackages(newRecommendations);
               setMessages(prev => [...prev, {
                 type: "bot",
-                content: `다른 추천 상품을 찾았습니다! 총 3개의 추천 상품을 확인해보세요.`
+                content: `다른 추천 상품을 찾았습니다! 총 ${totalShow}개의 추천 상품을 확인해보세요.`
               }]);
             }}
           />
@@ -1843,7 +1861,7 @@ export default function App() {
               steps={REASONING_STEPS.COMPARISON}
               completedLabel="비교 분석 완료"
               onAllStepsComplete={() => {
-                setComparisonFitPackages(fitPackages.slice(0, 3));
+                setComparisonFitPackages(fitPackages.slice(0, PRODUCT_COUNTS.fitCombo.fit));
                 setShowFitComparison(true);
                 setFitMessages(prev => [...prev, {
                   type: "bot",
@@ -1869,7 +1887,7 @@ export default function App() {
               steps={REASONING_STEPS.COMPARISON}
               completedLabel="비교 분석 완료"
               onAllStepsComplete={() => {
-                setComparisonFlights(flights.slice(0, 3));
+                setComparisonFlights(flights.slice(0, PRODUCT_COUNTS.fitFlight));
                 setShowFlightComparison(true);
                 setFitMessages(prev => [...prev, {
                   type: "bot",
@@ -1895,7 +1913,7 @@ export default function App() {
               steps={REASONING_STEPS.COMPARISON}
               completedLabel="비교 분석 완료"
               onAllStepsComplete={() => {
-                setComparisonHotels(hotels.slice(0, 3));
+                setComparisonHotels(hotels.slice(0, PRODUCT_COUNTS.fitHotel));
                 setShowHotelComparison(true);
                 setFitMessages(prev => [...prev, {
                   type: "bot",
@@ -1909,10 +1927,10 @@ export default function App() {
     }
   };
 
-  // FIT 콤보 추천 다시받기
+  // FIT 콤보 추천 다시받기 (FIT 2개 + 에어텔 1개 유지)
   const handleFitReRecommend = () => {
     const shuffled = [...mockFITPackages].sort(() => Math.random() - 0.5);
-    const newRecommendations = shuffled.slice(0, 3);
+    const newRecommendations = shuffled.slice(0, PRODUCT_COUNTS.fitCombo.fit);
 
     setFitPackages([]);
     setFitMessages([]);
@@ -1943,7 +1961,7 @@ export default function App() {
   // 항공편 추천 다시받기
   const handleFlightReRecommend = () => {
     const shuffled = [...mockFlights].sort(() => Math.random() - 0.5);
-    const newRecommendations = shuffled.slice(0, 3);
+    const newRecommendations = shuffled.slice(0, PRODUCT_COUNTS.fitFlight);
 
     setFlights([]);
     setFitMessages([]);
@@ -1974,7 +1992,7 @@ export default function App() {
   // 호텔 추천 다시받기
   const handleHotelReRecommend = () => {
     const shuffled = [...mockHotels].sort(() => Math.random() - 0.5);
-    const newRecommendations = shuffled.slice(0, 3);
+    const newRecommendations = shuffled.slice(0, PRODUCT_COUNTS.fitHotel);
 
     setHotels([]);
     setFitMessages([]);
@@ -2136,7 +2154,7 @@ export default function App() {
           <div className="px-5 space-y-4 mt-4 mb-4">
             {/* 패키지 상품만 조회: 상품 1,2,3 모두 패키지 | 추천상품조회: 상품 1,2 패키지 + 3번째 항공+호텔 */}
             {packageSearchMode === "package-only"
-              ? recommendedPackages.slice(0, 3).map((pkg, index) => (
+              ? recommendedPackages.slice(0, PRODUCT_COUNTS.directPackage).map((pkg, index) => (
                   <PackageCard
                     key={pkg.id}
                     package={pkg}
@@ -2147,7 +2165,7 @@ export default function App() {
                 ))
               : (
                   <>
-                    {recommendedPackages.slice(0, 2).map((pkg, index) => (
+                    {recommendedPackages.slice(0, PRODUCT_COUNTS.recommended.package).map((pkg, index) => (
                       <PackageCard
                         key={pkg.id}
                         package={pkg}
@@ -2174,7 +2192,7 @@ export default function App() {
                     />
                   </>
                 )}
-            {step === "packages" && recommendedPackages.length >= 2 && (
+            {step === "packages" && recommendedPackages.length >= PRODUCT_COUNTS.recommended.package && (
               <div className="flex gap-2">
                 <button
                   onClick={handleComparePackages}

@@ -170,4 +170,9 @@ note bottom of fit_packages
   현재 선택적 확장
 end note
 
+note bottom of packages
+  PackageDetail UI: H-AI 요약 10px, 30% 자유시간 보장 줄바꿈 방지
+  (2026-03-18 반영)
+end note
+
 @enduml

@@ -18,7 +18,7 @@
 
 - **프로덕트:** H-AI 여행 예약 AI 챗봇 (Agentic Commerce)
 - **배경:** 사용자와 대화하며 패키지·자유여행(FIT)을 추천하고 예약·결제까지 이어지는 대화형 AI 커머스 경험을 제공하려는 기획. 기존 검색형 예약과 달리 통합 검색·비교·예약 플로우와 AI 추론 시각화로 차별화.
-- **현재 단계:** MVP UI 완료(React + Vite, 목업 데이터). GitHub + Vercel 배포로 라이브 데모 제공. 실제 GDS/OTA API·결제 연동은 미구현.
+- **현재 단계:** MVP UI 완료(React + Vite, 목업 데이터). GitHub + Vercel 배포로 라이브 데모 제공. PackageDetail UI( H-AI 요약 10px, 30% 자유시간 보장 줄바꿈 방지) 2026-03-18 반영. 실제 GDS/OTA API·결제 연동은 미구현.
 
 ### 시장 분석
 

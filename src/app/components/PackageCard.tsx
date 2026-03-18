@@ -36,6 +36,10 @@ export interface PackageData {
   hotelGrade: string;
   departure: string;
   availableSeats: number;
+  /** 예약된 인원 수 (상세 화면 출발확정 뱃지 영역용) */
+  bookedCount?: number;
+  /** 최소 출발 인원 (상세 화면 표시용) */
+  minDepartureCount?: number;
   highlights: string[];
   recommendReason: string;
   reservationStatus?: '예약가능' | '예약대기' | '예약확정' | '출발예정';
