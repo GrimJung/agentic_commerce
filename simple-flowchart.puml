@@ -2,18 +2,31 @@
 !theme plain
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontSize 12
+skinparam defaultFontName "SansSerif"
+skinparam defaultFontColor #333333
 skinparam BoxPadding 10
+skinparam roundCorner 8
+skinparam titleFontName "SansSerif"
+skinparam titleFontSize 14
+skinparam titleFontColor #1976D2
+skinparam titleFontStyle bold
 
 skinparam activity {
   BackgroundColor #E3F2FD
   BorderColor #1976D2
-  FontSize 11
+  FontSize 12
+  FontName "SansSerif"
+  FontColor #333333
+  RoundCorner 8
 }
 
 skinparam decision {
   BackgroundColor #FFE082
   BorderColor #F57C00
-  FontSize 11
+  FontSize 12
+  FontName "SansSerif"
+  FontColor #333333
+  RoundCorner 8
 }
 
 title H-AI 여행 예약 챗봇 - 핵심 흐름 (간소화)
@@ -70,26 +83,30 @@ repeat
   endif
 repeat while (더 탐색?) is (yes) not (no)
 
-if (FIT 조합 or 숙소만?) then (yes)
+if (예약 타입?) then (패키지)
+  :👤 **예약자 정보 입력**\n(BookingForm)\n이름 / 연락처 / 여행자 수;
+  :💳 **결제 진행**\n(PaymentModal)\n결제 방법 선택 → 결제하기;
+  :🎉 **예약 확정**\n(BookingConfirmation);
+  stop
+else if (FIT 조합 or 숙소만?)
   :🏨 **룸타입 선택**\n(RoomTypeSelector 바텀시트);
-endif
-
-:👤 **예약자 정보 입력**\n(BookingForm)\n이름 / 연락처 / 여행자 수;
-
-:💳 **결제 진행**\n(PaymentModal)\n결제 방법 선택 → 결제하기;
-
-if (결제 성공?) then (✅ 성공)
-  :🎉 **예약 확정**\n(BookingConfirmation)\n예약 번호 HAI + timestamp;
-  :FIT 시 완료 제안 메시지\n(일정, 체크리스트 등);
+  :👤 **예약자 정보 입력**\n(BookingForm)\n이름 / 연락처 / 여행자 수;
+  :💳 **결제 진행**\n(PaymentModal)\n결제 방법 선택 → 결제하기;
+  :🎉 **예약 확정**\n(BookingConfirmation);
   stop
-else (❌ 취소)
-  :결제 취소 → 이전 단계;
+else (항공만)
+  partition "✈️ 항공 예약·결제 (FlightBookingSheet)" {
+    :📋 **항공 약관동의 · 운임 확인**\n(FlightReservationSheet)\n기본운임, 세금, 수수료, 운임상세일정;
+    :💳 **항공 예약정보입력 · 결제**\n(FlightPaymentSheet)\n결제수단 선택 → 결제하기;
+    :🎉 **항공 예약 완료**\n(FlightReservationComplete)\n예약번호 · 완료 메시지;
+  }
   stop
 endif
 
-note bottom
+note right
   문서 최종 업데이트: 2026-03-18
-  PackageDetail UI: H-AI 요약 10px, 30% 자유시간 보장 줄바꿈 방지 반영
+  PackageDetail UI: H-AI 요약 10px,
+  30% 자유시간 보장 줄바꿈 방지 반영
 end note
 
 @enduml

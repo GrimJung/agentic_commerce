@@ -173,17 +173,26 @@ User -> Bot: [예약하기] 버튼 클릭 (카드 또는 상세에서)
 activate Bot
 
 alt 패키지 상품 예약
-    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)
+    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)\n또는 PackageBookingSheet(예약금/총액 확인 후 결제 시트)
     
 else FIT 조합 예약
     Bot -> User: 룸타입 선택 바텀시트 표시 (RoomTypeSelector)
     User -> Bot: 룸타입 선택
     Bot -> Bot: 총 가격 업데이트\n= FIT 조합 가격 + 룸타입 추가 가격
-    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)
+    alt 항공 먼저 처리 (FIT 조합)
+        Bot -> User: **항공 예약 시트** (FlightBookingSheet)\n약관동의 · **운임 확인** → 결제 → 항공 예약완료
+        User -> Bot: (선택) 호텔 예약 진행
+    end
+    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)\n이름, 연락처, 여행자 수
     note right: 액티비티 티켓(ActivityTicketSelector)은\n선택 경로로 확장 가능
     
 else 항공만 예약
-    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)
+    Bot -> User: **항공 예약 시트** (FlightBookingSheet) 표시
+    Bot -> User: ① **약관동의 · 운임 확인** (FlightReservationSheet)\n기본운임(성인), 세금, 수수료, 운임상세일정
+    User -> Bot: 다음단계
+    Bot -> User: ② **예약정보입력 · 결제** (FlightPaymentSheet)\n결제수단 선택 → 결제하기
+    User -> Bot: 결제 완료
+    Bot -> User: ③ **항공 예약 완료** (FlightReservationComplete)\n예약번호 · 완료 메시지
     
 else 숙소만 예약
     Bot -> User: 룸타입 선택 바텀시트 표시 (RoomTypeSelector)

@@ -76,7 +76,17 @@ state fit_packages <<fit>> {
 packages --> booking : [예약하기] 클릭
 
 fit_packages --> room_type : [예약하기] (조합 or 숙소만)
-fit_packages --> booking : [예약하기] (항공만)
+fit_packages --> flight_booking : [예약하기] (항공만)
+
+state flight_booking <<booking>> {
+  [*] --> FlightTerms
+  FlightTerms : FlightReservationSheet\n약관동의 + **운임 확인**\n(기본운임, 세금, 수수료, 운임상세일정)
+  FlightTerms --> FlightPayment : 다음단계
+  FlightPayment : FlightPaymentSheet\n결제수단 선택 · 결제하기
+  FlightPayment --> flight_confirmed : 결제 완료
+  flight_confirmed : FlightReservationComplete\n항공 예약번호 · 완료 메시지
+  flight_confirmed --> confirmed : [확인]
+}
 
 state room_type <<booking>> {
   [*] --> RoomTypeSelector
@@ -147,6 +157,13 @@ note right of room_type
   step 유지 (fit-packages 등)
   showRoomTypeSelector = true
   조합/숙소만 예약 시만 진입
+end note
+
+note right of flight_booking
+  step = "booking"
+  flightSheetStep: terms → payment → complete
+  항공만 또는 FIT조합(항공 먼저) 시
+  FlightBookingSheet 단일 바텀시트
 end note
 
 note right of booking
