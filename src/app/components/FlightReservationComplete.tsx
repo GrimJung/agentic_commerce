@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NamemdaeComboStepper } from "./NamemdaeComboStepper";
 
 interface FlightReservationCompleteProps {
   /** 예약자명 (예: 최지혜 → "최지혜님!") */
@@ -45,31 +46,7 @@ export function FlightReservationComplete({
       {/* 단계 표시 */}
       <div className="py-[10px] px-4 border-b border-[#f0f0f0]">
         {isFitCombo ? (
-          <div className="flex items-start">
-            <div className="flex flex-col items-center shrink-0">
-              <span className="size-[25px] rounded-full border border-[#5e2bb8] bg-white flex items-center justify-center text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
-                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-              </span>
-              <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#4f4f4f] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />약관동의</span>
-            </div>
-            <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
-            <div className="flex flex-col items-center shrink-0">
-              <span className="size-[25px] rounded-full border border-[#5e2bb8] bg-white flex items-center justify-center text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
-                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-              </span>
-              <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#4f4f4f] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />예약정보입력</span>
-            </div>
-            <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
-            <div className="flex flex-col items-center shrink-0">
-              <span className="size-[25px] rounded-full bg-[#5e2bb8] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">3</span>
-              <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />예약완료</span>
-            </div>
-            <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
-            <div className="flex flex-col items-center shrink-0">
-              <span className="size-[25px] rounded-full border border-[#c8c8c8] bg-white flex items-center justify-center text-[13px] text-[#c8c8c8] font-['Pretendard:SemiBold',sans-serif]">4</span>
-              <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#4f4f4f] mt-[5px] mb-[5px] leading-[1.2] text-center">호텔예약</span>
-            </div>
-          </div>
+          <NamemdaeComboStepper activeStep={2} />
         ) : (
           <div className="flex items-start">
             <div className="flex flex-col items-center shrink-0">

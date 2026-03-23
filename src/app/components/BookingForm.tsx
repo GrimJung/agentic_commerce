@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { X, Plus, User, Clock, Info, Building2 } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
+import { NamemdaeComboStepper } from "./NamemdaeComboStepper";
 
 /** 이미지 URL 없거나 로드 실패 시 사용할 플레이스홀더 (만료 없는 data URI) */
 const DEFAULT_HOTEL_IMAGE_PLACEHOLDER =
@@ -198,25 +199,8 @@ export function BookingForm({
             )}
           </div>
           {isFitCombo && (
-            <div className="py-3 px-4 border-t border-[#f0f0f0]">
-              <div className="flex items-start">
-                <div className="flex flex-col items-center shrink-0">
-                  <span className="size-8 rounded-full border border-[#5e2bb8] bg-white flex items-center justify-center text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
-                    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-                  </span>
-                  <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#4f4f4f] mt-1.5 text-center">항공<br />예약완료</span>
-                </div>
-                <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
-                <div className="flex flex-col items-center shrink-0">
-                  <span className="size-8 rounded-full bg-[#5e2bb8] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">2</span>
-                  <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2] mt-1.5 text-center">호텔<br />예약정보입력</span>
-                </div>
-                <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
-                <div className="flex flex-col items-center shrink-0">
-                  <span className="size-8 rounded-full border border-[#c8c8c8] bg-white flex items-center justify-center text-[13px] text-[#c8c8c8] font-['Pretendard:SemiBold',sans-serif]">3</span>
-                  <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#4f4f4f] mt-1.5 text-center">호텔<br />결제완료</span>
-                </div>
-              </div>
+            <div className="border-t border-[#f0f0f0]">
+              <NamemdaeComboStepper activeStep={2} />
             </div>
           )}
         </div>

@@ -16,6 +16,12 @@ export interface HotelData {
   travelDateRange?: string;
   /** 여행 기간 (예: "4박 6일") */
   duration?: string;
+  /** 체크인 일자 (상세 헤더 투숙기간 표시용, 예: "2026-05-25") */
+  checkInDate?: string;
+  /** 체크아웃 일자 */
+  checkOutDate?: string;
+  /** 박 수 (명시 시 duration/일수 계산보다 우선) */
+  stayNights?: number;
   image?: string;
   recommendReason: string;
 }

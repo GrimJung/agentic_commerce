@@ -6,6 +6,7 @@ import { FlightData } from "./FlightCard";
 import type { BookingFormData } from "./BookingForm";
 import { PassengerFormSheet } from "./PassengerFormSheet";
 import { FlightPaymentDetailSheet } from "./FlightPaymentDetailSheet";
+import { NamemdaeFlightReservationContent } from "./NamemdaeFlightReservationContent";
 
 interface FlightPaymentSheetProps {
   flight: FlightData;
@@ -17,8 +18,10 @@ interface FlightPaymentSheetProps {
   onProceedToPayment: (isPayLater?: boolean) => void;
   /** true면 바깥 배경/시트 래퍼 없이 내용만 렌더 (통합 시트 내부 삽입용) */
   embedded?: boolean;
-  /** true면 항공+호텔 FIT 조합 플로우 (4단계 표시) */
+  /** true면 항공+호텔 내맘대로 조합 (3단계: 항공예약정보 → 호텔 → 결제) */
   isFitCombo?: boolean;
+  /** 내맘대로: 항공예약정보 단계에서 다음단계(호텔 예약)로 이동 시 예약 데이터 전달 */
+  onNamemdaeFlightNext?: (data: BookingFormData) => void;
 }
 
 export function FlightPaymentSheet({
@@ -29,8 +32,10 @@ export function FlightPaymentSheet({
   onProceedToPayment,
   embedded = false,
   isFitCombo = false,
+  onNamemdaeFlightNext,
 }: FlightPaymentSheetProps) {
   useLockBodyScroll(!embedded);
+  const isNamemdae = Boolean(isFitCombo && onNamemdaeFlightNext);
   const [paymentType, setPaymentType] = useState<"immediate" | "later">("immediate");
   const [usageGuideOpen, setUsageGuideOpen] = useState(false);
   const [paymentInfoOpen, setPaymentInfoOpen] = useState(false);
@@ -40,7 +45,7 @@ export function FlightPaymentSheet({
 
   const totalPrice = flight.price;
 
-  const content = (
+  const legacyContent = (
     <>
         {/* 헤더 */}
         <div className="sticky top-0 bg-white border-b border-[#f0f0f0] px-4 py-3 flex items-center justify-between gap-2 z-10 shrink-0">
@@ -321,7 +326,20 @@ export function FlightPaymentSheet({
     </>
   );
 
-  const passengerSheet = showPassengerSheet && (
+  const content = isNamemdae ? (
+    <NamemdaeFlightReservationContent
+      flight={flight}
+      initialData={bookingData}
+      onBack={onBack}
+      onClose={onClose}
+      onOpenScheduleDetail={() => setShowPaymentDetailSheet(true)}
+      onNext={(data) => onNamemdaeFlightNext?.(data)}
+    />
+  ) : (
+    legacyContent
+  );
+
+  const passengerSheet = !isNamemdae && showPassengerSheet && (
     <PassengerFormSheet
       onClose={() => setShowPassengerSheet(false)}
       bookerName={bookingData?.name ?? "홍길동"}
@@ -334,7 +352,7 @@ export function FlightPaymentSheet({
   const birthDateDisplay = bookingData?.birthDate ?? "1990-01-11";
   const confirmPopup = (
     <AnimatePresence>
-      {showConfirmPopup && (
+      {!isNamemdae && showConfirmPopup && (
         <div
           className="fixed inset-0 bg-black/50 z-[60] flex items-end"
           onClick={() => setShowConfirmPopup(false)}
@@ -457,7 +475,7 @@ export function FlightPaymentSheet({
         onBack={() => setShowPaymentDetailSheet(false)}
         onComplete={() => {
           setShowPaymentDetailSheet(false);
-          onProceedToPayment(false);
+          if (!isNamemdae) onProceedToPayment(false);
         }}
       />
     );
@@ -487,6 +505,7 @@ export function FlightPaymentSheet({
       </div>
       {passengerSheet}
       {confirmPopup}
+      {paymentDetailSheet}
     </>
   );
 }

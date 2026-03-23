@@ -9,6 +9,7 @@ import { HotelData } from "./HotelCard";
 import { FlightDetailContent } from "./FlightDetailContent";
 import { HotelDetailContent } from "./HotelDetailContent";
 import type { RoomType } from "./RoomTypeSelector";
+import { RoomInfoNoticePopup } from "./RoomInfoNoticePopup";
 
 interface FITPackageDetailProps {
   package: FITPackageData;
@@ -59,6 +60,8 @@ function toHotelData(pkg: FITPackageData): HotelData {
     destination: pkg.destination,
     passengerCount: pkg.passengerCount,
     recommendReason: pkg.recommendReason,
+    travelDateRange: pkg.travelDateRange,
+    duration: pkg.duration,
   };
 }
 
@@ -68,11 +71,17 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
   const hotelSectionRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<"flight" | "hotel">("flight");
-  const [priceExpanded, setPriceExpanded] = useState(false);
+  const [priceExpanded, setPriceExpanded] = useState(true);
   const [includedExpanded, setIncludedExpanded] = useState(true);
+  const [showRoomInfoBeforeBooking, setShowRoomInfoBeforeBooking] = useState(false);
 
   const hotelPrice = selectedRoomType ? selectedRoomType.priceFrom : pkg.hotelInfo.price;
   const totalPrice = pkg.flightInfo.price + hotelPrice;
+  const pax = Math.max(1, pkg.passengerCount);
+  /** 예시 화면과 동일 비율: 1인당 유류·제세 과금 표기 (인원에 비례) */
+  const flightTicketingFee = 0;
+  const flightFuelSurcharge = 33000 * pax;
+  const flightTaxAndCharges = 48400 * pax;
 
   const flightData = useMemo(() => toFlightData(pkg), [pkg]);
   const hotelData = useMemo(() => toHotelData(pkg), [pkg]);
@@ -171,9 +180,14 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
           {/* 목적지 헤더 + AI 추천 (상단만 패딩) */}
           <div className="p-5 pb-0">
           <div className="mb-4">
-            <h3 className="font-['Pretendard:Bold',sans-serif] text-[20px] text-[#111]">
-              {pkg.destination} 자유여행
-            </h3>
+            <div className="flex flex-wrap items-center gap-2 gap-y-1">
+              <h3 className="font-['Pretendard:Bold',sans-serif] text-[20px] text-[#111]">
+                {pkg.destination} 자유여행
+              </h3>
+              <span className="px-2 py-0.5 rounded-[6px] text-[11px] font-['Pretendard:SemiBold',sans-serif] bg-[#ede9fe] text-[#5e2bb8]">
+                내맘대로
+              </span>
+            </div>
             <div className="flex items-center gap-1 mt-[5px] text-[14px] text-[#666]">
               <span>{pkg.travelDateRange ?? pkg.duration}</span>
               {pkg.travelDateRange && (
@@ -195,43 +209,85 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
             </p>
           </div>
 
-          {/* 총 결제금액 (접기 디폴트, 펼치면 상세 금액) */}
-          <div className="mb-2">
+          {/* 결제정보 (캡처 UI: 총액 · 항공 부가 항목 · 안내) */}
+          <div className="mb-4">
             <button
               type="button"
               onClick={() => setPriceExpanded(!priceExpanded)}
-              className="w-full flex items-center justify-between text-left py-[3px] px-0 text-[14px] text-[#333] font-['Pretendard:Bold',sans-serif]"
+              className="w-full flex items-center justify-between text-left py-1 px-0"
             >
-              <span className="font-['Pretendard:Bold',sans-serif]">총 결제금액</span>
-              <span className="flex items-center gap-2">
-                <span className="font-['Pretendard:Bold',sans-serif] text-[#111]">{totalPrice.toLocaleString()}원</span>
-                {priceExpanded ? <ChevronUp className="size-5 text-[#666]" /> : <ChevronDown className="size-5 text-[#666]" />}
-              </span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#111]">결제정보</span>
+              {priceExpanded ? (
+                <ChevronUp className="size-5 shrink-0 text-[#666]" aria-hidden />
+              ) : (
+                <ChevronDown className="size-5 shrink-0 text-[#666]" aria-hidden />
+              )}
             </button>
             {priceExpanded && (
-              <div className="mt-1 space-y-1">
-                <div className="flex items-center justify-between text-[14px] text-[#333] py-0.5">
-                  <span>항공</span>
-                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[#111]">{pkg.flightInfo.price.toLocaleString()}원</span>
+              <div className="mt-2 space-y-3">
+                <div className="flex items-baseline justify-between gap-3 font-['Pretendard:SemiBold',sans-serif] font-semibold">
+                  <span className="text-[17px] text-[#111] shrink-0">총 결제금액</span>
+                  <span className="text-[17px] text-[#111] text-right tabular-nums">
+                    {totalPrice.toLocaleString()}원
+                  </span>
                 </div>
-                <div className="flex items-center justify-between text-[14px] text-[#333] py-0.5">
-                  <span>호텔</span>
-                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[#111]">{hotelPrice.toLocaleString()}원</span>
+                <p className="text-[13px] text-[#111] leading-[1.45] font-['Pretendard:Regular',sans-serif] mb-0">
+                  총 결제 금액은 항공,호텔 합산 비용으로 하기 내용을 포함하고 있습니다.
+                </p>
+                <div className="space-y-2.5 pt-0.5">
+                  <div className="flex items-center justify-between gap-3 text-[12px] mb-0">
+                    <span className="min-w-0 text-[#888]">
+                      항공권 발권수수료{" "}
+                      <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
+                    </span>
+                    <span className="shrink-0 font-['Pretendard:SemiBold',sans-serif] tabular-nums text-[#111]">
+                      {flightTicketingFee.toLocaleString()}원
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 text-[12px] mb-0">
+                    <span className="min-w-0 text-[#888]">
+                      항공권 유류할증료{" "}
+                      <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
+                    </span>
+                    <span className="shrink-0 font-['Pretendard:SemiBold',sans-serif] tabular-nums text-[#111]">
+                      {flightFuelSurcharge.toLocaleString()}원
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 text-[12px] mb-0">
+                    <span className="min-w-0 text-[#888]">
+                      항공권 제세공과금{" "}
+                      <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
+                    </span>
+                    <span className="shrink-0 font-['Pretendard:SemiBold',sans-serif] tabular-nums text-[#111]">
+                      {flightTaxAndCharges.toLocaleString()}원
+                    </span>
+                  </div>
+                </div>
+                <div className="rounded-[12px] bg-[#f8f9fa] px-3.5 py-3.5 mt-1">
+                  <div className="flex items-center gap-1.5 mb-2.5">
+                    <span className="text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">ⓘ 결제 정보</span>
+                  </div>
+                  <ul className="space-y-2 pl-0.5 text-[12px] leading-[1.5] text-[#666] font-['Pretendard:Regular',sans-serif]">
+                    <li className="flex gap-2 mb-0">
+                      <span className="shrink-0 text-[#999]">•</span>
+                      <span>
+                        항공 예약 변경 시 환불 수수료는 별도이며, 일정표 내 &apos;항공요금 환불 규정&apos;을 확인해 주세요.
+                      </span>
+                    </li>
+                    <li className="flex gap-2 mb-0">
+                      <span className="shrink-0 text-[#999]">•</span>
+                      <span>유류할증료 및 제세공과금은 항공사 정책 및 환율에 따라 일별 변동될 수 있습니다.</span>
+                    </li>
+                    <li className="flex gap-2 mb-0">
+                      <span className="shrink-0 text-[#999]">•</span>
+                      <span className="text-[#7b3ff2] font-['Pretendard:Medium',sans-serif]">
+                        카드정보는 1회 입력이나, 카드 승인금액은 항공, 호텔 각 상품 별도 승인 되오니 이용에 참고해주시기 바랍니다.
+                      </span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             )}
-            {/* 검색 유효기간 안내 토스트 말풍선 (말 꼬리는 우측 금액 쪽으로) */}
-            <div className="flex justify-end mt-0">
-              <div className="relative flex flex-col items-end">
-                <div className="relative flex flex-col justify-center items-center h-[25px] w-[200px] px-[5px] py-1 bg-white text-[#666] rounded-[12px] text-[10px] font-['Pretendard:Medium',sans-serif] shadow-[0px_2px_8px_rgba(0,0,0,0.08)] border border-[#eee]">
-                  검색 30분 경과 시 초기화 및 재조회 됩니다.
-                  <span
-                    className="absolute right-5 -top-1.5 w-0 h-0 border-[6px] border-transparent border-b-white"
-                    aria-hidden
-                  />
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* 포함 사항 (접기/펼침) */}
@@ -281,13 +337,24 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
         {/* 하단 플로팅: 이 조합으로 예약하기 */}
         <div className="shrink-0 border-t border-[#f0f0f0] bg-white px-5 pt-3 pb-5">
           <button
-            onClick={onBooking}
+            type="button"
+            onClick={() => setShowRoomInfoBeforeBooking(true)}
             className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
           >
             이 조합으로 예약하기
           </button>
         </div>
       </motion.div>
+
+      <RoomInfoNoticePopup
+        open={showRoomInfoBeforeBooking}
+        onClose={() => setShowRoomInfoBeforeBooking(false)}
+        onConfirm={() => {
+          setShowRoomInfoBeforeBooking(false);
+          onBooking();
+        }}
+        zClass="z-[100]"
+      />
     </motion.div>
   );
 }

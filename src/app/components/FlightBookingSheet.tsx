@@ -23,6 +23,8 @@ interface FlightBookingSheetProps {
   onFinalSubmit: (isPayLater?: boolean) => void;
   /** FIT 조합일 때 "이어서 호텔 예약하기" 클릭 시 호출 */
   onProceedToHotel?: () => void;
+  /** 내맘대로(FIT): 항공예약정보 다음단계 → 호텔 예약 폼으로 */
+  onNamemdaeFlightContinue?: (data: BookingFormData) => void;
 }
 
 /**
@@ -41,6 +43,7 @@ export function FlightBookingSheet({
   onBack,
   onFinalSubmit,
   onProceedToHotel,
+  onNamemdaeFlightContinue,
 }: FlightBookingSheetProps) {
   useLockBodyScroll();
   return (
@@ -53,13 +56,13 @@ export function FlightBookingSheet({
         className="bg-white w-full rounded-t-[24px] max-h-[85vh] overflow-y-auto flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {step === "terms" ? (
+        {!isFitCombo && step === "terms" ? (
           <FlightReservationSheet
             embedded
             flight={flight}
             onClose={onClose}
             onProceedToPayment={onProceedToNextStep}
-            isFitCombo={isFitCombo}
+            isFitCombo={false}
           />
         ) : step === "complete" && bookingData ? (
           <FlightReservationComplete
@@ -79,6 +82,7 @@ export function FlightBookingSheet({
             onClose={onClose}
             onProceedToPayment={onFinalSubmit}
             isFitCombo={isFitCombo}
+            onNamemdaeFlightNext={isFitCombo ? onNamemdaeFlightContinue : undefined}
           />
         ) : null}
       </motion.div>

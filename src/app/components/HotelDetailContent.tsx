@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import {
-  Building2,
+  Bed,
   MapPin,
   Star,
   Wifi,
@@ -20,9 +20,82 @@ import {
   ChevronDown,
   ChevronUp,
   Check,
+  Info,
+  AlertCircle,
 } from "lucide-react";
 import { HotelData } from "./HotelCard";
 import type { RoomType } from "./RoomTypeSelector";
+import { HotelRefundPolicySheet } from "./HotelRefundPolicySheet";
+
+const DEFAULT_HOTEL_YEAR = 2026;
+
+function toDisplayYMD(s: string): string {
+  const t = s.trim().replace(/\//g, ".");
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
+    const [y, m, d] = t.split("-");
+    return `${y}.${m}.${d}`;
+  }
+  if (/^\d{4}\.\d{2}\.\d{2}$/.test(t)) return t;
+  return t;
+}
+
+function parseTravelDateRangeToStayDates(
+  range: string | undefined,
+  year: number
+): { checkIn: string; checkOut: string } | null {
+  if (!range?.includes("~")) return null;
+  const parts = range.split("~").map((p) => p.trim());
+  if (parts.length !== 2) return null;
+  const parsePart = (p: string) => {
+    const m = p.match(/^(\d{2})\.(\d{2})/);
+    return m ? `${year}.${m[1]}.${m[2]}` : null;
+  };
+  const checkIn = parsePart(parts[0]);
+  const checkOut = parsePart(parts[1]);
+  if (!checkIn || !checkOut) return null;
+  return { checkIn, checkOut };
+}
+
+function parseDurationNights(duration?: string): number | null {
+  if (!duration) return null;
+  const m = duration.match(/(\d+)박/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function nightsBetweenYMD(checkIn: string, checkOut: string): number {
+  const d1 = new Date(checkIn.replace(/\./g, "-"));
+  const d2 = new Date(checkOut.replace(/\./g, "-"));
+  if (Number.isNaN(d1.getTime()) || Number.isNaN(d2.getTime())) return 3;
+  const diff = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.max(1, diff);
+}
+
+/** 예: `2026.05.25 ~ 2026.05.28 (3박)` */
+function getHotelStayPeriodLabel(hotel: HotelData): string {
+  if (hotel.checkInDate && hotel.checkOutDate) {
+    const ci = toDisplayYMD(hotel.checkInDate);
+    const co = toDisplayYMD(hotel.checkOutDate);
+    const nights = hotel.stayNights ?? nightsBetweenYMD(ci, co);
+    return `${ci} ~ ${co} (${nights}박)`;
+  }
+  const parsed = parseTravelDateRangeToStayDates(hotel.travelDateRange, DEFAULT_HOTEL_YEAR);
+  if (parsed) {
+    const nights =
+      hotel.stayNights ??
+      parseDurationNights(hotel.duration) ??
+      nightsBetweenYMD(parsed.checkIn, parsed.checkOut);
+    return `${parsed.checkIn} ~ ${parsed.checkOut} (${nights}박)`;
+  }
+  return `${DEFAULT_HOTEL_YEAR}.05.25 ~ ${DEFAULT_HOTEL_YEAR}.05.28 (3박)`;
+}
+
+/** 취소약관 등 체크인 일자 (YYYY.MM.DD) */
+function getHotelCheckInYmd(hotel: HotelData): string {
+  if (hotel.checkInDate) return toDisplayYMD(hotel.checkInDate);
+  const parsed = parseTravelDateRangeToStayDates(hotel.travelDateRange, DEFAULT_HOTEL_YEAR);
+  if (parsed) return parsed.checkIn;
+  return `${DEFAULT_HOTEL_YEAR}.05.25`;
+}
 
 const FACILITIES: { id: string; label: string; Icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "smoking", label: "흡연불가", Icon: Cigarette },
@@ -46,6 +119,8 @@ export interface HotelDetailContentProps {
   onChangeRoom?: () => void;
   /** 변경된 객실 정보 (있으면 호텔 기본 객실 대신 표시) */
   selectedRoom?: RoomType | null;
+  /** 상세보기 클릭 시 추가 동작 (예: 로깅). 기본 바텀시트는 항상 열립니다. */
+  onHotelRefundPolicyDetails?: () => void;
 }
 
 export function HotelDetailContent({
@@ -54,9 +129,12 @@ export function HotelDetailContent({
   onBooking,
   onChangeRoom,
   selectedRoom,
+  onHotelRefundPolicyDetails,
 }: HotelDetailContentProps) {
   const [sectionExpanded, setSectionExpanded] = useState(true);
   const [noticeExpanded, setNoticeExpanded] = useState(false);
+  const [otherInstructionsExpanded, setOtherInstructionsExpanded] = useState(true);
+  const [refundPolicyOpen, setRefundPolicyOpen] = useState(false);
   const noticeRef = useRef<HTMLDivElement>(null);
 
   const handleExpandNotice = () => {
@@ -66,17 +144,33 @@ export function HotelDetailContent({
     });
   };
 
+  const stayPeriodLabel = getHotelStayPeriodLabel(hotel);
+
   return (
     <>
       <div className="px-5 py-6">
         <button
           type="button"
           onClick={() => setSectionExpanded(!sectionExpanded)}
-          className="w-full flex items-center justify-between text-left mb-3"
+          className="w-full flex items-center justify-between gap-2 text-left"
         >
-          <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">호텔 상세 정보</h3>
-          {sectionExpanded ? <ChevronUp className="size-5 text-[#666]" /> : <ChevronDown className="size-5 text-[#666]" />}
+          <div className="flex min-w-0 flex-1 items-center gap-[5px]">
+            <span
+              className="flex size-6 shrink-0 items-center justify-center rounded-[8px] bg-[#05bdce] text-[13px] font-bold leading-none text-white font-['Pretendard:Bold',sans-serif]"
+              aria-hidden
+            >
+              2
+            </span>
+            <Bed className="size-[18px] shrink-0 text-[#05bdce]" strokeWidth={2.25} aria-hidden />
+            <h3 className="min-w-0 font-semibold font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">
+              호텔 상세 정보
+            </h3>
+          </div>
+          {sectionExpanded ? <ChevronUp className="size-5 shrink-0 text-[#666]" /> : <ChevronDown className="size-5 shrink-0 text-[#666]" />}
         </button>
+        <p className="mt-[5px] mb-2 text-left text-[15px] text-[#05bdce] font-['Pretendard:Medium',sans-serif] tracking-tight">
+          {stayPeriodLabel}
+        </p>
         {sectionExpanded && (
         <>
         {hotel.image && (
@@ -93,10 +187,9 @@ export function HotelDetailContent({
         )}
 
         <div className="mb-[10px]">
-          <div className="flex items-start justify-start gap-2 mb-0">
-            <Building2 className="size-[18px] text-[#7b3ff2]" />
-            <span className="text-[13px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">{hotel.grade}</span>
-          </div>
+          <span className="mb-0 block text-[13px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">
+            {hotel.grade}
+          </span>
           <h3 className="font-['Pretendard:Bold',sans-serif] text-[20px] text-[#111] mb-0">{hotel.name}</h3>
           {hotel.nameEn ? <p className="text-[13px] text-[#666] mb-2">{hotel.nameEn}</p> : null}
           <div className="mb-3">
@@ -119,9 +212,8 @@ export function HotelDetailContent({
           <p className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2] mb-2">객실 정보</p>
           <ul className="space-y-0 text-[16px] text-[#111] font-medium">
             <li className="text-left mb-0 leading-[20px]">{selectedRoom ? selectedRoom.name : hotel.roomType}, 금연 (No Room Cleaning Service)</li>
-            <li className="grid grid-cols-2 gap-2 mb-0">
-              <span className="text-left text-[12px] font-semibold text-[#5e2bb8]">04.10~04.13 3박</span>
-              <span className="text-right text-[12px] font-normal text-[#111]">객실1, 성인2명, 아동1명</span>
+            <li className="text-left mb-0">
+              <span className="text-[12px] font-normal text-[#111]">객실1, 성인2명, 아동1명</span>
             </li>
             <li className="text-left mb-0 text-[12px] text-[#0fbabf]">
               {selectedRoom
@@ -253,6 +345,24 @@ export function HotelDetailContent({
                     <ChevronDown className="size-4" />
                   </button>
                 </div>
+                <div className="mt-4 flex items-center justify-between gap-3 rounded-[16px] bg-[#f5f5f5] px-4 py-3">
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <AlertCircle className="size-[18px] shrink-0 text-[#111]" strokeWidth={2} aria-hidden />
+                    <span className="text-[14px] font-['Pretendard:Medium',sans-serif] text-[#111]">
+                      호텔 취소/환불 규정
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onHotelRefundPolicyDetails?.();
+                      setRefundPolicyOpen(true);
+                    }}
+                    className="shrink-0 rounded-full border border-[#e0e0e0] bg-white px-3.5 py-1.5 text-[13px] font-['Pretendard:Medium',sans-serif] text-[#111] hover:bg-[#fafafa] transition-colors"
+                  >
+                    상세보기
+                  </button>
+                </div>
               </div>
             </>
           ) : (
@@ -322,6 +432,52 @@ export function HotelDetailContent({
             </>
           )}
         </div>
+
+        <div className="mb-4 -mx-5 px-5 mt-6 pt-6 border-t-[8px] border-[#ebebeb]">
+          <button
+            type="button"
+            onClick={() => setOtherInstructionsExpanded(!otherInstructionsExpanded)}
+            className="w-full flex items-center justify-between gap-2 text-left mb-3"
+          >
+            <h4 className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#111]">
+              기타 안내사항
+            </h4>
+            {otherInstructionsExpanded ? (
+              <ChevronUp className="size-5 shrink-0 text-[#666]" aria-hidden />
+            ) : (
+              <ChevronDown className="size-5 shrink-0 text-[#666]" aria-hidden />
+            )}
+          </button>
+          {otherInstructionsExpanded && (
+            <div className="rounded-[16px] bg-[#f5f5f5] p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Info className="size-[18px] shrink-0 text-[#666]" strokeWidth={2} aria-hidden />
+                <p className="text-[14px] font-['Pretendard:SemiBold',sans-serif] font-semibold text-[#111]">
+                  아래 내용을 확인해 주세요.
+                </p>
+              </div>
+              <ul className="list-disc list-outside space-y-3 pl-4 text-[13px] text-[#666] leading-[1.6] marker:text-[#bbb]">
+                <li>
+                  내맘대로 상품으로 예약한 경우, 이는 항공+호텔 결합상품이므로, 항공예약 단독으로는 취소 불가하며 적어도
+                  1개의 호텔과 함께 취소 가능합니다.
+                </li>
+                <li>
+                  내맘대로 상품으로 예약한 경우, 내맘대로 상품에서 2개 이상의 호텔 상품을 예약할 경우에 한해 호텔 건별
+                  취소가 가능합니다. (단, 최대 2개 호텔까지만 호텔 건별 취소가 가능)
+                </li>
+                <li>
+                  내맘대로 상품으로 예약한 경우, 취소는 1:1 문의로만 요청 가능하며, 수수료 규정에 대한 확인 절차가
+                  필요합니다. 이후 최종적으로 고객의 취소 결정 및 동의 득한 후 항공 예약, 호텔예약이 동시에 일괄 취소로
+                  진행됩니다. (단, 최대 2개 호텔까지에 대한 호텔 건별 취소는, 각 호텔별 취소 수수료 규정에 의거하여
+                  개별적으로 진행됩니다.)
+                </li>
+                <li>
+                  내맘대로 상품의 수수료는 항공, 호텔 각각의 규정이 중복 적용되며 1:1문의로 확인 가능합니다.
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
         </>
         )}
       </div>
@@ -336,6 +492,13 @@ export function HotelDetailContent({
           </button>
         </div>
       )}
+
+      <HotelRefundPolicySheet
+        open={refundPolicyOpen}
+        onClose={() => setRefundPolicyOpen(false)}
+        hotelName={hotel.name}
+        checkInYmd={getHotelCheckInYmd(hotel)}
+      />
     </>
   );
 }

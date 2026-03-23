@@ -198,10 +198,18 @@ git push -u origin main
 
 ---
 
+## 📦 Archive (원복용 문서)
+
+- **`docs/archive/`**: 신규 로직 전 **기존 플로우·UI**를 기록한 문서.  
+- **항공+호텔(FIT 조합)** 예약·결제: [`docs/archive/FIT_COMBO_AIR_HOTEL_BOOKING_PAYMENT.md`](./docs/archive/FIT_COMBO_AIR_HOTEL_BOOKING_PAYMENT.md)
+
+---
+
 ## 📝 변경 이력
 
 | 일자 | 내용 |
 |------|------|
+| 2026-03-23 | **Archive**: 항공+호텔(FIT 조합) 예약·결제 프로세스를 `docs/archive/`에 저장 (신규 로직 작업 시 원복 참고) |
 | 2026-03-18 | **PackageDetail UI**: "H-AI 요약" 라벨 폰트 크기 12px → 10px 적용; "30% 자유시간 보장" 텍스트 줄바꿈 방지(`whitespace-nowrap`) 적용 |
 
 ---

@@ -27,6 +27,18 @@ import { BookingConfirmation } from "./components/BookingConfirmation";
 import { AgentReasoningBlock } from "./components/AgentReasoningBlock";
 import { REASONING_STEPS } from "./constants/reasoningSteps";
 
+/** 내맘대로(항공+호텔) 항공예약정보 단계 진입 시 기본 예약자 정보 */
+const DEFAULT_NAMEMDAE_FLIGHT_BOOKING: BookingFormData = {
+  name: "강다희",
+  phone: "010-1234-5678",
+  email: "hana@hanatour.com",
+  birthDate: "1990-01-11",
+  passportNumber: "",
+  travelers: 2,
+  agreeTerms: true,
+  agreeCancellation: true,
+};
+
 // 클릭 시 사라지는 버튼 그룹
 function DismissableButtons({ buttons }: { buttons: { label: string; onClick: () => void; className: string }[] }) {
   const [clicked, setClicked] = useState(false);
@@ -2618,7 +2630,19 @@ export default function App() {
             setBookingData(data);
             setFlightSheetStep("payment");
           }}
-          onBack={() => setFlightSheetStep("terms")}
+          onBack={() => {
+            if (selectedFitPackage) setFlightSheetStep(null);
+            else setFlightSheetStep("terms");
+          }}
+          onNamemdaeFlightContinue={(data) => {
+            setBookingData(data);
+            setFlightSheetStep(null);
+            if (selectedFitPackage && !selectedRoomType && mockRoomTypes[selectedFitPackage.id]?.length > 0) {
+              setSelectedRoomType(mockRoomTypes[selectedFitPackage.id][0]);
+            }
+            setShowBookingForm(true);
+            setStep("booking");
+          }}
           onFinalSubmit={(isPayLater) => {
             setFlightCompleteIsPayLater(!!isPayLater);
             setMessages((prev) => [
@@ -2831,7 +2855,8 @@ export default function App() {
             };
             setSelectedFlight(flightData);
             setFitTotalPrice(selectedFitPackage.totalPrice);
-            setFlightSheetStep("terms");
+            setBookingData((prev) => prev ?? DEFAULT_NAMEMDAE_FLIGHT_BOOKING);
+            setFlightSheetStep("payment");
             setStep("booking");
           }}
           onChangeRoom={() => {

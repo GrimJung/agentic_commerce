@@ -34,6 +34,10 @@ export interface FlightData {
   passengerCount: number;
   /** 여행 기간 날짜 표기 (예: "04.01(월)~04.06(토)") */
   travelDateRange?: string;
+  /** 가는편 일자 (상세 헤더 표시용, 예: "2026-05-25" 또는 "2026.05.25") */
+  outboundDate?: string;
+  /** 오는편 일자 */
+  returnDate?: string;
   /** 여행 기간 (예: "4박 6일") */
   duration?: string;
   isDirect: boolean; // 직항 여부

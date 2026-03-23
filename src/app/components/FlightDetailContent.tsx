@@ -1,7 +1,56 @@
 import { useState } from "react";
-import { ChevronUp, ChevronDown, Clock, Plane } from "lucide-react";
+import { ChevronUp, ChevronDown, Clock, Plane, Info } from "lucide-react";
 import { FlightData } from "./FlightCard";
 import { formatSeatClass } from "./ui/utils";
+import { FlightFareRefundPolicySheet } from "./FlightFareRefundPolicySheet";
+
+const DEFAULT_FLIGHT_YEAR = 2026;
+
+/** YYYY-MM-DD / YYYY.MM.DD → YYYY.MM.DD */
+function toDisplayYMD(s: string): string {
+  const t = s.trim().replace(/\//g, ".");
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
+    const [y, m, d] = t.split("-");
+    return `${y}.${m}.${d}`;
+  }
+  if (/^\d{4}\.\d{2}\.\d{2}$/.test(t)) return t;
+  return t;
+}
+
+/**
+ * travelDateRange 예: "04.01(월)~04.06(토)" → 가는편/오는편 YYYY.MM.DD
+ */
+function parseTravelDateRangeToYMD(
+  travelDateRange: string | undefined,
+  year: number
+): { outbound: string; inbound: string } | null {
+  if (!travelDateRange?.includes("~")) return null;
+  const parts = travelDateRange.split("~").map((p) => p.trim());
+  if (parts.length !== 2) return null;
+  const parsePart = (p: string) => {
+    const m = p.match(/^(\d{2})\.(\d{2})/);
+    return m ? `${year}.${m[1]}.${m[2]}` : null;
+  };
+  const outbound = parsePart(parts[0]);
+  const inbound = parsePart(parts[1]);
+  if (!outbound || !inbound) return null;
+  return { outbound, inbound };
+}
+
+function getOutboundInboundDisplayDates(flight: FlightData): { outbound: string; inbound: string } {
+  if (flight.outboundDate && flight.returnDate) {
+    return {
+      outbound: toDisplayYMD(flight.outboundDate),
+      inbound: toDisplayYMD(flight.returnDate),
+    };
+  }
+  const parsed = parseTravelDateRangeToYMD(flight.travelDateRange, DEFAULT_FLIGHT_YEAR);
+  if (parsed) return parsed;
+  return {
+    outbound: `${DEFAULT_FLIGHT_YEAR}.01.01`,
+    inbound: `${DEFAULT_FLIGHT_YEAR}.01.08`,
+  };
+}
 
 /** 공항 문자열에서 코드 추출 (예: "인천국제공항 (ICN)" → "ICN") */
 function getAirportCode(airport?: string, fallback?: string): string {
@@ -38,6 +87,8 @@ export interface FlightDetailContentProps {
   onBooking?: () => void;
   /** 항공권 변경 클릭 시 호출 (항공권 선택 팝업 열기) */
   onChangeFlight?: () => void;
+  /** 상세보기 클릭 시 추가 동작. 기본 바텀시트는 항상 열립니다. */
+  onFlightFareRefundPolicyDetails?: () => void;
 }
 
 export function FlightDetailContent({
@@ -45,19 +96,27 @@ export function FlightDetailContent({
   hideBookingButton = false,
   onBooking,
   onChangeFlight,
+  onFlightFareRefundPolicyDetails,
 }: FlightDetailContentProps) {
   const [sectionExpanded, setSectionExpanded] = useState(true);
   const [outboundExpanded, setOutboundExpanded] = useState(true);
   const [returnExpanded, setReturnExpanded] = useState(true);
+  const [fareRefundPolicyOpen, setFareRefundPolicyOpen] = useState(false);
 
   const depCode = flight.departureCode ?? getAirportCode(flight.departureAirport);
   const arrCode = flight.arrivalCode ?? getAirportCode(flight.arrivalAirport);
   const returnFlight = getReturnFlight(flight);
+  const { outbound: outboundDateStr, inbound: inboundDateStr } = getOutboundInboundDisplayDates(flight);
 
   /** "약 2시간 30분" → "2시간 30분", "직항, 총 05시간 40분"용 */
   const durationLabel = (dur: string) => dur.replace(/^약\s*/, "").trim();
   const routeLabel = (dep: string, arr: string, dCode: string, aCode: string) =>
     dCode && aCode ? `${dep} - ${arr} ${dCode}-${aCode}` : `${dep} - ${arr}`;
+
+  const airportLine = (f: FlightData) =>
+    `${f.departureAirport ?? `${f.departure} 국제공항`}-${f.arrivalAirport ?? `${f.arrival} 공항`}`;
+  const outboundScheduleLine = airportLine(flight);
+  const inboundScheduleLine = airportLine(returnFlight);
 
   return (
     <>
@@ -67,11 +126,25 @@ export function FlightDetailContent({
           <button
             type="button"
             onClick={() => setSectionExpanded(!sectionExpanded)}
-            className="w-full flex items-center justify-between text-left"
+            className="w-full flex items-center justify-between gap-2 text-left"
           >
-            <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">항공 상세 정보</h3>
-            {sectionExpanded ? <ChevronUp className="size-5 text-[#666]" /> : <ChevronDown className="size-5 text-[#666]" />}
+            <div className="flex min-w-0 flex-1 items-center gap-[5px]">
+              <span
+                className="flex size-6 shrink-0 items-center justify-center rounded-[8px] bg-[rgb(69,132,255)] text-[13px] font-bold leading-none text-white font-['Pretendard:Bold',sans-serif]"
+                aria-hidden
+              >
+                1
+              </span>
+              <Plane className="size-[18px] shrink-0 text-[rgb(69,132,255)]" strokeWidth={2.25} aria-hidden />
+              <h3 className="min-w-0 font-semibold font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">
+                항공 상세 정보
+              </h3>
+            </div>
+            {sectionExpanded ? <ChevronUp className="size-5 shrink-0 text-[#666]" /> : <ChevronDown className="size-5 shrink-0 text-[#666]" />}
           </button>
+          <p className="mt-[5px] text-left text-[15px] text-[rgb(69,132,255)] font-['Pretendard:Medium',sans-serif] tracking-tight">
+            가는편 : {outboundDateStr} | 오는편 : {inboundDateStr}
+          </p>
         </div>
         {sectionExpanded && (
         <>
@@ -330,10 +403,30 @@ export function FlightDetailContent({
           )}
         </div>
 
-        <div className="flex gap-2 items-start mb-6">
-          <p className="text-[13px] text-[#666] leading-[1.5]">
-            해당 항공권은 유류할증료 및 세금 포함이며, 유류할증료는 실시간으로 변동될 수 있습니다.
-          </p>
+        <div className="mb-6 rounded-[16px] bg-[#f5f5f5] p-4">
+          <div className="flex items-center justify-between gap-3 mb-0">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <Info className="size-[18px] shrink-0 text-[#111]" strokeWidth={2} aria-hidden />
+              <span className="text-[14px] font-['Pretendard:Medium',sans-serif] font-medium text-[#111]">
+                항공 요금/환불 규정
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                onFlightFareRefundPolicyDetails?.();
+                setFareRefundPolicyOpen(true);
+              }}
+              className="shrink-0 rounded-full border border-[#e0e0e0] bg-white px-3.5 py-1.5 text-[13px] font-['Pretendard:Medium',sans-serif] text-[#111] hover:bg-[#fafafa] transition-colors"
+            >
+              상세보기
+            </button>
+          </div>
+          <ul className="list-disc list-outside space-y-0 pl-4 text-[13px] text-[#666] leading-[1.6] marker:text-[#bbb] [&>li]:mb-0">
+            <li>결제된 발권대행 수수료는 환불되지 않습니다.</li>
+            <li>유류할증료 및 제세공과금은 항공사 사정 및 환율변동에 의해 매일 변경될 수 있습니다.</li>
+            <li>예약변경 및 환불 수수료는 별도이며, 상세내용은 요금/환불 규정을 확인바랍니다.</li>
+          </ul>
         </div>
         </>
         )}
@@ -349,6 +442,14 @@ export function FlightDetailContent({
           </button>
         </div>
       )}
+
+      <FlightFareRefundPolicySheet
+        open={fareRefundPolicyOpen}
+        onClose={() => setFareRefundPolicyOpen(false)}
+        airline={flight.airline}
+        outboundSchedule={outboundScheduleLine}
+        inboundSchedule={inboundScheduleLine}
+      />
     </>
   );
 }
