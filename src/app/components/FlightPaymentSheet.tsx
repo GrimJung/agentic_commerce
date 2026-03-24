@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { UserPlus, ChevronUp, ChevronDown, ChevronRight, ArrowLeft, X } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { FlightData } from "./FlightCard";
-import type { BookingFormData } from "./BookingForm";
+import type { BookingFormData, HotelBookingInfo } from "./BookingForm";
 import { PassengerFormSheet } from "./PassengerFormSheet";
 import { FlightPaymentDetailSheet } from "./FlightPaymentDetailSheet";
 import { NamemdaeFlightReservationContent } from "./NamemdaeFlightReservationContent";
@@ -22,6 +22,11 @@ interface FlightPaymentSheetProps {
   isFitCombo?: boolean;
   /** 내맘대로: 항공예약정보 단계에서 다음단계(호텔 예약)로 이동 시 예약 데이터 전달 */
   onNamemdaeFlightNext?: (data: BookingFormData) => void;
+  namemdaeHotelInfo?: HotelBookingInfo;
+  /** 조합 결제 완료 직전: 예약 데이터만 저장(시트 유지) */
+  onNamemdaeComboPaymentSubmitted?: (data: BookingFormData) => void;
+  /** 결제 완료 시트 닫기 → 대화 복귀 */
+  onNamemdaeComboPaymentDismiss?: () => void;
 }
 
 export function FlightPaymentSheet({
@@ -33,6 +38,9 @@ export function FlightPaymentSheet({
   embedded = false,
   isFitCombo = false,
   onNamemdaeFlightNext,
+  namemdaeHotelInfo,
+  onNamemdaeComboPaymentSubmitted,
+  onNamemdaeComboPaymentDismiss,
 }: FlightPaymentSheetProps) {
   useLockBodyScroll(!embedded);
   const isNamemdae = Boolean(isFitCombo && onNamemdaeFlightNext);
@@ -334,6 +342,9 @@ export function FlightPaymentSheet({
       onClose={onClose}
       onOpenScheduleDetail={() => setShowPaymentDetailSheet(true)}
       onNext={(data) => onNamemdaeFlightNext?.(data)}
+      hotelInfo={namemdaeHotelInfo}
+      onComboPaymentSubmitted={onNamemdaeComboPaymentSubmitted}
+      onComboPaymentSuccessDismiss={onNamemdaeComboPaymentDismiss}
     />
   ) : (
     legacyContent
@@ -443,7 +454,7 @@ export function FlightPaymentSheet({
               <button
                 type="button"
                 onClick={() => setShowConfirmPopup(false)}
-                className="flex-1 py-3.5 border border-[#e0e0e0] rounded-[12px] text-[15px] text-[#666] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f9f9f9] transition-colors"
+                className="flex-1 py-3.5 border border-[#e0e0e0] rounded-[30px] text-[15px] text-[#666] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f9f9f9] transition-colors"
               >
                 다시 확인하기
               </button>

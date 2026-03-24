@@ -4,7 +4,7 @@ import { FlightReservationSheet } from "./FlightReservationSheet";
 import { FlightPaymentSheet } from "./FlightPaymentSheet";
 import { FlightReservationComplete } from "./FlightReservationComplete";
 import { FlightData } from "./FlightCard";
-import type { BookingFormData } from "./BookingForm";
+import type { BookingFormData, HotelBookingInfo } from "./BookingForm";
 
 export type FlightSheetStep = "terms" | "payment" | "complete";
 
@@ -25,6 +25,12 @@ interface FlightBookingSheetProps {
   onProceedToHotel?: () => void;
   /** 내맘대로(FIT): 항공예약정보 다음단계 → 호텔 예약 폼으로 */
   onNamemdaeFlightContinue?: (data: BookingFormData) => void;
+  /** FIT: 시트 내 2단계(호텔예약정보)에 쓰는 호텔 메타·금액 */
+  namemdaeHotelInfo?: HotelBookingInfo;
+  /** 조합(항공+호텔) 결제 단계: 데이터만 저장 */
+  onNamemdaeComboPaymentSubmitted?: (data: BookingFormData) => void;
+  /** 결제 완료 시트 닫기 시 대화 복귀 */
+  onNamemdaeComboPaymentDismiss?: () => void;
 }
 
 /**
@@ -44,6 +50,9 @@ export function FlightBookingSheet({
   onFinalSubmit,
   onProceedToHotel,
   onNamemdaeFlightContinue,
+  namemdaeHotelInfo,
+  onNamemdaeComboPaymentSubmitted,
+  onNamemdaeComboPaymentDismiss,
 }: FlightBookingSheetProps) {
   useLockBodyScroll();
   return (
@@ -83,6 +92,9 @@ export function FlightBookingSheet({
             onProceedToPayment={onFinalSubmit}
             isFitCombo={isFitCombo}
             onNamemdaeFlightNext={isFitCombo ? onNamemdaeFlightContinue : undefined}
+            namemdaeHotelInfo={namemdaeHotelInfo}
+            onNamemdaeComboPaymentSubmitted={onNamemdaeComboPaymentSubmitted}
+            onNamemdaeComboPaymentDismiss={onNamemdaeComboPaymentDismiss}
           />
         ) : null}
       </motion.div>

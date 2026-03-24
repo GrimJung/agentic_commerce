@@ -39,7 +39,11 @@ export function NamemdaeComboStepper({ activeStep }: NamemdaeComboStepperProps) 
       </span>
       <span
         className={`text-[11px] font-['Pretendard:SemiBold',sans-serif] mt-1.5 text-center leading-[1.25] px-0.5 ${
-          active || done ? "text-[#5e2bb8] font-bold" : "text-[#4f4f4f]"
+          done
+            ? "text-[#4A2190] font-bold"
+            : active
+              ? "text-[#5e2bb8] font-bold"
+              : "text-[#4f4f4f]"
         }`}
       >
         {label}

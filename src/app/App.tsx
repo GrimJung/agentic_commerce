@@ -19,7 +19,7 @@ import { FlightBookingSheet } from "./components/FlightBookingSheet";
 import type { FlightSheetStep } from "./components/FlightBookingSheet";
 import { ActivityTicketSelector, ActivityTicket } from "./components/ActivityTicketSelector";
 import { RoomTypeSelector, RoomType } from "./components/RoomTypeSelector";
-import { BookingForm, BookingFormData, HotelBookingInfo } from "./components/BookingForm";
+import { BookingForm, BookingFormData } from "./components/BookingForm";
 import { PackageBookingSheet } from "./components/PackageBookingSheet";
 import { PaymentSheet, type PaymentCompleteDetails } from "./components/PaymentSheet";
 import { PaymentModal } from "./components/PaymentModal";
@@ -2625,6 +2625,26 @@ export default function App() {
           reservationNumber={flightReservationNumber}
           isPayLater={flightCompleteIsPayLater}
           isFitCombo={!!selectedFitPackage}
+          namemdaeHotelInfo={
+            selectedFitPackage
+              ? {
+                  hotelName: selectedFitPackage.hotelInfo.name,
+                  hotelLocation:
+                    selectedFitPackage.destination || selectedFitPackage.hotelInfo.location || "",
+                  checkIn: "2026.04.08(수)",
+                  checkOut: "2026.04.10(금)",
+                  nights: 2,
+                  roomTypeLabel: selectedRoomType
+                    ? `[${selectedRoomType.name}] ${selectedRoomType.bedType} · ${selectedRoomType.capacity}`
+                    : selectedFitPackage.hotelInfo.roomType,
+                  totalAmount:
+                    fitTotalPrice ||
+                    (selectedRoomType?.priceFrom ?? selectedFitPackage.hotelInfo.price),
+                  freeCancellationText:
+                    "체크인 전 2026년 03월 27일 18시(현지시간)까지는 수수료 없이 변경/취소/환불이 가능합니다.",
+                }
+              : undefined
+          }
           onClose={() => setFlightSheetStep(null)}
           onProceedToNextStep={(data) => {
             setBookingData(data);
@@ -2637,12 +2657,50 @@ export default function App() {
           onNamemdaeFlightContinue={(data) => {
             setBookingData(data);
             setFlightSheetStep(null);
-            if (selectedFitPackage && !selectedRoomType && mockRoomTypes[selectedFitPackage.id]?.length > 0) {
-              setSelectedRoomType(mockRoomTypes[selectedFitPackage.id][0]);
+            let room = selectedRoomType;
+            if (selectedFitPackage && !room && mockRoomTypes[selectedFitPackage.id]?.length > 0) {
+              room = mockRoomTypes[selectedFitPackage.id][0];
+              setSelectedRoomType(room);
             }
-            setShowBookingForm(true);
-            setStep("booking");
+            const payAmount =
+              fitTotalPrice || (room?.priceFrom ?? selectedFitPackage?.hotelInfo.price ?? 0);
+            setPaymentAmount(payAmount);
+            setMessages((prev) => [
+              ...prev,
+              { type: "user", content: "{호텔 HP12345678} 예약완료" },
+              { type: "bot", content: "예약 정보를 확인했습니다. 결제를 진행해 주세요." },
+            ]);
+            setShowPaymentSheet(true);
+            setStep("payment");
           }}
+          onNamemdaeComboPaymentSubmitted={
+            selectedFitPackage
+              ? (data) => {
+                  setBookingData(data);
+                }
+              : undefined
+          }
+          onNamemdaeComboPaymentDismiss={
+            selectedFitPackage
+              ? () => {
+                  setFlightSheetStep(null);
+                  setShowPaymentSheet(false);
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      type: "user",
+                      content: "{항공 HA12345678910} · {호텔 HH12345678910} 결제가 완료되었습니다.",
+                    },
+                    {
+                      type: "bot",
+                      content:
+                        "결제가 완료되었습니다. 항공+호텔 예약이 확정되었습니다. 예약내역에서 상세 정보를 확인해 주세요.",
+                    },
+                  ]);
+                  setStep("initial");
+                }
+              : undefined
+          }
           onFinalSubmit={(isPayLater) => {
             setFlightCompleteIsPayLater(!!isPayLater);
             setMessages((prev) => [

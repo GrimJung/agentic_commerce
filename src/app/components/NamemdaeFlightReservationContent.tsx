@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo, type ComponentProps } from "react";
+import { createPortal } from "react-dom";
+import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowLeft,
   ChevronUp,
@@ -8,8 +10,11 @@ import {
   Info,
   HelpCircle,
   CircleAlert,
+  X,
 } from "lucide-react";
-import type { BookingFormData } from "./BookingForm";
+import type { BookingFormData, HotelBookingInfo } from "./BookingForm";
+import { NamemdaeComboPaymentContent } from "./NamemdaeComboPaymentContent";
+import { NamemdaeHotelReservationContent } from "./NamemdaeHotelReservationContent";
 import { FlightData } from "./FlightCard";
 import { NamemdaeComboStepper } from "./NamemdaeComboStepper";
 import { MyTravelerNotebookModal } from "./MyTravelerNotebookModal";
@@ -41,6 +46,22 @@ function LockedBookerBox({ fieldLabel, value }: { fieldLabel: string; value: str
   );
 }
 
+function formatBirthYmd(birth: string): string {
+  const digits = birth.replace(/\D/g, "");
+  if (digits.length === 8) return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`;
+  return birth.replace(/\./g, "-").replace(/\//g, "-");
+}
+
+function genderShort(passengerType: string): string {
+  return passengerType.includes("남") ? "남" : "여";
+}
+
+function formatPhoneKr(phone: string): string {
+  const d = phone.replace(/\D/g, "");
+  if (d.length === 11 && d.startsWith("010")) return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+  return phone;
+}
+
 function VerifiedInput(props: ComponentProps<"input">) {
   const { className, ...rest } = props;
   const v = props.value?.toString() ?? "";
@@ -64,6 +85,12 @@ export interface NamemdaeFlightReservationContentProps {
   onClose?: () => void;
   onOpenScheduleDetail: () => void;
   onNext: (data: BookingFormData) => void;
+  /** FIT 조합 시 호텔 예약정보 단계(2단계)에 표시할 데이터 */
+  hotelInfo?: HotelBookingInfo;
+  /** 결제 단계: 예약 데이터만 저장(시트 유지). 미전달 시 onNext 호출 */
+  onComboPaymentSubmitted?: (data: BookingFormData) => void;
+  /** 결제 완료 바텀시트 닫기 → 대화 등 상위 처리 */
+  onComboPaymentSuccessDismiss?: () => void;
 }
 
 export function NamemdaeFlightReservationContent({
@@ -73,6 +100,9 @@ export function NamemdaeFlightReservationContent({
   onClose: _onClose,
   onOpenScheduleDetail,
   onNext,
+  hotelInfo,
+  onComboPaymentSubmitted,
+  onComboPaymentSuccessDismiss,
 }: NamemdaeFlightReservationContentProps) {
   /** 로그인 회원 기준 확정 예약자 정보 (편집 불가) */
   const bookerLocked = useMemo(() => {
@@ -121,6 +151,9 @@ export function NamemdaeFlightReservationContent({
   const [termsOpen, setTermsOpen] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(true);
   const [agreePrivacy, setAgreePrivacy] = useState(true);
+  const [showFinalConfirm, setShowFinalConfirm] = useState(false);
+  const [comboPhase, setComboPhase] = useState<"flight" | "hotel" | "payment">("flight");
+  const [hotelFormKey, setHotelFormKey] = useState(0);
 
   useEffect(() => {
     if (sameAsBooker) {
@@ -145,12 +178,11 @@ export function NamemdaeFlightReservationContent({
     agreeTerms &&
     agreePrivacy;
 
-  const handleNext = () => {
-    if (!canNext) return;
+  const submitReservation = () => {
     const d = bookerLocked.birthDigits;
     const birthIso =
       d.length === 8 ? `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}` : initialData.birthDate;
-    onNext({
+    const payload: BookingFormData = {
       name: bookerLocked.name.trim(),
       phone: bookerLocked.phone.trim(),
       email: bookerLocked.email.trim(),
@@ -159,23 +191,95 @@ export function NamemdaeFlightReservationContent({
       travelers: passengerCount,
       agreeTerms: agreeTerms && agreePrivacy,
       agreeCancellation: true,
-    });
+    };
+    if (hotelInfo && onComboPaymentSubmitted) {
+      onComboPaymentSubmitted(payload);
+      return;
+    }
+    onNext(payload);
   };
+
+  const handleOpenFinalConfirm = () => {
+    if (!canNext) return;
+    setShowFinalConfirm(true);
+  };
+
+  const handleFinalConfirmComplete = () => {
+    setShowFinalConfirm(false);
+    if (hotelInfo) {
+      setHotelFormKey((k) => k + 1);
+      setComboPhase("hotel");
+      return;
+    }
+    submitReservation();
+  };
+
+  const handleHeaderBack = () => {
+    if (comboPhase === "payment") {
+      setComboPhase("hotel");
+      return;
+    }
+    if (comboPhase === "hotel") {
+      setComboPhase("flight");
+      return;
+    }
+    onBack();
+  };
+
+  const hotelPrefill = useMemo(
+    () => ({
+      nameKo: p1NameKo,
+      enLast: p1EnLast,
+      enFirst: p1EnFirst,
+      birth: p1Birth,
+      phone: p1Phone,
+      email: p1Email,
+      genderFemale: p1Type.includes("여"),
+    }),
+    [p1NameKo, p1EnLast, p1EnFirst, p1Birth, p1Phone, p1Email, p1Type],
+  );
 
   return (
     <>
       <div className="sticky top-0 bg-white border-b border-[#f0f0f0] z-10 shrink-0 flex items-center px-2 py-3 gap-1 min-w-0">
-        <button type="button" onClick={onBack} className="p-2 -ml-1 shrink-0" aria-label="뒤로 가기">
+        <button type="button" onClick={handleHeaderBack} className="p-2 -ml-1 shrink-0" aria-label="뒤로 가기">
           <ArrowLeft className="size-6 text-[#111]" />
         </button>
         <h1 className="min-w-0 font-['Pretendard:Bold',sans-serif] text-[18px] leading-tight text-[#111] truncate px-1">
-          예약정보
+          {comboPhase === "payment" ? "결제하기" : "예약정보"}
         </h1>
         <div className="flex-1 min-w-0" aria-hidden />
       </div>
 
-      <NamemdaeComboStepper activeStep={1} />
+      {comboPhase !== "payment" ? (
+        <NamemdaeComboStepper
+          activeStep={comboPhase === "flight" ? 1 : 2}
+        />
+      ) : null}
 
+      {comboPhase === "hotel" && hotelInfo ? (
+        <NamemdaeHotelReservationContent
+          key={hotelFormKey}
+          hotelInfo={hotelInfo}
+          prefill={hotelPrefill}
+          onComplete={() => setComboPhase("payment")}
+        />
+      ) : comboPhase === "payment" && hotelInfo ? (
+        <NamemdaeComboPaymentContent
+          totalAmount={hotelInfo.totalAmount}
+          airApprovalAmount={flight.price}
+          bookerName={bookerLocked.name}
+          bookerPhone={bookerLocked.phone}
+          travelerNameKo={p1NameKo}
+          travelerEnLast={p1EnLast}
+          travelerEnFirst={p1EnFirst}
+          travelerGenderFemale={p1Type.includes("여")}
+          travelerBirth={p1Birth}
+          onPayComplete={submitReservation}
+          onClosePaymentSuccess={onComboPaymentSuccessDismiss}
+        />
+      ) : (
+        <>
       <div className="px-5 py-4 flex-1 overflow-y-auto pb-28 bg-[#f8f8f8]">
         {/* 예약자 정보 — 섹션은 일반 카드, 필드만 딤 + 박스 내 라벨/값 */}
         <section className="mb-5 bg-white rounded-[12px] p-4 border border-[#eee]">
@@ -631,13 +735,184 @@ export function NamemdaeFlightReservationContent({
       <div className="sticky bottom-0 bg-white border-t border-[#f0f0f0] px-5 py-4 shrink-0">
         <button
           type="button"
-          onClick={handleNext}
+          onClick={handleOpenFinalConfirm}
           disabled={!canNext}
           className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
         >
           다음단계
         </button>
       </div>
+        </>
+      )}
+
+      {typeof document !== "undefined"
+        ? createPortal(
+            <AnimatePresence>
+              {showFinalConfirm && (
+                <div
+                  className="fixed inset-0 z-[100] flex w-screen max-w-[100vw] items-end bg-black/50"
+                  onClick={() => setShowFinalConfirm(false)}
+                  role="presentation"
+                >
+                  <motion.div
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "100%" }}
+                    transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                    className="flex max-h-[90vh] w-full min-w-0 flex-col overflow-hidden rounded-t-[24px] bg-white shadow-[0_-8px_32px_rgba(0,0,0,0.12)]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+              <div className="sticky top-0 bg-white border-b border-[#f0f0f0] px-4 py-3 flex items-start justify-between gap-3 shrink-0 z-10">
+                <div className="min-w-0 flex-1 pt-[6px]">
+                  <h2 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111] leading-tight">
+                    예약내역 최종 확인
+                  </h2>
+                  <p className="mt-0 text-[12px] text-[#888] leading-[1.45]">
+                    입력하신 정보가 모두 정확한지 확인해주시기 바랍니다.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowFinalConfirm(false)}
+                  className="p-2 -mr-2 -mt-0.5 text-[#666] hover:text-[#111] shrink-0"
+                  aria-label="닫기"
+                >
+                  <X className="size-6" />
+                </button>
+              </div>
+
+              <div className="px-5 py-4 flex-1 overflow-y-auto pb-4">
+                <section className="mb-5">
+                  <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] mb-2">
+                    탑승자 정보 총{" "}
+                    <span className="text-[#7b3ff2]">{passengerCount}명</span>
+                  </h3>
+                  <div className="rounded-[10px] border border-[#eee] overflow-hidden">
+                    <table className="w-full text-left text-[13px]">
+                      <thead>
+                        <tr className="bg-[#f9f9f9] border-b border-[#eee]">
+                          <th className="px-2.5 py-2 text-[12px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
+                            영문성
+                          </th>
+                          <th className="px-2.5 py-2 text-[12px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
+                            영문이름
+                          </th>
+                          <th className="px-2.5 py-2 text-[12px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
+                            생년월일
+                          </th>
+                          <th className="px-2.5 py-2 text-[12px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
+                            성별
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-[#f0f0f0]">
+                          <td className="px-2.5 py-2.5 text-[#111] font-['Pretendard:Medium',sans-serif]">
+                            {p1EnLast || "—"}
+                          </td>
+                          <td className="px-2.5 py-2.5 text-[#111] font-['Pretendard:Medium',sans-serif]">
+                            {p1EnFirst || "—"}
+                          </td>
+                          <td className="px-2.5 py-2.5 text-[#111] whitespace-nowrap">
+                            {formatBirthYmd(p1Birth)}
+                          </td>
+                          <td className="px-2.5 py-2.5 text-[#111]">{genderShort(p1Type)}</td>
+                        </tr>
+                        {needsSecondPassenger && (
+                          <tr>
+                            <td className="px-2.5 py-2.5 text-[#111] font-['Pretendard:Medium',sans-serif]">
+                              {p2EnLast || "—"}
+                            </td>
+                            <td className="px-2.5 py-2.5 text-[#111] font-['Pretendard:Medium',sans-serif]">
+                              {p2EnFirst || "—"}
+                            </td>
+                            <td className="px-2.5 py-2.5 text-[#111] whitespace-nowrap">
+                              {formatBirthYmd(p2Birth)}
+                            </td>
+                            <td className="px-2.5 py-2.5 text-[#111]">{genderShort(p2Type)}</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="mt-3 rounded-[10px] bg-[#ededed] px-3 py-2.5 text-[12px] text-[#555] leading-[1.5] space-y-1.5">
+                    <p>
+                      • 예약 완료 후 탑승자 정보 변경이 제한될 수 있습니다. 여권과 동일한 영문 성·이름·성별인지
+                      확인해 주세요.
+                    </p>
+                    <p>
+                      • 영문 성/이름 입력 시 띄어쓰기나 &quot;-&quot; 없이 영문 스펠링만 정확히 입력해 주십시오.
+                    </p>
+                  </div>
+                </section>
+
+                <section className="mb-5">
+                  <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] mb-2">
+                    예약자 연락정보 확인
+                  </h3>
+                  <div className="rounded-[10px] border border-[#eee] overflow-hidden">
+                    <table className="w-full text-left text-[14px]">
+                      <tbody>
+                        <tr className="border-b border-[#f0f0f0]">
+                          <td className="px-3 py-2.5 text-[#666] w-[104px] shrink-0">휴대폰 번호</td>
+                          <td className="px-3 py-2.5 text-[#111]">
+                            {formatPhoneKr(bookerLocked.phone)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="px-3 py-2.5 text-[#666]">이메일</td>
+                          <td className="px-3 py-2.5 text-[#111] break-all">{bookerLocked.email}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-3 text-[12px] leading-[1.5]">
+                    <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">
+                      예약·발권 알림 및 상담
+                    </span>
+                    <span className="text-[#666]">
+                      을 위해 위 연락처가 정확한지 다시 한 번 확인해 주세요.
+                    </span>
+                  </p>
+                </section>
+
+                <section className="mb-1">
+                  <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] mb-2">
+                    중복(이중)예약 안내
+                  </h3>
+                  <div className="rounded-[10px] bg-[#ededed] px-3 py-2.5 text-[12px] text-[#555] leading-[1.5] space-y-1.5">
+                    <p>
+                      • 동일 노선·동일 탑승일 등 조건의 중복 예약은 항공사 정책에 따라 사전 통보 없이 취소될 수
+                      있습니다.
+                    </p>
+                    <p>• 허위 정보·타인 명의 예약은 제한될 수 있으니 유의해 주세요.</p>
+                  </div>
+                </section>
+              </div>
+
+              <div className="sticky bottom-0 bg-white border-t border-[#f0f0f0] px-5 py-4 shrink-0 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowFinalConfirm(false)}
+                  className="flex-1 py-3.5 border border-[#e0e0e0] rounded-[30px] text-[15px] text-[#666] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f9f9f9] transition-colors"
+                >
+                  다시 확인하기
+                </button>
+                <button
+                  type="button"
+                  onClick={handleFinalConfirmComplete}
+                  className="flex-1 py-3.5 bg-[#7b3ff2] text-white rounded-[30px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+                >
+                  확인 완료
+                </button>
+              </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>,
+            document.body,
+          )
+        : null}
 
       {showP1TravelerNotebook && (
         <MyTravelerNotebookModal

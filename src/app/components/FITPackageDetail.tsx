@@ -339,7 +339,7 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
           <button
             type="button"
             onClick={() => setShowRoomInfoBeforeBooking(true)}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[rgba(94,43,184,1)] transition-colors"
           >
             이 조합으로 예약하기
           </button>
