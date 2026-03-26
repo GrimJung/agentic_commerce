@@ -269,12 +269,6 @@ export function NamemdaeFlightReservationContent({
           totalAmount={hotelInfo.totalAmount}
           airApprovalAmount={flight.price}
           bookerName={bookerLocked.name}
-          bookerPhone={bookerLocked.phone}
-          travelerNameKo={p1NameKo}
-          travelerEnLast={p1EnLast}
-          travelerEnFirst={p1EnFirst}
-          travelerGenderFemale={p1Type.includes("여")}
-          travelerBirth={p1Birth}
           onPayComplete={submitReservation}
           onClosePaymentSuccess={onComboPaymentSuccessDismiss}
         />
@@ -737,7 +731,7 @@ export function NamemdaeFlightReservationContent({
           type="button"
           onClick={handleOpenFinalConfirm}
           disabled={!canNext}
-          className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
+          className="w-full py-4 bg-[rgba(94,43,184,1)] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[rgba(74,33,144,1)] transition-colors"
         >
           다음단계
         </button>

@@ -508,7 +508,7 @@ export function FlightPaymentSheet({
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ type: "spring", damping: 30, stiffness: 300 }}
-          className="bg-white w-full rounded-t-[24px] max-h-[85vh] overflow-y-auto flex flex-col"
+          className="bg-white w-full rounded-t-[24px] max-h-[85vh] min-h-0 flex flex-col overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {content}
