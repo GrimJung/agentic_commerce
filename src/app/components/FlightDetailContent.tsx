@@ -87,6 +87,12 @@ export interface FlightDetailContentProps {
   onBooking?: () => void;
   /** 항공권 변경 클릭 시 호출 (항공권 선택 팝업 열기) */
   onChangeFlight?: () => void;
+  /** 결제조건변경 클릭 시 호출. 제공되면 버튼이 '결제조건변경'으로 바뀜 */
+  onChangePaymentCondition?: () => void;
+  /** 결제조건 선택 후 표시할 조정된 가격 */
+  priceOverride?: number;
+  /** 결제조건 선택 후 표시할 카드명 */
+  cardLabel?: string;
   /** 상세보기 클릭 시 추가 동작. 기본 바텀시트는 항상 열립니다. */
   onFlightFareRefundPolicyDetails?: () => void;
 }
@@ -96,6 +102,9 @@ export function FlightDetailContent({
   hideBookingButton = false,
   onBooking,
   onChangeFlight,
+  onChangePaymentCondition,
+  priceOverride,
+  cardLabel,
   onFlightFareRefundPolicyDetails,
 }: FlightDetailContentProps) {
   const [sectionExpanded, setSectionExpanded] = useState(true);
@@ -222,21 +231,34 @@ export function FlightDetailContent({
             </div>
           </div>
           <div className="border-t border-[#e8e8e8] pt-3 mb-0" aria-hidden="true" />
-          <div className="text-right mb-3">
-            <span className="text-[11px] text-[#999] mr-1">
-              성인{flight.passengerCount}인 기준
-            </span>
-            <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold">
-              {flight.price.toLocaleString()}원
-            </span>
+          <div className="mb-3">
+            <div className="flex items-center justify-end gap-2 flex-wrap mt-1">
+              <span className="text-[11px] text-[#999]">
+                {cardLabel ?? "삼성 iD GLOBAL 카드"}/성인{flight.passengerCount}인 기준
+              </span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold tabular-nums">
+                {(priceOverride ?? flight.price).toLocaleString()}원
+              </span>
+              {onChangePaymentCondition ? (
+                <button
+                  type="button"
+                  onClick={onChangePaymentCondition}
+                  className="shrink-0 py-1.5 px-2.5 rounded-[8px] text-[12px] text-[#666] font-['Pretendard:Medium',sans-serif] border border-[#e0e0e0] bg-white hover:bg-[#f5f5f5] transition-colors"
+                >
+                  결제조건변경
+                </button>
+              ) : null}
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={onChangeFlight}
-            className="w-full py-2.5 border border-[#e0e0e0] rounded-[10px] text-[14px] text-[#666] font-['Pretendard:Medium',sans-serif] bg-white hover:bg-[#f0f0f0] transition-colors"
-          >
-            항공권 변경
-          </button>
+          {onChangeFlight ? (
+            <button
+              type="button"
+              onClick={onChangeFlight}
+              className="w-full py-2.5 border border-[#e0e0e0] rounded-[10px] text-[14px] text-[#666] font-['Pretendard:Medium',sans-serif] bg-white hover:bg-[#f0f0f0] transition-colors"
+            >
+              항공권 변경
+            </button>
+          ) : null}
         </div>
 
         {/* 가는 항공편 — 타임라인 레이아웃 */}

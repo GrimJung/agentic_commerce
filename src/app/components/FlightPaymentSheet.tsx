@@ -50,7 +50,6 @@ export function FlightPaymentSheet({
   const [showPassengerSheet, setShowPassengerSheet] = useState(false);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [showPaymentDetailSheet, setShowPaymentDetailSheet] = useState(false);
-
   const totalPrice = flight.price;
 
   const legacyContent = (
@@ -124,7 +123,7 @@ export function FlightPaymentSheet({
         </div>
 
         <div className="px-5 py-4 flex-1 overflow-y-auto pb-28">
-          {/* 예약자 정보 (로그인 회원 기반, 읽기 전용 딤 처리 · 2열: 라벨 | 입력) */}
+          {/* 예약자 정보 */}
           <section className="mb-5">
             <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] mb-3">
               예약자 정보
@@ -132,43 +131,26 @@ export function FlightPaymentSheet({
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <label className="shrink-0 w-[88px] text-[13px] text-[#666]">이름</label>
-                <input
-                  type="text"
-                  readOnly
-                  value={bookingData?.name ?? "홍길동"}
-                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default"
-                />
+                <input type="text" readOnly value={bookingData?.name ?? "홍길동"}
+                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default" />
               </div>
               <div className="flex items-center gap-3">
                 <label className="shrink-0 w-[88px] text-[13px] text-[#666]">생년월일</label>
-                <input
-                  type="text"
-                  readOnly
-                  value={bookingData?.birthDate?.replace(/-/g, ".") ?? "1990.01.01"}
-                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default"
-                />
+                <input type="text" readOnly value={bookingData?.birthDate?.replace(/-/g, ".") ?? "1990.01.01"}
+                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default" />
               </div>
               <div className="flex items-center gap-3">
                 <label className="shrink-0 w-[88px] text-[13px] text-[#666]">이메일</label>
-                <input
-                  type="email"
-                  readOnly
-                  value={bookingData?.email ?? "hana@hanatour.com"}
-                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default"
-                />
+                <input type="email" readOnly value={bookingData?.email ?? "hana@hanatour.com"}
+                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default" />
               </div>
               <div className="flex items-center gap-3">
                 <label className="shrink-0 w-[88px] text-[13px] text-[#666]">휴대폰 번호</label>
-                <input
-                  type="text"
-                  readOnly
-                  value={bookingData?.phone ?? "010-0000-0000"}
-                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default"
-                />
+                <input type="text" readOnly value={bookingData?.phone ?? "010-0000-0000"}
+                  className="flex-1 min-w-0 px-4 py-3 border border-[#e8e8e8] rounded-[10px] text-[14px] bg-[#f5f5f5] text-[#888] cursor-default" />
               </div>
             </div>
           </section>
-
           {/* 탑승자 정보 */}
           <section className="mb-5 pt-5 border-t border-[#f0f0f0]">
             <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] mb-2">

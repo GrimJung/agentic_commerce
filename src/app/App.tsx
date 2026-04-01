@@ -17,6 +17,7 @@ import { FlightDetail } from "./components/FlightDetail";
 import { FlightSelectSheet } from "./components/FlightSelectSheet";
 import { FlightBookingSheet } from "./components/FlightBookingSheet";
 import type { FlightSheetStep } from "./components/FlightBookingSheet";
+import { FlightPaymentConditionSheet } from "./components/FlightPaymentConditionSheet";
 import { ActivityTicketSelector, ActivityTicket } from "./components/ActivityTicketSelector";
 import { RoomTypeSelector, RoomType } from "./components/RoomTypeSelector";
 import { BookingForm, BookingFormData } from "./components/BookingForm";
@@ -1417,6 +1418,9 @@ export default function App() {
   const [showFlightDetail, setShowFlightDetail] = useState(false);
   const [showFlightChangeSheet, setShowFlightChangeSheet] = useState(false);
   const [flightSheetStep, setFlightSheetStep] = useState<FlightSheetStep | null>(null);
+  const [showPaymentConditionSheet, setShowPaymentConditionSheet] = useState(false);
+  const [paymentConditionDiff, setPaymentConditionDiff] = useState(0);
+  const [paymentConditionCardName, setPaymentConditionCardName] = useState("삼성 iD GLOBAL 카드");
   const [flightCompleteIsPayLater, setFlightCompleteIsPayLater] = useState(false);
   const [flightReservationNumber, setFlightReservationNumber] = useState("HA2500092453");
   const [showFitDetail, setShowFitDetail] = useState(false);
@@ -2303,8 +2307,7 @@ export default function App() {
                 onBooking={() => {
                   setSelectedFlight(flight);
                   setFitTotalPrice(flight.price);
-                  setFlightSheetStep("terms");
-                  setStep("booking");
+                  setShowPaymentConditionSheet(true);
                 }}
               />
             ))}
@@ -2617,6 +2620,23 @@ export default function App() {
         />
       )}
 
+      {showPaymentConditionSheet && (
+        <FlightPaymentConditionSheet
+          onClose={() => setShowPaymentConditionSheet(false)}
+          onSelect={(condition) => {
+            setPaymentConditionDiff(condition.priceDiff);
+            setPaymentConditionCardName(condition.name);
+            setShowPaymentConditionSheet(false);
+            // 항공권 상세 / 항공+호텔 상세에서 진입한 경우 → 상세로 복귀만
+            // 목록 예약하기에서 진입한 경우 → 예약 플로우 시작
+            if (!showFlightDetail && !showFitDetail) {
+              setFlightSheetStep("terms");
+              setStep("booking");
+            }
+          }}
+        />
+      )}
+
       {flightSheetStep && selectedFlight && (
         <FlightBookingSheet
           step={flightSheetStep}
@@ -2862,11 +2882,14 @@ export default function App() {
           onClose={() => setShowFlightDetail(false)}
           onBooking={() => {
             setShowFlightDetail(false);
-            setFitTotalPrice(selectedFlight.price);
+            setFitTotalPrice(selectedFlight.price + paymentConditionDiff);
             setFlightSheetStep("terms");
             setStep("booking");
           }}
-          onChangeFlight={() => setShowFlightChangeSheet(true)}
+          onChangeFlight={fitSearchMode !== 'flight' ? () => setShowFlightChangeSheet(true) : undefined}
+          onChangePaymentCondition={fitSearchMode === 'flight' ? () => setShowPaymentConditionSheet(true) : undefined}
+          priceOverride={fitSearchMode === 'flight' ? selectedFlight.price + paymentConditionDiff : undefined}
+          cardLabel={fitSearchMode === 'flight' ? paymentConditionCardName : undefined}
         />
       )}
 
@@ -2912,7 +2935,8 @@ export default function App() {
               recommendReason: selectedFitPackage.recommendReason,
             };
             setSelectedFlight(flightData);
-            setFitTotalPrice(selectedFitPackage.totalPrice);
+            const hotelPart = selectedRoomType?.priceFrom ?? selectedFitPackage.hotelInfo.price;
+            setFitTotalPrice(f.price + hotelPart + paymentConditionDiff);
             setBookingData((prev) => prev ?? DEFAULT_NAMEMDAE_FLIGHT_BOOKING);
             setFlightSheetStep("payment");
             setStep("booking");
@@ -2927,6 +2951,9 @@ export default function App() {
             setShowRoomTypeSelector(true);
           }}
           onChangeFlight={() => setShowFlightChangeSheet(true)}
+          onChangePaymentCondition={() => setShowPaymentConditionSheet(true)}
+          flightPaymentConditionDiff={paymentConditionDiff}
+          paymentConditionCardLabel={paymentConditionCardName}
         />
       )}
 

@@ -164,6 +164,33 @@ export function FlightReservationSheet({
         </div>
 
         <div className="px-5 py-4 flex-1 overflow-y-auto pb-[30px]">
+          {/* AI 취소수수료 안내 */}
+          <div className="mb-4 space-y-2">
+            <div className="flex items-start gap-3 bg-[#e8f0fe] rounded-[12px] px-4 py-3">
+              <svg className="size-5 shrink-0 mt-0.5 text-[#2d6fdf]" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+              </svg>
+              <p className="text-[14px] text-[#1a3a6e] leading-[1.6] font-['Pretendard:Medium',sans-serif]">
+                <span className="font-['Pretendard:Bold',sans-serif] text-[#4585ff] font-semibold">2026년 03월 31일 23:56까지</span> 취소 완료 시,<br />
+                항공사 취소수수료가 없어요.
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-[#f5f5f5] rounded-[12px] px-4 py-3">
+              <svg className="size-5 shrink-0 mt-0.5 text-[#888]" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+              </svg>
+              <p className="text-[14px] text-[#444] leading-[1.6] font-['Pretendard:Medium',sans-serif]">
+                이후 취소 수수료는<br />
+                <span className="text-[#2d6fdf] underline underline-offset-2 cursor-pointer">AI 항공사 취소수수료</span> 안내를 확인해 보세요.
+              </p>
+            </div>
+            <p className="text-[13px] text-[#e03131] pl-1">
+              • 단, 발권 대행 수수료는 환불되지 않습니다.
+            </p>
+          </div>
+
+          <div className="border-t border-[#e5e5e5] mb-4" />
+
           {/* 가는 항공편 (첨부 이미지 UI) */}
           <section className="mb-4">
             <div className="flex items-center justify-between mb-2">

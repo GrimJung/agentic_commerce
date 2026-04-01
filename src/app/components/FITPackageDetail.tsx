@@ -19,6 +19,12 @@ interface FITPackageDetailProps {
   onChangeRoom?: () => void;
   /** 항공권 변경 클릭 시 호출 (항공권 선택 팝업 열기) */
   onChangeFlight?: () => void;
+  /** 결제조건변경 클릭 시 호출 (결제조건 선택 바텀시트) */
+  onChangePaymentCondition?: () => void;
+  /** App과 동기화: 결제조건에 따른 항공 요금 가산액 */
+  flightPaymentConditionDiff?: number;
+  /** 결제조건 선택 후 항공 요금 옆 표기 카드/수단명 */
+  paymentConditionCardLabel?: string;
   /** 변경된 객실 정보 */
   selectedRoomType?: RoomType | null;
 }
@@ -65,7 +71,17 @@ function toHotelData(pkg: FITPackageData): HotelData {
   };
 }
 
-export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoom, onChangeFlight, selectedRoomType }: FITPackageDetailProps) {
+export function FITPackageDetail({
+  package: pkg,
+  onClose,
+  onBooking,
+  onChangeRoom,
+  onChangeFlight,
+  onChangePaymentCondition,
+  flightPaymentConditionDiff = 0,
+  paymentConditionCardLabel,
+  selectedRoomType,
+}: FITPackageDetailProps) {
   useLockBodyScroll();
   const flightSectionRef = useRef<HTMLDivElement>(null);
   const hotelSectionRef = useRef<HTMLDivElement>(null);
@@ -77,6 +93,8 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
 
   const hotelPrice = selectedRoomType ? selectedRoomType.priceFrom : pkg.hotelInfo.price;
   const totalPrice = pkg.flightInfo.price + hotelPrice;
+  const totalPriceWithPaymentCondition = totalPrice + flightPaymentConditionDiff;
+  const flightPriceOverride = pkg.flightInfo.price + flightPaymentConditionDiff;
   const pax = Math.max(1, pkg.passengerCount);
   /** 예시 화면과 동일 비율: 1인당 유류·제세 과금 표기 (인원에 비례) */
   const flightTicketingFee = 0;
@@ -228,7 +246,7 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
                 <div className="flex items-baseline justify-between gap-3 font-['Pretendard:SemiBold',sans-serif] font-semibold">
                   <span className="text-[17px] text-[#111] shrink-0">총 결제금액</span>
                   <span className="text-[17px] text-[#111] text-right tabular-nums">
-                    {totalPrice.toLocaleString()}원
+                    {totalPriceWithPaymentCondition.toLocaleString()}원
                   </span>
                 </div>
                 <p className="text-[13px] text-[#111] leading-[1.45] font-['Pretendard:Regular',sans-serif] mb-0">
@@ -321,7 +339,14 @@ export function FITPackageDetail({ package: pkg, onClose, onBooking, onChangeRoo
 
           {/* 항공 상세 (단독 항공 상세와 동일한 내부 정보) */}
           <div ref={flightSectionRef} data-section="flight" className="scroll-mt-4">
-            <FlightDetailContent flight={flightData} hideBookingButton onChangeFlight={onChangeFlight} />
+            <FlightDetailContent
+              flight={flightData}
+              hideBookingButton
+              onChangeFlight={onChangeFlight}
+              onChangePaymentCondition={onChangePaymentCondition}
+              priceOverride={flightPriceOverride}
+              cardLabel={paymentConditionCardLabel}
+            />
           </div>
 
           {/* 항공/호텔 구분선 */}

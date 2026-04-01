@@ -201,7 +201,7 @@ export function FITPackageCard({
           </div>
           <div className="text-right">
             <span className="text-[11px] text-[#999] mr-1">
-              성인1 기준
+              삼성 iD GLOBAL 카드/성인1
             </span>
             <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold">
               {pkg.flightInfo.price.toLocaleString()}원

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft, CreditCard, ChevronDown, ChevronUp, CircleAlert, X, Check } from "lucide-react";
+import { ArrowLeft, CreditCard, ChevronDown, ChevronUp, ChevronRight, CircleAlert, X, Check } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 
 interface FlightPaymentDetailSheetProps {
@@ -40,6 +40,9 @@ export function FlightPaymentDetailSheet({
   const [cashReceiptTypeDropdownOpen, setCashReceiptTypeDropdownOpen] =
     useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [insuranceOption, setInsuranceOption] = useState<"join" | "later">("join");
+  const [cancellationInsurance, setCancellationInsurance] = useState<"join" | "skip">("join");
+  const [mileageInput, setMileageInput] = useState("");
 
   const discountAmount = 0;
   const insuranceAmount = 9720;
@@ -93,14 +96,365 @@ export function FlightPaymentDetailSheet({
           </div>
 
           <div className="flex-1 overflow-y-auto pb-28">
-            {/* 결제 상세 내역 */}
+            {/* 여행자 보험 가입 선택 */}
             <section className="px-5 py-4 border-b border-[#f0f0f0]">
+              <h3 className="font-['Pretendard:Bold',sans-serif] text-[18px] font-bold text-[#111] mb-4">
+                여행자 보험 가입 선택
+              </h3>
+              <p className="text-[13px] text-[#666] leading-[1.6] mb-3">
+                항공권 구매하면서 안전한 여행을 위해 여행자 보험도 함께 가입해보세요!
+              </p>
+              <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] mb-2">상품 선택</p>
+              <div className="flex gap-2 mb-3">
+                <button
+                  type="button"
+                  className="flex-1 flex items-center justify-center gap-1 py-2.5 border border-[#ddd] rounded-full text-[13px] text-[#444] bg-white hover:bg-[#f9f9f9] transition-colors"
+                >
+                  보장내역 상세보기
+                  <ChevronRight className="size-4 text-[#888]" />
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 flex items-center justify-center gap-1 py-2.5 border border-[#ddd] rounded-full text-[13px] text-[#444] bg-white hover:bg-[#f9f9f9] transition-colors"
+                >
+                  보험료 상세보기
+                  <ChevronRight className="size-4 text-[#888]" />
+                </button>
+              </div>
+              {/* 여행자 보험 가입하기 */}
+              <button
+                type="button"
+                onClick={() => setInsuranceOption("join")}
+                className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${insuranceOption === "join" ? "border-[#7b3ff2] bg-white" : "border-[#e5e5e5] bg-white"}`}
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceOption === "join" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                    {insuranceOption === "join" && (
+                      <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
+                        <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111]">여행자 보험 가입하기</span>
+                </div>
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="text-[13px] text-[#555]">총 보험료</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">20,170원</span>
+                  <span className="text-[#ddd]">|</span>
+                  <span className="text-[13px] text-[#555]">가입인원</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">2명</span>
+                  <span className="text-[#ddd]">|</span>
+                  <span className="text-[13px] text-[#555]">총</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">3일</span>
+                </div>
+                <p className="text-[12px] text-[#888] mb-3">2026.05.20 00:00 ~ 2026.05.22 23:59</p>
+                <div className="bg-[#f8f5ff] rounded-[10px] px-3 py-2.5 space-y-1.5">
+                  <p className="text-[12px] text-[#666]">
+                    • 여행 중 휴대품 손해 <span className="text-[#7b3ff2]">100만원</span> 보장 한도 (품목당 <span className="text-[#7b3ff2]">20만원</span>)
+                  </p>
+                  <p className="text-[12px] text-[#666]">
+                    • 항공기 및 수화물 지연 <span className="text-[#7b3ff2]">20만원</span> 보장 한도
+                  </p>
+                  <p className="text-[12px] text-[#666]">
+                    • 해외상해/질병 의료비 <span className="text-[#7b3ff2]">5천만원</span> 보장 한도
+                  </p>
+                </div>
+              </button>
+              {/* 보험 나중에 가입하기 */}
+              <button
+                type="button"
+                onClick={() => setInsuranceOption("later")}
+                className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${insuranceOption === "later" ? "border-[#7b3ff2] bg-white" : "border-[#e5e5e5] bg-white"}`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceOption === "later" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                    {insuranceOption === "later" && (
+                      <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
+                        <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111]">보험 나중에 가입하기</span>
+                </div>
+                <p className="text-[13px] text-[#666] leading-[1.6] pl-8">
+                  예약 완료 후 마이페이지 예약 내역에서 별도로 가입 가능합니다.
+                </p>
+              </button>
+              {/* 유의사항 */}
+              <div className="mt-3 bg-[#f8f8f8] rounded-[12px] px-4 py-4">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <svg className="size-4 shrink-0 text-[#555]" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#333]">유의사항</span>
+                </div>
+                <ul className="space-y-2.5">
+                  <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>여행자 보험 관련문의는 보험상담전화 (<span className="font-['Pretendard:SemiBold',sans-serif] text-[#111]">1566-0171</span>)으로 하실 수 있습니다. (평일 업무시간 09:00 ~ 18:00 / 주말, 공휴일 제외)</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] leading-[1.6]">
+                    <span className="shrink-0 text-[#555]">•</span>
+                    <span className="font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2]">항공권 변경 및 예약취소 시 여행자 보험은 별도로 변경 및 취소를 진행하셔야 합니다.</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>여행자 보험 확인 및 취소는 마이페이지 예약내역 <span className="font-['Pretendard:SemiBold',sans-serif] text-[#111]">[여행자 보험 확인/취소]</span> 버튼을 클릭하셔서 확인하시기 바랍니다.</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>여행자 보험은 <span className="font-['Pretendard:SemiBold',sans-serif] text-[#111]">AXA손해보험</span>과 제휴로 진행되며 하나투어는 해당 상품에 대한 별도의 책임을 지지 않습니다.</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>AXA손해보험과 준법감시필-검-251125-마케팅팀-980(2025.11.25~2026.11.24)</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>자세한 사항은 <span className="text-[#2d6fdf] underline underline-offset-2 cursor-pointer">보험 가입 시 유의사항</span>을 확인해 주시기 바랍니다.</span>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            {/* 항공권 취소 시 위약금 보장 받기 선택 */}
+            <section className="px-5 py-4 border-b border-[#f0f0f0]">
+              <h3 className="font-['Pretendard:Bold',sans-serif] text-[17px] text-[#111] mb-4">
+                항공권 취소 시 위약금 보장 받기 선택
+              </h3>
+              {/* 보장내역 블러 영역 */}
+              <div className="mb-3">
+                <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] mb-2">보장내역</p>
+                <div className="relative rounded-[12px] overflow-hidden border border-[#eee]">
+                  <div className="px-4 py-4 space-y-2.5 blur-[3px] select-none pointer-events-none">
+                    <div className="h-3 bg-[#e0d4f7] rounded-full w-3/4" />
+                    <div className="h-3 bg-[#e0d4f7] rounded-full w-1/2" />
+                    <div className="h-3 bg-[#e8e8e8] rounded-full w-2/3" />
+                    <div className="h-3 bg-[#e8e8e8] rounded-full w-1/3" />
+                    <div className="h-3 bg-[#e0d4f7] rounded-full w-1/2" />
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="bg-white/90 rounded-full px-5 py-2.5 text-[13px] text-[#555] shadow-sm">
+                      <span className="font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">가입 버튼 클릭 시</span> 확인 가능해요
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-4 py-3.5 border border-[#ddd] rounded-full text-[14px] text-[#444] bg-white hover:bg-[#f9f9f9] transition-colors mb-4"
+              >
+                <span>보장내역 상세보기</span>
+                <ChevronRight className="size-4 text-[#888]" />
+              </button>
+              {/* 가입 카드 */}
+              <button
+                type="button"
+                onClick={() => setCancellationInsurance("join")}
+                className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${cancellationInsurance === "join" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"}`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationInsurance === "join" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                    {cancellationInsurance === "join" && (
+                      <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
+                        <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111]">항공권 취소 위약금 보상 보험 가입</span>
+                </div>
+                <p className="text-[13px] text-[#555] pl-8 mb-3">취소 걱정 없이 항공권 구매하세요!</p>
+                <div className="flex items-center gap-2 pl-8">
+                  <span className="text-[13px] text-[#555]">총 보험료</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">0원</span>
+                  <span className="text-[#ddd]">|</span>
+                  <span className="text-[13px] text-[#555]">가입인원</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">2명</span>
+                </div>
+              </button>
+              {/* 미가입 카드 */}
+              <button
+                type="button"
+                onClick={() => setCancellationInsurance("skip")}
+                className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${cancellationInsurance === "skip" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"}`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationInsurance === "skip" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                    {cancellationInsurance === "skip" && (
+                      <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
+                        <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111]">항공권 취소 위약금 보상 보험 미 가입</span>
+                </div>
+                <p className="text-[13px] text-[#666] leading-[1.6] pl-8">
+                  발권 완료 후 마이페이지 예약 내역에서 출발 30일 전까지 별도로 가입 가능합니다.<br />
+                  아래 유의사항을 확인해 주세요.
+                </p>
+              </button>
+              {/* 유의사항 */}
+              <div className="mt-3 bg-[#f8f8f8] rounded-[12px] px-4 py-4">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <svg className="size-4 shrink-0 text-[#555]" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#333]">유의사항</span>
+                </div>
+                <p className="font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#333] mb-1.5">가입 가능 여부 (항공권과 동시에 구매하지 않을 경우)</p>
+                <ul className="space-y-1.5 mb-3">
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>출발 30일 전까지 : 마이페이지 &gt; [위약금 보상 보험 가입] 버튼 클릭 후 가입 가능</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>출발 30일 미만 : 가입 불가</span>
+                  </li>
+                </ul>
+                <p className="font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#333] mb-1.5">가입 대상 제외</p>
+                <ul className="space-y-1.5 mb-3">
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>24개월 미만의 유아</span></li>
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>항공권 운임 규정이 &apos;환불불가&apos;인 경우</span></li>
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>티켓번호가 변경(재발행)된 경우</span></li>
+                </ul>
+                <p className="font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#333] mb-1.5">해지 및 환급</p>
+                <ul className="space-y-1.5 mb-3">
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>가입 후 15일 이내 : 전액 환불</span></li>
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>가입 후 15일 이후 : 일할 계산 환불</span></li>
+                </ul>
+                <p className="font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#333] mb-1.5">문의처</p>
+                <ul className="space-y-1.5 mb-3">
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>메리츠화재 1566-7711 (평일 09:00~18:00, 주말·공휴일 제외)</span></li>
+                </ul>
+                <p className="font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#333] mb-1.5">기타 안내</p>
+                <ul className="space-y-1.5">
+                  <li className="flex gap-2 text-[12px] leading-[1.6]">
+                    <span className="shrink-0 text-[#666]">•</span>
+                    <span className="font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2]">항공권 변경(재발행) 시 보험은 더이상 유효하지 않으며, 직접 취소하셔야 합니다. (취소 후 재가입 불가)</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>환불불가 운임 항공권은 취소 위약금 보상 보험을 가입하셔도 보장을 받으실 수 없습니다.</span></li>
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>보험 확인 및 취소 : 마이페이지 &gt; 예약내역 &gt; 나만의 혜택 &gt; 항공권 취소 위약금 보상 보험 상세</span></li>
+                  <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>메리츠화재 준법감시인 심의필 제2025-광고-1220호(2025.06.13~2026.06.12)</span></li>
+                </ul>
+              </div>
+            </section>
+
+            {/* 할인/혜택 적용 */}
+            <section className="px-5 py-4 border-b-8 border-[#f0f0f0]">
               <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] mb-3">
+                할인/혜택 적용
+              </h3>
+              {/* 쿠폰할인 행 */}
+              <div className="flex items-center justify-between py-3 border-b border-[#f0f0f0]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[14px] text-[#111]">쿠폰할인</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] text-[#999]">0원</span>
+                  <button
+                    type="button"
+                    className="px-3 py-1.5 rounded-full border border-[#ddd] text-[12px] text-[#666] bg-white hover:bg-[#f9f9f9] transition-colors"
+                  >
+                    조회
+                  </button>
+                </div>
+              </div>
+              {/* 마일리지 */}
+              <div className="border-b border-[#f0f0f0] py-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[14px] text-[#111]">마일리지</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[15px] font-semibold text-[#5e2bb8]">10,000,000m</span>
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 rounded-full border border-[#ddd] text-[12px] text-[#666] bg-white hover:bg-[#f9f9f9] transition-colors"
+                    >
+                      전액사용
+                    </button>
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  value={mileageInput}
+                  onChange={(e) => {
+                    const next = e.target.value.replace(/\D/g, "");
+                    setMileageInput(next);
+                  }}
+                  placeholder="0"
+                  className="mt-3 w-full rounded-[14px] border border-[#d1d5db] bg-white px-4 py-3.5 font-['Pretendard:Medium',sans-serif] text-[15px] tabular-nums text-[#111] placeholder:text-[#ccc] outline-none transition-colors focus:border-[#9ca3af]"
+                  aria-label="사용 마일리지"
+                />
+                <p className="mt-2 text-[12px] leading-[1.5] text-[#ababab]">
+                  1,000 ⓜ 이상 부터 사용 가능, 항공권은 100 ⓜ 단위로 사용 가능
+                </p>
+              </div>
+              {/* 상품권 */}
+              <div className="flex items-center justify-between py-3 border-b border-[#f0f0f0]">
+                <span className="text-[14px] text-[#111]">상품권</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] text-[#999]">0원</span>
+                  <button
+                    type="button"
+                    className="px-3 py-1.5 rounded-full border border-[#ddd] text-[12px] text-[#666] bg-white hover:bg-[#f9f9f9] transition-colors"
+                  >
+                    조회
+                  </button>
+                </div>
+              </div>
+              {/* 기프트카드 */}
+              <div className="flex items-center justify-between py-3 border-b border-[#f0f0f0]">
+                <span className="text-[14px] text-[#111]">기프트카드</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] text-[#999]">0원</span>
+                  <button
+                    type="button"
+                    className="px-3 py-1.5 rounded-full border border-[#ddd] text-[12px] text-[#666] bg-white hover:bg-[#f9f9f9] transition-colors"
+                  >
+                    조회
+                  </button>
+                </div>
+              </div>
+              {/* 안내사항 */}
+              <div className="mt-4 bg-[#f8f8f8] rounded-[12px] px-4 py-4">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <svg className="size-4 shrink-0 text-[#555]" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#333]">안내사항</span>
+                </div>
+                <ul className="space-y-2.5">
+                  <li className="flex gap-2 text-[12px] leading-[1.6]">
+                    <span className="shrink-0 text-[#555]">•</span>
+                    <span>
+                      <span className="font-['Pretendard:SemiBold',sans-serif] text-[#5e2bb8]">쿠폰은 단독으로만 사용 가능</span>
+                      <span className="text-[#555]">합니다. 마일리지, 상품권, 기프트 카드와 중복 사용은 불가합니다.</span>
+                    </span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>마일리지로 결제한 항공권을 취소 또는 환불할 경우, 수수료는 마일리지로 차감되지 않으며 별도의 입금 또는 카드 결제가 필요합니다.<br />(홈페이지 하단 이용약관 제9조 참조)</span>
+                  </li>
+                  <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
+                    <span className="shrink-0">•</span>
+                    <span>마일리지 차감 및 결제 불가 항목: 하나투어 환불대행수수료, 항공사 환불수수료</span>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            {/* 결제 상세 내역 */}
+            <section className="px-5 py-4 border-b-8 border-[#f0f0f0]">
+              <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[18px] font-bold text-[#111] mb-3">
                 결제 상세 내역
               </h3>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[14px] text-[#333]">결제 예정 금액</span>
-                <span className="text-[14px] text-[#111] font-['Pretendard:Bold',sans-serif]">
+                <span className="text-[14px] text-[#111] font-semibold font-['Pretendard:Bold',sans-serif]">
                   {totalAmount.toLocaleString()} 원
                 </span>
               </div>
@@ -133,13 +487,21 @@ export function FlightPaymentDetailSheet({
                   <ChevronDown className="size-4 shrink-0" aria-hidden />
                 )}
               </button>
-              <div className="flex items-center justify-between pt-2 mt-2 border-t border-[#eee]">
-                <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111]">
-                  최종 결제금액
-                </span>
-                <span className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#5e2bb8]">
-                  {finalAmount.toLocaleString()}원
-                </span>
+              <div className="pt-2 mt-2 border-t border-[#eee] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[14px] text-[#333]">총 할인금액</span>
+                  <span className="text-[14px] text-[#111] font-['Pretendard:Bold',sans-serif]">
+                    {discountAmount.toLocaleString()}원
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] font-semibold text-[#111]">
+                    최종 결제금액
+                  </span>
+                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#5e2bb8]">
+                    {finalAmount.toLocaleString()}원
+                  </span>
+                </div>
               </div>
             </section>
 

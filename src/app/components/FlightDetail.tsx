@@ -9,9 +9,15 @@ interface FlightDetailProps {
   onBooking: () => void;
   /** 항공권 변경 클릭 시 호출 (항공권 선택 팝업 열기) */
   onChangeFlight?: () => void;
+  /** 결제조건변경 클릭 시 호출. 제공되면 버튼이 '결제조건변경'으로 바뀜 */
+  onChangePaymentCondition?: () => void;
+  /** 결제조건 선택 후 표시할 조정된 가격 */
+  priceOverride?: number;
+  /** 결제조건 선택 후 표시할 카드명 */
+  cardLabel?: string;
 }
 
-export function FlightDetail({ flight, onClose, onBooking, onChangeFlight }: FlightDetailProps) {
+export function FlightDetail({ flight, onClose, onBooking, onChangeFlight, onChangePaymentCondition, priceOverride, cardLabel }: FlightDetailProps) {
   useLockBodyScroll();
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={onClose}>
@@ -36,7 +42,7 @@ export function FlightDetail({ flight, onClose, onBooking, onChangeFlight }: Fli
             </svg>
           </button>
         </div>
-        <FlightDetailContent flight={flight} onBooking={onBooking} onChangeFlight={onChangeFlight} />
+        <FlightDetailContent flight={flight} onBooking={onBooking} onChangeFlight={onChangeFlight} onChangePaymentCondition={onChangePaymentCondition} priceOverride={priceOverride} cardLabel={cardLabel} />
       </motion.div>
     </div>
   );
