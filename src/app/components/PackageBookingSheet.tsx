@@ -208,7 +208,7 @@ export function PackageBookingSheet({
                     {formatDepartureDisplay(pkg.departure)}
                   </p>
                 </div>
-                <span className="px-3 py-1.5 rounded-full bg-[#5e2bb8] text-white text-[13px] font-['Pretendard:SemiBold',sans-serif] shrink-0">
+                <span className="h-[25px] px-3 flex flex-col items-center justify-center rounded-full bg-[#5e2bb8] text-white text-[13px] font-['Pretendard:SemiBold',sans-serif] shrink-0">
                   {formatDurationBadge(pkg.duration)}
                 </span>
                 <div className="text-center flex-1 min-w-0">
@@ -300,7 +300,7 @@ export function PackageBookingSheet({
                   </div>
                   <button
                     type="button"
-                    className="shrink-0 w-[60px] h-[30px] px-0 py-0 flex flex-col justify-start items-center rounded-full bg-transparent border border-[#f5f5f5] text-[13px] font-['Pretendard:Medium',sans-serif] text-[#111] transition-colors"
+                    className="shrink-0 w-[60px] h-[30px] px-0 py-0 flex flex-col justify-center items-center rounded-full bg-transparent border border-[#f5f5f5] text-[13px] font-['Pretendard:Medium',sans-serif] text-[#111] transition-colors"
                   >
                     상세
                   </button>
@@ -313,7 +313,7 @@ export function PackageBookingSheet({
                   </div>
                   <button
                     type="button"
-                    className="shrink-0 px-3 py-1.5 rounded-full bg-transparent border border-[#f5f5f5] text-[13px] font-['Pretendard:Medium',sans-serif] text-[#111] transition-colors"
+                    className="shrink-0 h-[30px] w-[60px] flex items-center justify-center rounded-full bg-transparent border border-[#f5f5f5] text-[13px] font-['Pretendard:Medium',sans-serif] text-[#111] transition-colors"
                   >
                     추가
                   </button>
@@ -517,7 +517,7 @@ export function PackageBookingSheet({
               <AccordionTrigger className="group w-full px-4 py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   약관 및 개인정보 동의
-                  <span className="px-1.5 py-0.5 rounded bg-[#5e2bb8] text-white text-[11px] font-medium">필수</span>
+                  <span className="px-1.5 py-0.5 rounded-[8px_8px_8px_0] bg-[#5e2bb8] text-white text-[11px] font-medium">필수</span>
                 </span>
                 <span className="flex items-center gap-1 shrink-0">
                   <span className={cn(
@@ -606,7 +606,7 @@ export function PackageBookingSheet({
                 <ChevronDown className="size-4 text-[#111] shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4 text-[13px]">
-                <div className="flex justify-between font-['Pretendard:SemiBold',sans-serif] text-[#111]">
+                <div className="flex justify-between font-['Pretendard:SemiBold',sans-serif] text-[15px] font-semibold text-[#111]">
                   <span>총 상품금액</span>
                   <span>{totalPrice.toLocaleString()}원</span>
                 </div>
@@ -665,7 +665,7 @@ export function PackageBookingSheet({
             type="button"
             onClick={handlePayDeposit}
             disabled={!allRequiredAgreed}
-            className="flex-1 py-2 flex flex-col items-center justify-center gap-0 border border-[#ddd] bg-white text-[#111] rounded-[12px] hover:bg-[#f9f9f9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2 flex flex-col items-center justify-center gap-0 border border-[#ddd] bg-white text-[#111] rounded-[32px] hover:bg-[#f9f9f9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="text-[11px] font-['Pretendard:Medium',sans-serif] text-[#111] leading-tight">계약금 결제</span>
             <span className="text-[14px] font-['Pretendard:Bold',sans-serif] text-[#111] leading-tight">{DEPOSIT_AMOUNT.toLocaleString()}원</span>
@@ -674,7 +674,7 @@ export function PackageBookingSheet({
             type="button"
             onClick={handlePayFull}
             disabled={!allRequiredAgreed}
-            className="flex-1 py-2 flex flex-col items-center justify-center gap-0 bg-[#7b3ff2] text-white rounded-[30px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5e2bb8] transition-colors"
+            className="flex-1 py-2 flex flex-col items-center justify-center gap-0 bg-[#5e2bb8] text-white rounded-[30px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#4a2299] transition-colors"
           >
             <span className="text-[11px] font-['Pretendard:Medium',sans-serif] text-white leading-tight">전액 결제</span>
             <span className="text-[14px] font-['Pretendard:Bold',sans-serif] text-white leading-tight">{finalPrice.toLocaleString()}원</span>

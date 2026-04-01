@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, CreditCard, Check, ChevronDown, ChevronUp, X } from "lucide-react";
+import { ArrowLeft, CreditCard, Check, ChevronDown, ChevronUp, ShieldCheck, X } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { cn } from "./ui/utils";
 import { NamemdaeComboStepper } from "./NamemdaeComboStepper";
@@ -47,7 +47,7 @@ interface PaymentSheetProps {
   skipCompletion?: boolean;
 }
 
-type PaymentMethod = "card" | "kakao" | "payco" | "naver";
+type PaymentMethod = "card" | "bank" | "kakao" | "payco" | "naver";
 
 type CardOption = "samsung" | "hana" | null;
 
@@ -72,6 +72,8 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
   const [cashReceiptTypeDropdownOpen, setCashReceiptTypeDropdownOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [amountDetailOpen, setAmountDetailOpen] = useState(false);
+  const [mileageInput, setMileageInput] = useState("");
+  const [couponApplied] = useState(true); // 쿠폰 적용됨 (데모)
 
   const formatPhoneDisplay = (raw: string): string => {
     const digits = raw.replace(/\D/g, "").slice(0, 11);
@@ -81,7 +83,8 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
   };
   const isCashReceiptPhoneValid = cashReceiptPhone.replace(/\D/g, "").length === 11;
 
-  const totalDiscount = mileageUse;
+  const couponDiscount = couponApplied ? 10000 : 0;
+  const totalDiscount = couponDiscount + mileageUse;
   const finalAmount = Math.max(0, amount - totalDiscount);
   const amountUsd = (amount / 1493).toFixed(1);
 
@@ -245,195 +248,369 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
         </div>
 
         <div className="flex-1 w-full overflow-y-auto pb-28">
+          {/* 할인/혜택 적용 */}
+          <section className="p-4 border-b-8 border-[#f0f0f0]">
+            <h2 className="text-[17px] font-bold font-['Pretendard:Bold',sans-serif] text-[#111] mb-4">
+              할인/혜택 적용
+            </h2>
+
+            {/* 쿠폰할인 */}
+            <div className="flex items-center justify-between py-3">
+              <span className="text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">쿠폰할인</span>
+              <div className="flex items-center gap-2">
+                {couponApplied ? (
+                  <>
+                    <div className="flex items-center gap-1">
+                      <span className="inline-flex items-center justify-center size-4 rounded-[3px] bg-[#f43f8c] text-white">
+                        <svg className="size-2.5" viewBox="0 0 10 10" fill="none">
+                          <path d="M1.5 5L3.8 7.5L8.5 2.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <span className="text-[13px] text-[#f43f8c] font-['Pretendard:SemiBold',sans-serif]">적용됨</span>
+                    </div>
+                    <span className="text-[15px] font-['Pretendard:Bold',sans-serif] text-[#111]">10,000 원</span>
+                  </>
+                ) : (
+                  <span className="text-[14px] text-[#999]">0원</span>
+                )}
+                <button
+                  type="button"
+                  className="px-4 py-1.5 rounded-full border border-[#ddd] text-[13px] text-[#444] bg-white hover:bg-[#f9f9f9] transition-colors"
+                >
+                  변경
+                </button>
+              </div>
+            </div>
+
+            {/* 마일리지 */}
+            <div className="py-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">마일리지</span>
+                  <button type="button" className="size-5 rounded-full border border-[#ccc] flex items-center justify-center text-[#888] text-[11px] font-bold leading-none">
+                    ?
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[17px] font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">
+                    115,185
+                  </span>
+                  <span className="inline-flex items-center justify-center size-5 rounded-full border-2 border-[#7b3ff2] text-[#7b3ff2] text-[10px] font-bold">
+                    m
+                  </span>
+                  <button
+                    type="button"
+                    className="px-4 py-1.5 rounded-full border border-[#7b3ff2] text-[13px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f5f0ff] transition-colors"
+                  >
+                    전액사용
+                  </button>
+                </div>
+              </div>
+              <div className="mt-3">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  value={mileageInput}
+                  onChange={(e) => setMileageInput(e.target.value.replace(/\D/g, ""))}
+                  placeholder="0"
+                  className="w-full rounded-[14px] border border-[#d1d5db] bg-white px-4 py-3.5 text-[16px] tabular-nums text-[#111] placeholder:text-[#ccc] outline-none transition-colors focus:border-[#9ca3af]"
+                  aria-label="사용 마일리지"
+                />
+                <p className="mt-2 text-[12px] text-[#aaa] leading-[1.5]">
+                  최소 100 <span className="inline-flex items-center justify-center size-4 rounded-full border border-[#aaa] text-[9px]">m</span> 부터 사용 가능
+                </p>
+              </div>
+            </div>
+
+            {/* 상품권 */}
+            <div className="flex items-center justify-between py-3 border-b border-[#f0f0f0]">
+              <span className="text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">상품권</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[15px] font-['Pretendard:Bold',sans-serif] text-[#111]">0원</span>
+                <button
+                  type="button"
+                  className="px-4 py-1.5 rounded-full border border-[#ddd] text-[13px] text-[#444] bg-white hover:bg-[#f9f9f9] transition-colors"
+                >
+                  조회
+                </button>
+              </div>
+            </div>
+
+            {/* 기프트카드 */}
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">기프트카드</span>
+                <button type="button" className="size-5 rounded-full border border-[#ccc] flex items-center justify-center text-[#888] text-[11px] font-bold leading-none">
+                  ?
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[15px] font-['Pretendard:Bold',sans-serif] text-[#111]">0원</span>
+                <button
+                  type="button"
+                  className="px-4 py-1.5 rounded-full border border-[#ddd] text-[13px] text-[#444] bg-white hover:bg-[#f9f9f9] transition-colors"
+                >
+                  조회
+                </button>
+              </div>
+            </div>
+          </section>
+
           {/* 결제 상세 내역 */}
-          <section className="p-4 border-b border-[#f0f0f0]">
-            <h2 className="text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#111] mb-3">
+          <section className="px-4 pt-5 pb-4 border-b border-[#f0f0f0]">
+            <h2 className="font-bold font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111] mb-4">
               결제 상세 내역
             </h2>
-            <div className="space-y-2 text-[13px] text-[#333]">
-              <div className="flex justify-between items-center">
-                <span>총 상품금액</span>
-                <span>
-                  {amount.toLocaleString()}
-                  <span className="font-['Pretendard:Bold',sans-serif]">원</span>
-                  <span className="text-[#666] font-normal ml-1">(USD {amountUsd})</span>
-                </span>
-              </div>
-              <div className="flex justify-between items-center pl-3">
-                <span className="text-[#666]">ㄴ 상품금액</span>
-                <span>{amount.toLocaleString()} 원</span>
-              </div>
+
+            {/* 총 상품금액 + 금액 자세히 보기 */}
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-[14px] text-[#555]">총 상품금액</span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#111]">
+                {amount.toLocaleString()} <span className="text-[14px]">원</span>
+              </span>
+            </div>
+            <div className="flex justify-end mb-3">
               <button
                 type="button"
                 onClick={() => setAmountDetailOpen(!amountDetailOpen)}
-                className="flex items-center justify-end gap-0.5 w-full text-[12px] text-[#4585ff] font-['Pretendard:SemiBold',sans-serif] mt-1"
+                className="flex items-center gap-1 text-[13px] text-[#4585ff] font-['Pretendard:SemiBold',sans-serif]"
               >
-                금액 자세히 보기 {amountDetailOpen ? "^" : "⌄"}
+                금액 자세히 보기
+                {amountDetailOpen
+                  ? <ChevronUp className="size-3.5 shrink-0" />
+                  : <ChevronDown className="size-3.5 shrink-0" />}
               </button>
-              {amountDetailOpen && (
-                <div className="pt-2 mt-2 border-t border-[#eee] space-y-1 text-[13px] text-[#666]">
-                  <div className="flex justify-between">
-                    <span>총 할인금액</span>
-                    <span>{totalDiscount.toLocaleString()}원</span>
+            </div>
+
+            <div className="border-t border-dashed border-[#ddd] mb-3" />
+
+            {/* 전액결제 / 총 할인금액 */}
+            <div className="space-y-2 mb-3">
+              <div className="flex justify-between items-center">
+                <span className="text-[14px] text-[#555]">전액 결제</span>
+                <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111]">
+                  {amount.toLocaleString()} <span className="font-normal text-[13px]">원</span>
+                </span>
+              </div>
+              {totalDiscount > 0 && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[14px] text-[#555]">총 할인금액</span>
+                    <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111]">
+                      -{totalDiscount.toLocaleString()} <span className="font-normal text-[13px]">원</span>
+                    </span>
                   </div>
-                </div>
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between items-center pl-3">
+                      <span className="text-[13px] text-[#888]">ㄴ 쿠폰</span>
+                      <span className="text-[13px] text-[#888]">-{couponDiscount.toLocaleString()} 원</span>
+                    </div>
+                  )}
+                </>
               )}
-              <div className="pt-2 mt-2 border-t border-[#eee]">
-                <div className="flex justify-between items-center">
-                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#333]">
-                    최종 결제금액
-                  </span>
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#7b3ff2]">
-                    {finalAmount.toLocaleString()}원
-                  </span>
-                </div>
+            </div>
+
+            {/* 최종 결제금액 */}
+            <div className="border-t border-[#eee] pt-3">
+              <div className="flex justify-between items-baseline">
+                <span className="font-semibold font-['Pretendard:SemiBold',sans-serif] text-[16px] text-[#111]">최종 결제금액</span>
+                <span className="font-['Pretendard:Bold',sans-serif] text-[26px] text-[#7b3ff2] leading-none">
+                  {finalAmount.toLocaleString()}<span className="text-[18px]">원</span>
+                </span>
+              </div>
+              <div className="flex flex-col items-end mt-1.5 gap-0.5">
+                <span className="text-[12px] text-[#aaa]">유류할증료 &amp; 제세공과금 포함</span>
+                <span className="text-[12px] text-[#aaa]">
+                  하나투어 마일리지 <span className="text-[#f43f8c] font-['Pretendard:SemiBold',sans-serif]">적립 불가</span> 상품
+                </span>
+              </div>
+              <div className="flex items-center justify-end gap-1 mt-2">
+                <svg className="size-3.5 shrink-0 text-[#888]" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                </svg>
+                <span className="text-[12px] text-[#555]">
+                  쿠폰할인은 <span className="font-['Pretendard:Bold',sans-serif] text-[#111]">기본 상품금액 기준</span>으로 계산
+                </span>
               </div>
             </div>
           </section>
 
           {/* 결제수단 */}
-          <section className="p-4 border-b border-[#f0f0f0]">
-            <h2 className="text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#111] mb-3">
+          <section className="px-4 pt-4 pb-2 border-b border-[#f0f0f0]">
+            <h2 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111] mb-4">
               결제수단
             </h2>
+            <div className="rounded-[16px] border border-[#e5e5e5] bg-white overflow-hidden">
 
-            {/* 전체를 감싸는 하나의 박스 */}
-            <div className="rounded-[12px] border border-[#e5e5e5] bg-white overflow-hidden">
               {/* 신용카드 */}
-              <label className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors">
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={paymentMethod === "card"}
-                  onChange={() => setPaymentMethod("card")}
-                  className="size-5 text-[#7b3ff2]"
-                />
-                <CreditCard className="size-5 text-[#666]" />
-                <span className="text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">신용카드</span>
+              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer" onClick={() => setPaymentMethod("card")}>
+                {/* 커스텀 라디오 */}
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center transition-colors ${paymentMethod === "card" ? "border-[#7b3ff2] bg-white" : "border-[#ccc] bg-white"}`}>
+                  {paymentMethod === "card" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                </span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#7b3ff2]">신용카드</span>
+                <CreditCard className="size-5 text-[#7b3ff2]" />
               </label>
-              <div className="border-t border-[#eee]" />
+
               {paymentMethod === "card" && (
-                <>
-                  <div className="px-4 pb-3">
-                    <div className="text-center mb-[5px]">
-                      <p className="text-[13px] text-[#666] mt-[10px] mb-0">
-                        오늘도 [하나]같이 특별한 혜택!
-                      </p>
-                      <button type="button" className="text-[13px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
-                        카드 바로 선택하기
-                      </button>
-                    </div>
+                <div className="border-t border-[#eee] px-4 pb-4">
+                  <div className="text-center py-3">
+                    <p className="text-[13px] text-[#555]">오늘도 <span className="font-['Pretendard:Bold',sans-serif] text-[#111]">[하나]같이</span> 특별한 혜택!</p>
+                    <button type="button" className="text-[13px] text-[#555] mt-0.5">카드 바로 선택하기</button>
+                  </div>
 
-                    <div className="grid grid-cols-2 gap-2 mb-4">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCard("samsung")}
-                        className={cn(
-                          "relative rounded-[10px] border p-4 text-left transition-colors",
-                          selectedCard === "samsung" ? "border-[#7b3ff2] bg-[#f9f5ff]" : "border-[#e5e5e5] bg-white"
-                        )}
-                      >
-                        {selectedCard === "samsung" ? (
-                          <Check className="absolute top-3 right-3 size-5 text-[#7b3ff2]" />
-                        ) : (
-                          <div className="absolute top-3 right-3 size-5 rounded-full border-2 border-[#ddd]" />
-                        )}
-                        <p className="text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#2563eb] mb-0.5">삼성카드</p>
-                        <p className="text-[12px] text-[#333]">하나투어 삼성카드</p>
-                        <p className="text-[11px] text-[#666] mt-1">12/24개월 라이트 할부</p>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCard("hana")}
-                        className={cn(
-                          "relative rounded-[10px] border p-4 text-left transition-colors",
-                          selectedCard === "hana" ? "border-[#7b3ff2] bg-[#f9f5ff]" : "border-[#e5e5e5] bg-white"
-                        )}
-                      >
-                        {selectedCard === "hana" ? (
-                          <Check className="absolute top-3 right-3 size-5 text-[#7b3ff2]" />
-                        ) : (
-                          <div className="absolute top-3 right-3 size-5 rounded-full border-2 border-[#ddd]" />
-                        )}
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <span className="flex size-6 items-center justify-center rounded bg-[#00a870] text-[10px] font-bold text-white">하나</span>
-                          <span className="text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">하나카드</span>
-                        </div>
-                        <p className="text-[12px] text-[#333]">하나카드</p>
-                      </button>
-                    </div>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCard("samsung")}
+                      className={cn(
+                        "relative rounded-[12px] border p-4 text-left transition-colors",
+                        selectedCard === "samsung" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"
+                      )}
+                    >
+                      <span className={`absolute top-3 right-3 size-5 rounded-full border-2 flex items-center justify-center ${selectedCard === "samsung" ? "border-[#aaa]" : "border-[#ddd]"}`}>
+                        {selectedCard === "samsung" && <Check className="size-3 text-[#aaa]" strokeWidth={2.5} />}
+                      </span>
+                      <p className="text-[13px] font-['Pretendard:SemiBold',sans-serif] text-[#2563eb] mb-1">삼성카드</p>
+                      <p className="text-[13px] font-['Pretendard:Bold',sans-serif] text-[#111]">하나투어 삼성카드</p>
+                      <p className="text-[11px] text-[#888] mt-1">12/24개월 라이트 할부</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCard("hana")}
+                      className={cn(
+                        "relative rounded-[12px] border p-4 text-left transition-colors",
+                        selectedCard === "hana" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"
+                      )}
+                    >
+                      <span className={`absolute top-3 right-3 size-5 rounded-full border-2 flex items-center justify-center ${selectedCard === "hana" ? "border-[#aaa]" : "border-[#ddd]"}`}>
+                        {selectedCard === "hana" && <Check className="size-3 text-[#aaa]" strokeWidth={2.5} />}
+                      </span>
+                      <div className="flex items-center gap-1 mb-1">
+                        <svg viewBox="0 0 20 20" className="size-5 shrink-0" fill="none">
+                          <circle cx="10" cy="10" r="10" fill="#00A870"/>
+                          <text x="10" y="14" textAnchor="middle" fontSize="8" fontWeight="bold" fill="white">하나</text>
+                        </svg>
+                        <span className="text-[13px] font-['Pretendard:SemiBold',sans-serif] text-[#00a870]">하나카드</span>
+                      </div>
+                      <p className="text-[13px] font-['Pretendard:Bold',sans-serif] text-[#111]">하나카드</p>
+                    </button>
+                  </div>
 
-                    <div className="flex items-center justify-between text-[12px] text-[#666] py-2 mb-2">
-                      <span>신용카드정보 제공 항목</span>
-                      <button type="button" className="text-[12px] text-[#666] underline font-medium">무이자 할부 / 제휴 안내</button>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[12px] text-[#666]">신용카드정보 제공 항목</span>
+                    <button type="button" className="text-[12px] text-[#333] font-['Pretendard:SemiBold',sans-serif] underline underline-offset-2">무이자 할부 / 제휴 안내</button>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between px-4 py-3.5 border border-[#e0e0e0] rounded-[12px] bg-white">
+                      <span className="text-[14px] text-[#aaa]">카드사</span>
+                      <ChevronDown className="size-4 text-[#aaa]" />
                     </div>
-                    <div className="space-y-2 mb-2">
-                      <div className="flex items-center justify-between px-4 py-3 border border-[#e8e8e8] rounded-[10px] bg-white">
-                        <span className="text-[14px] text-[#999]">카드사</span>
-                        <ChevronDown className="size-5 text-[#999]" />
-                      </div>
-                      <div className="flex items-center justify-between px-4 py-3 border border-[#e8e8e8] rounded-[10px] bg-white">
-                        <span className="text-[14px] text-[#999]">할부기간을 선택해 주세요</span>
-                        <ChevronDown className="size-5 text-[#999]" />
-                      </div>
+                    <div className="flex items-center justify-between px-4 py-3.5 border border-[#e0e0e0] rounded-[12px] bg-white">
+                      <span className="text-[14px] text-[#aaa]">할부기간을 선택해 주세요</span>
+                      <ChevronDown className="size-4 text-[#aaa]" />
                     </div>
                   </div>
-                </>
+                </div>
               )}
 
-              <div className="border-t border-[#eee]" />
-              <label className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors">
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={paymentMethod === "kakao"}
-                  onChange={() => setPaymentMethod("kakao")}
-                  className="size-5 text-[#7b3ff2]"
-                />
-                <span className="text-[14px] font-medium text-[#111]">카카오페이</span>
-                <span className="text-[12px] font-bold text-[#fee500] bg-[#3c1e1e] px-1.5 py-0.5 rounded">pay</span>
+              {/* 무통장 입금 */}
+              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "bank" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "bank" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                </span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">무통장 입금</span>
+                <svg className="size-6 shrink-0" viewBox="0 0 24 24" fill="none">
+                  <ellipse cx="12" cy="8" rx="8" ry="3" fill="#888" opacity="0.3"/>
+                  <ellipse cx="12" cy="8" rx="8" ry="3" stroke="#555" strokeWidth="1.2"/>
+                  <path d="M4 8v4c0 1.66 3.58 3 8 3s8-1.34 8-3V8" stroke="#555" strokeWidth="1.2" fill="none"/>
+                  <path d="M4 12v4c0 1.66 3.58 3 8 3s8-1.34 8-3v-4" stroke="#555" strokeWidth="1.2" fill="none"/>
+                  <circle cx="18" cy="17" r="4" fill="#f59e0b"/>
+                  <text x="18" y="20" textAnchor="middle" fontSize="6" fontWeight="bold" fill="white">₩</text>
+                </svg>
               </label>
-              <label className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors border-t border-[#eee]">
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={paymentMethod === "payco"}
-                  onChange={() => setPaymentMethod("payco")}
-                  className="size-5 text-[#7b3ff2]"
-                />
-                <span className="text-[14px] font-medium text-[#111]">페이코</span>
-                <span className="text-[11px] font-bold text-[#e53935]">PAYCO</span>
+
+              {/* 카카오페이 */}
+              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "kakao" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "kakao" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                </span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">카카오페이</span>
+                <span className="inline-flex items-center gap-0.5 bg-[#1a1200] text-[#fee500] text-[11px] font-bold px-2 py-1 rounded-full">
+                  <span className="text-[#fee500] text-[13px]">•</span>pay
+                </span>
               </label>
-              <label className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors border-t border-[#eee]">
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={paymentMethod === "naver"}
-                  onChange={() => setPaymentMethod("naver")}
-                  className="size-5 text-[#7b3ff2]"
-                />
-                <span className="text-[14px] font-medium text-[#111]">네이버페이</span>
-                <span className="text-[12px] font-bold text-[#03c75a]">N pay</span>
+
+              {/* 페이코 */}
+              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("payco")}>
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "payco" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "payco" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                </span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">페이코</span>
+                <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#e53935] tracking-tight">PAYCO</span>
+              </label>
+
+              {/* 네이버페이 */}
+              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("naver")}>
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "naver" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "naver" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                </span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">네이버페이</span>
+                <span className="inline-flex items-center gap-0.5 bg-[#03c75a] text-white text-[11px] font-bold px-2 py-1 rounded-full">
+                  <span className="font-['Pretendard:Bold',sans-serif]">N</span>pay
+                </span>
               </label>
             </div>
 
-            {/* 다음에도 이 결제수단 사용 — 박스 밖 */}
-            <label className="flex items-center gap-2 mt-4 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberPaymentMethod}
-                  onChange={(e) => setRememberPaymentMethod(e.target.checked)}
-                  className="size-5 rounded border-2 border-[#c8c8c8] text-[#7b3ff2] focus:ring-[#7b3ff2]"
-                />
-                <span className="text-[14px] text-[#111]">다음에도 이 결제수단 사용</span>
-              </label>
+            <label className="flex items-center gap-3 mt-4 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={rememberPaymentMethod}
+                onChange={() => setRememberPaymentMethod((v) => !v)}
+              />
+              <span
+                className={cn(
+                  "shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center transition-colors",
+                  rememberPaymentMethod ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"
+                )}
+              >
+                {rememberPaymentMethod && <Check className="size-3.5 text-white" strokeWidth={2.5} />}
+              </span>
+              <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">
+                다음에도 이 결제수단 사용
+              </span>
+            </label>
+
+            <div className="mt-4 rounded-2xl bg-[#e8f5f9] px-4 py-4 text-left">
+              <div className="flex items-start justify-start gap-2 mb-[5px]">
+                <ShieldCheck className="size-5 shrink-0 text-[#0fbfc7]" strokeWidth={2} />
+                <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#0fbfc7] font-semibold flex flex-col justify-start items-start">
+                  안심결제 캠페인
+                </span>
+              </div>
+              <ul className="space-y-2.5 text-[13px] text-[#444] leading-[1.5]">
+                <li className="mb-0">
+                  하나. 예약시 안내 받은{" "}
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[#111]">[가상계좌]</span>로 결제하세요.
+                </li>
+                <li>
+                  둘. 입금시 예금주가{" "}
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[#111]">[하나투어]</span>인지 꼭 확인하세요.
+                </li>
+                <li>
+                  셋. 예금주 하나투어가 아닌 계좌로 입금하실 경우 법적 보호를 받으실 수 없습니다.
+                </li>
+              </ul>
+            </div>
           </section>
 
           {/* 현금영수증 등록 관리 — 항공결제 화면과 동일 */}
           <section className="p-4">
             <div>
               <div className="flex items-center justify-between">
-                <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">
+                <h3 className="font-normal font-['Pretendard:Regular',sans-serif] text-[15px] text-[#111]">
                   현금영수증 등록 관리
                 </h3>
                 <div className="flex items-center gap-6">
@@ -573,7 +750,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
             type="button"
             onClick={handlePay}
             disabled={isProcessing}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[12px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
+            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#5e2bb8] transition-colors"
           >
             {isProcessing ? (
               <span className="flex items-center justify-center gap-2">
