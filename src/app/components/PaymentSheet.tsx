@@ -415,7 +415,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
             <div className="border-t border-[#eee] pt-3">
               <div className="flex justify-between items-baseline">
                 <span className="font-semibold font-['Pretendard:SemiBold',sans-serif] text-[16px] text-[#111]">최종 결제금액</span>
-                <span className="font-['Pretendard:Bold',sans-serif] text-[26px] text-[#7b3ff2] leading-none">
+                <span className="font-['Pretendard:Bold',sans-serif] font-bold text-[26px] text-[#5e2bb8] leading-none">
                   {finalAmount.toLocaleString()}<span className="text-[18px]">원</span>
                 </span>
               </div>
@@ -595,11 +595,11 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
                   하나. 예약시 안내 받은{" "}
                   <span className="font-['Pretendard:Bold',sans-serif] text-[#111]">[가상계좌]</span>로 결제하세요.
                 </li>
-                <li>
+                <li className="mb-0">
                   둘. 입금시 예금주가{" "}
                   <span className="font-['Pretendard:Bold',sans-serif] text-[#111]">[하나투어]</span>인지 꼭 확인하세요.
                 </li>
-                <li>
+                <li className="mb-0">
                   셋. 예금주 하나투어가 아닌 계좌로 입금하실 경우 법적 보호를 받으실 수 없습니다.
                 </li>
               </ul>
@@ -750,7 +750,7 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
             type="button"
             onClick={handlePay}
             disabled={isProcessing}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#5e2bb8] transition-colors"
+            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[rgba(94,43,184,1)] transition-colors"
           >
             {isProcessing ? (
               <span className="flex items-center justify-center gap-2">
