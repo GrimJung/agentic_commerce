@@ -117,8 +117,8 @@ function ChatInput({ onSend }: { onSend: (message: string) => void }) {
 
 /** 상품 노출 개수 (추천검색/직접검색/자유여행) */
 const PRODUCT_COUNTS = {
-  /** 추천검색하기: 패키지 2개, 항공+호텔 1개 */
-  recommended: { package: 2, combo: 1 },
+  /** 추천검색하기: 항공+호텔 1개, 에어텔 1개, 호텔 1개 */
+  recommended: 3,
   /** 직접검색 - 패키지: 패키지 3개 */
   directPackage: 3,
   /** 자유여행 항공+호텔: FIT 2개 + 에어텔(패키지) 1개 */
@@ -1751,18 +1751,9 @@ export default function App() {
                       ...mockPackages.filter(p => !recommended.some(r => r.id === p.id)).slice(0, n - recommended.length)
                     ];
                 setRecommendedPackages(toShow);
-              } else {
-                const n = PRODUCT_COUNTS.recommended.package;
-                const recommended = filtered.slice(0, n);
-                const toShow = recommended.length >= n
-                  ? recommended
-                  : [
-                      ...recommended,
-                      ...mockPackages.filter(p => !recommended.some(r => r.id === p.id)).slice(0, n - recommended.length)
-                    ];
-                setRecommendedPackages(toShow);
               }
-              const count = isPackageOnly ? PRODUCT_COUNTS.directPackage : PRODUCT_COUNTS.recommended.package + PRODUCT_COUNTS.recommended.combo;
+              // 추천검색 모드는 고정 mock 데이터(FIT+에어텔+호텔)를 렌더링하므로 별도 패키지 세팅 불필요
+              const count = isPackageOnly ? PRODUCT_COUNTS.directPackage : PRODUCT_COUNTS.recommended;
               const packageResultParts = [
                 destText && `${destText}`,
                 themeText && `${themeText} 테마`,
@@ -1790,9 +1781,9 @@ export default function App() {
     setShowDetail(true);
   };
 
-  // 패키지 비교 (직접검색 3개 / 추천검색 패키지 2개 기준)
+  // 패키지 비교 (직접검색 전용)
   const handleComparePackages = () => {
-    if (recommendedPackages.length >= PRODUCT_COUNTS.recommended.package) {
+    if (recommendedPackages.length >= PRODUCT_COUNTS.directPackage) {
       setPackageMessages([
         { type: "user", content: "상품 비교해주세요" },
         {
@@ -1802,7 +1793,7 @@ export default function App() {
               steps={REASONING_STEPS.COMPARISON}
               completedLabel="비교 분석 완료"
               onAllStepsComplete={() => {
-                const maxCompare = packageSearchMode === "package-only" ? PRODUCT_COUNTS.directPackage : PRODUCT_COUNTS.recommended.package;
+                const maxCompare = PRODUCT_COUNTS.directPackage;
                 const base = recommendedPackages.slice(0, maxCompare);
                 const ids = new Set(base.map((p) => p.id));
                 const need = maxCompare - base.length;
@@ -1824,9 +1815,9 @@ export default function App() {
     }
   };
 
-  // 추천 다시받기 (직접검색 패키지 3개 / 추천검색 패키지 2개)
+  // 추천 다시받기 (직접검색 패키지 3개 / 추천검색 고정 3개)
   const handleReRecommend = () => {
-    const n = packageSearchMode === "package-only" ? PRODUCT_COUNTS.directPackage : PRODUCT_COUNTS.recommended.package;
+    const n = PRODUCT_COUNTS.directPackage;
     const currentIds = new Set(recommendedPackages.map(p => p.id));
     const remaining = mockPackages.filter(p => !currentIds.has(p.id));
 
@@ -1843,7 +1834,7 @@ export default function App() {
     setShowComparison(false);
     setComparisonPackages([]);
 
-    const totalShow = packageSearchMode === "package-only" ? n : n + PRODUCT_COUNTS.recommended.combo;
+    const totalShow = packageSearchMode === "package-only" ? n : PRODUCT_COUNTS.recommended;
     setMessages(prev => [...prev,
       { type: "user", content: "다른 상품 추천해주세요" },
       {
@@ -2166,9 +2157,8 @@ export default function App() {
         )}
 
         {(step === "packages" || step === "booking" || step === "payment" || step === "confirmed")
-          && recommendedPackages.length > 0 && (
+          && (packageSearchMode === "package-only" ? recommendedPackages.length > 0 : packageSearchMode === "recommended-mix") && (
           <div className="px-5 space-y-4 mt-4 mb-4">
-            {/* 패키지 상품만 조회: 상품 1,2,3 모두 패키지 | 추천상품조회: 상품 1,2 패키지 + 3번째 항공+호텔 */}
             {packageSearchMode === "package-only"
               ? recommendedPackages.slice(0, PRODUCT_COUNTS.directPackage).map((pkg, index) => (
                   <PackageCard
@@ -2181,20 +2171,11 @@ export default function App() {
                 ))
               : (
                   <>
-                    {recommendedPackages.slice(0, PRODUCT_COUNTS.recommended.package).map((pkg, index) => (
-                      <PackageCard
-                        key={pkg.id}
-                        package={pkg}
-                        rank={index + 1}
-                        onClick={() => handlePackageClick(pkg)}
-                        onBooking={() => handleBooking(pkg)}
-                      />
-                    ))}
-                    {/* 3번째: 항공+호텔 상품 (추천 검색 경로) */}
+                    {/* 추천검색: 1번째 항공+호텔 */}
                     <FITPackageCard
                       key={mockFITPackages[0].id}
                       package={mockFITPackages[0]}
-                      rank={3}
+                      rank={1}
                       onClick={() => {
                         setSelectedFitPackage(mockFITPackages[0]);
                         setShowFitDetail(true);
@@ -2206,9 +2187,32 @@ export default function App() {
                         setShowRoomTypeSelector(true);
                       }}
                     />
+                    {/* 추천검색: 2번째 에어텔 */}
+                    <PackageCard
+                      key={airtelPackage.id}
+                      package={airtelPackage}
+                      rank={2}
+                      productLabel="에어텔"
+                      onClick={() => handlePackageClick(airtelPackage)}
+                      onBooking={() => handleBooking(airtelPackage)}
+                    />
+                    {/* 추천검색: 3번째 호텔 */}
+                    <HotelCard
+                      key={mockHotels[0].id}
+                      hotel={mockHotels[0]}
+                      rank={3}
+                      onClick={() => {
+                        setSelectedHotel(mockHotels[0]);
+                        setShowHotelDetail(true);
+                      }}
+                      onBooking={() => {
+                        setSelectedHotel(mockHotels[0]);
+                        setShowHotelDetail(true);
+                      }}
+                    />
                   </>
                 )}
-            {step === "packages" && recommendedPackages.length >= PRODUCT_COUNTS.recommended.package && (
+            {step === "packages" && packageSearchMode === "package-only" && recommendedPackages.length >= PRODUCT_COUNTS.directPackage && (
               <div className="flex gap-2">
                 <button
                   onClick={handleComparePackages}

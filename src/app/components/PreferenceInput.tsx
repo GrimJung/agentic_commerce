@@ -22,11 +22,9 @@ interface PreferenceInputProps {
     travelPeriodDisplay?: string;
     adults?: number;
     children?: number;
-    infants?: number;
-    childAges?: number[]; // 자유여행/추천검색 시 아동 나이 (만0~만17)
+    childAges?: number[]; // 아동 나이 (만2~만17)
   }) => void;
   mode?: "package" | "fit"; // 패키지 또는 자유여행 모드
-  /** true면 추천 검색하기로 열린 폼 → 인원을 자유여행처럼 성인+아동만, 아동 나이 선택 박스 표시 */
   personaRecommendFlow?: boolean;
   initialDestination?: string;
   initialBudget?: string;
@@ -43,17 +41,12 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
   const [travelPeriodEnd, setTravelPeriodEnd] = useState(defaultPeriod.end);
   const [adults, setAdults] = useState(initialTravelers >= 1 ? Math.max(1, initialTravelers) : 1);
   const [children, setChildren] = useState(0);
-  const [infants, setInfants] = useState(0);
-  /** 자유여행 모드에서 아동별 나이 (만0세=0 ~ 만17세=17, ''=미선택). length === children */
+  /** 아동별 나이 (만2세=2 ~ 만17세=17, ''=미선택). length === children */
   const [childAges, setChildAges] = useState<(number | string)[]>([]);
-
-  const [searchMode, setSearchMode] = useState<'combo' | 'flight' | 'hotel'>('combo');
 
   const [calendarOpen, setCalendarOpen] = useState(false);
 
-  /** 추천검색 시에도 자유여행처럼 성인+아동만, 아동 나이 선택 적용 */
-  const useFitStyleGuests = mode === "fit" || (mode === "package" && personaRecommendFlow);
-  const travelers = adults + children + (mode === "package" && !personaRecommendFlow ? infants : 0);
+  const travelers = adults + children;
 
   const themes = ["휴양", "문화탐방", "자연경관", "레저/액티비티", "쇼핑"];
   const budgets = ["100만원 이하", "100-200만원", "200-300만원", "300만원 이상"];
@@ -62,14 +55,10 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
     ? `${travelPeriodStart.slice(5, 7)}.${travelPeriodStart.slice(8, 10)}~${travelPeriodEnd.slice(5, 7)}.${travelPeriodEnd.slice(8, 10)}`
     : undefined;
 
-  /** 만0세·만1세 인원 수는 성인 수를 초과할 수 없음 (미선택 ''은 제외) */
-  const underAge2Count = useFitStyleGuests ? childAges.filter((a) => typeof a === "number" && a <= 1).length : 0;
-  const isFitChildAgeValid = !useFitStyleGuests || children === 0 || underAge2Count <= adults;
-
   const handleSubmit = (submitMode: 'combo' | 'flight' | 'hotel') => {
-    if ((budget || destination) && isFitChildAgeValid) {
+    if (budget || destination || theme) {
       onSubmit({
-        theme: "",
+        theme,
         budget,
         destination,
         travelers,
@@ -77,14 +66,13 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
         travelPeriodDisplay,
         adults,
         children,
-        infants: 0,
         childAges: children > 0 ? childAges.map((a) => (a === "" ? 2 : a as number)) : undefined,
       });
     }
   };
 
   const handlePackageSubmit = () => {
-    if (isValid && (! useFitStyleGuests || isFitChildAgeValid)) {
+    if (isValid) {
       onSubmit({
         theme,
         budget,
@@ -94,17 +82,15 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
         travelPeriodDisplay,
         adults,
         children,
-        infants: personaRecommendFlow ? 0 : infants,
-        childAges: useFitStyleGuests && children > 0 ? childAges.map((a) => (a === "" ? 2 : a as number)) : undefined,
+        childAges: children > 0 ? childAges.map((a) => (a === "" ? 2 : a as number)) : undefined,
       });
     }
   };
 
-  const isValid = mode === "fit" ? (budget || destination) : (theme || budget || destination);
+  const isValid = theme || budget || destination;
 
-  // 자유여행·추천검색(아동만) 모드에서 아동 수 변경 시 childAges 길이 동기화
+  // 아동 수 변경 시 childAges 길이 동기화
   useEffect(() => {
-    if (!useFitStyleGuests) return;
     if (children === 0) {
       setChildAges([]);
       return;
@@ -114,7 +100,7 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
       if (prev.length < children) return [...prev, ...Array(children - prev.length).fill("")];
       return prev.slice(0, children);
     });
-  }, [useFitStyleGuests, children]);
+  }, [children]);
 
   const AGE_OPTIONS = useMemo(() => Array.from({ length: 18 }, (_, i) => ({ value: i, label: `만${i}세` })), []);
 
@@ -170,26 +156,23 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
           />
         </div>
 
-        {/* 패키지 모드일 때만 테마 선택 표시 */}
-        {mode === "package" && (
-          <div>
-            <label className="block text-[14px] text-[#666] mb-2">여행 테마</label>
-            <div className="flex flex-wrap gap-2">
-              {themes.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTheme(t)}
-                  className={`px-4 py-2 rounded-full text-[14px] transition-colors ${theme === t
-                      ? "bg-[#3780ff] text-white"
-                      : "bg-[#f5f5f5] text-[#666] hover:bg-[#e5e5e5]"
-                    }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
+        <div>
+          <label className="block text-[14px] text-[#666] mb-2">여행 테마</label>
+          <div className="flex flex-wrap gap-2">
+            {themes.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTheme(t)}
+                className={`px-4 py-2 rounded-full text-[14px] transition-colors ${theme === t
+                    ? mode === "fit" ? "bg-[#7b3ff2] text-white" : "bg-[#3780ff] text-white"
+                    : "bg-[#f5f5f5] text-[#666] hover:bg-[#e5e5e5]"
+                  }`}
+              >
+                {t}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
 
         <div>
           <label className="block text-[14px] text-[#666] mb-2">예산 (1인 기준)</label>
@@ -213,7 +196,7 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
 
         <div className="space-y-3">
           <label className="block text-[14px] text-[#666] mb-2">여행 인원 수</label>
-          <div className={`grid gap-3 ${useFitStyleGuests ? "grid-cols-2" : "grid-cols-3"}`}>
+          <div className="grid gap-3 grid-cols-2">
             <div className="bg-[#f9f9f9] rounded-[12px] p-3">
               <p className="text-[12px] text-[#666] mb-2">성인</p>
               <div className="flex items-center justify-between gap-1">
@@ -242,10 +225,7 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
               <div className="flex items-center justify-between gap-1">
                 <button
                   type="button"
-                  onClick={() => {
-                    setChildren((c) => Math.max(0, c - 1));
-                    if (useFitStyleGuests) setChildAges((prev) => prev.slice(0, -1));
-                  }}
+                  onClick={() => setChildren((c) => Math.max(0, c - 1))}
                   disabled={children <= 0}
                   className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shrink-0"
                 >
@@ -256,45 +236,17 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
                 </span>
                 <button
                   type="button"
-                  onClick={() => {
-                    setChildren((c) => c + 1);
-                    if (useFitStyleGuests) setChildAges((prev) => [...prev, ""]);
-                  }}
+                  onClick={() => setChildren((c) => c + 1)}
                   className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors flex items-center justify-center shrink-0"
                 >
                   +
                 </button>
               </div>
             </div>
-            {mode === "package" && !personaRecommendFlow && (
-            <div className="bg-[#f9f9f9] rounded-[12px] p-3">
-              <p className="text-[12px] text-[#666] mb-2">유아</p>
-              <div className="flex items-center justify-between gap-1">
-                <button
-                  type="button"
-                  onClick={() => setInfants((i) => Math.max(0, i - 1))}
-                  disabled={infants <= 0}
-                  className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shrink-0"
-                >
-                  −
-                </button>
-                <span className="text-[16px] font-['Pretendard:Bold',sans-serif] text-[#111] tabular-nums">
-                  {infants}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setInfants((i) => i + 1)}
-                  className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors flex items-center justify-center shrink-0"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            )}
           </div>
 
-          {/* 자유여행·추천검색: 아동 1명 이상일 때 아동 나이 선택 (만0세~만17세), 2열 그리드·플레이스홀더 아동1/아동2 */}
-          {useFitStyleGuests && children >= 1 && (
+          {/* 아동 1명 이상일 때 나이 선택 (만2세~만17세) */}
+          {children >= 1 && (
             <div className="mt-3 grid grid-cols-2 gap-2">
               {childAges.slice(0, children).map((age, index) => (
                 <select
@@ -320,20 +272,15 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
                   ))}
                 </select>
               ))}
-              {!isFitChildAgeValid && (
-                <p className="text-[12px] text-red-600 mt-1 col-span-2">
-                  성인 {adults}명에 유아 (만2세 미만) {adults}명 만을 예약하실 수 있으며, 나머지 유아는 소아(만2세 이상)으로 예약하셔야 합니다.
-                </p>
-              )}
             </div>
           )}
         </div>
 
-        {/* 패키지 모드: 단일 버튼 (추천검색 시 아동 나이 유효성 적용) */}
+        {/* 패키지 모드: 단일 버튼 */}
         {mode === "package" && (
           <button
             onClick={handlePackageSubmit}
-            disabled={!isValid || (useFitStyleGuests && !isFitChildAgeValid)}
+            disabled={!isValid}
             className="w-full py-3 rounded-[12px] bg-[#3780ff] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#2d6fdf] transition-colors"
           >
             여행 상품 추천받기
@@ -345,21 +292,21 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
           <div className="space-y-2">
             <button
               onClick={() => handleSubmit('combo')}
-              disabled={!isValid || !isFitChildAgeValid}
+              disabled={!isValid}
               className="w-full py-3 rounded-[12px] bg-[#7b3ff2] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
             >
               항공+호텔 조합 검색하기
             </button>
             <button
               onClick={() => handleSubmit('flight')}
-              disabled={!isValid || !isFitChildAgeValid}
+              disabled={!isValid}
               className="w-full py-3 rounded-[12px] bg-[#7b3ff2] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
             >
               항공만 검색하기
             </button>
             <button
               onClick={() => handleSubmit('hotel')}
-              disabled={!isValid || !isFitChildAgeValid}
+              disabled={!isValid}
               className="w-full py-3 rounded-[12px] bg-[#7b3ff2] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
             >
               호텔만 검색하기

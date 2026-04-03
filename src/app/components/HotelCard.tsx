@@ -84,7 +84,7 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
           <Building2 className="size-4 text-[#7b3ff2]" />
           <span className="text-[13px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">호텔</span>
         </div>
-        <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111] mb-1">
+        <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111] mb-1 font-semibold">
           {hotel.name}
         </p>
         <div className="flex items-center gap-2 mb-2">
