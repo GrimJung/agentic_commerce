@@ -486,7 +486,7 @@ export function HotelDetailContent({
         <div className="sticky bottom-0 bg-white border-t border-[#f0f0f0] px-5 py-4">
           <button
             onClick={onBooking}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#5d2bb4] transition-colors"
           >
             객실 선택하기
           </button>

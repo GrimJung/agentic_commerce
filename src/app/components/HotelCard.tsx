@@ -110,7 +110,7 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
             e.stopPropagation();
             onClick();
           }}
-          className="flex-1 py-2.5 bg-white border border-[#2d6fdf] text-[#2d6fdf] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
+          className="flex-1 py-2.5 bg-white border border-[#5e2bb8] text-[#5e2bb8] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
         >
           상세보기
         </button>
@@ -119,7 +119,7 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
             e.stopPropagation();
             onBooking();
           }}
-          className="flex-1 py-2.5 bg-[#7b3ff2] text-white rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+          className="flex-1 py-2.5 bg-[#7b3ff2] text-white rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
         >
           예약하기
         </button>

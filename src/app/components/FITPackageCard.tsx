@@ -235,7 +235,7 @@ export function FITPackageCard({
             </span>
             <div className="text-right">
               <span className="text-[11px] text-[#999] mr-1">
-                1인상 항공+호텔 예약시
+                1인당 항공+호텔 예약시
               </span>
               <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold">
                 {pkg.hotelInfo.price.toLocaleString()}원
