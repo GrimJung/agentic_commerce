@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Plus, Mic } from "lucide-react";
 import { MainPage } from "./components/MainPage";
 import { ChatMessage } from "./components/ChatMessage";
 import { PreferenceInput } from "./components/PreferenceInput";
 import { PackageCard, PackageData } from "./components/PackageCard";
 import { PackageDetail } from "./components/PackageDetail";
+import { PackageInlineDetail } from "./components/PackageInlineDetail";
 import { AIPackageComparison } from "./components/AIPackageComparison";
+import { PackageComparisonInline } from "./components/PackageComparisonInline";
 import { FITPackageCard, FITPackageData } from "./components/FITPackageCard";
 import { FITPackageDetail } from "./components/FITPackageDetail";
 import { FITComparison } from "./components/FITComparison";
@@ -62,15 +65,31 @@ function DismissableButtons({ buttons }: { buttons: { label: string; onClick: ()
 // 헤더 컴포넌트
 function Header({ onBack }: { onBack?: () => void }) {
   return (
-    <div className="bg-white border-b border-[#f0f0f0] px-5 py-4 flex items-center">
-      <button className="p-2 -ml-2" onClick={onBack}>
+    <div className="relative flex h-[52px] items-center border-b border-[#f0f0f0] bg-white px-2">
+      <button type="button" className="absolute left-1 top-1/2 z-[1] -translate-y-1/2 p-2" onClick={onBack} aria-label="뒤로">
         <svg className="size-6" viewBox="0 0 24 24" fill="none">
           <path d="M15 18L9 12L15 6" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <h1 className="font-['Pretendard:Bold',sans-serif] text-[20px] text-[#111] ml-2">
-        H-AI 하이
-      </h1>
+      <div className="flex flex-1 items-center justify-center gap-1.5 pr-1">
+        <h1 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111]">
+          H-AI 하이
+        </h1>
+        <button
+          type="button"
+          aria-label="도움말"
+          className="flex size-[18px] shrink-0 items-center justify-center rounded-full border border-[#ccc] text-[11px] font-semibold text-[#666]"
+        >
+          ?
+        </button>
+      </div>
+      <button type="button" className="absolute right-1 top-1/2 -translate-y-1/2 p-2" aria-label="메뉴">
+        <svg className="size-5 text-[#111]" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="6" r="1.5" />
+          <circle cx="12" cy="12" r="1.5" />
+          <circle cx="12" cy="18" r="1.5" />
+        </svg>
+      </button>
     </div>
   );
 }
@@ -87,29 +106,32 @@ function ChatInput({ onSend }: { onSend: (message: string) => void }) {
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] border-t border-[#f5f5f5] bg-white px-5 py-3 z-10">
-      <div className="flex gap-2 items-center">
-        <button className="p-2">
-          <svg className="size-6" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="#666" strokeWidth="1.5" />
-            <path d="M12 8V12L14 14" stroke="#666" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
+    <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[390px] -translate-x-1/2 border-t border-[#f0f0f0] bg-white px-4 py-3">
+      <div className="flex items-center gap-2">
+        <button type="button" aria-label="추가" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f5f5f5] text-[#666]">
+          <Plus className="size-5 stroke-[2]" />
         </button>
-        <div className="flex-1 relative">
+        <div className="relative min-w-0 flex-1">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="궁금하신 내용을 물어보세요!"
-            className="w-full px-4 py-3 rounded-[24px] bg-[#f5f5f5] text-[14px] focus:outline-none"
+            placeholder="궁금한 내용을 H-AI에게 물어보..."
+            className="w-full rounded-full border border-[#e5e5e5] bg-white py-3 pl-4 pr-[88px] text-[14px] text-[#111] placeholder:text-[#999] focus:outline-none focus:ring-2 focus:ring-[#3780ff]/25"
           />
+          <div className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2.5">
+            <Mic className="size-[18px] text-[#666]" strokeWidth={1.75} />
+            <svg className="size-[18px] text-[#7b3ff2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <path d="M4 12v-2a4 4 0 014-4" />
+              <path d="M4 6v6a4 4 0 004 4" />
+              <path d="M8 10v4" />
+              <path d="M12 8v8" />
+              <path d="M16 6v12" />
+              <path d="M20 9v6" />
+            </svg>
+          </div>
         </div>
-        <button onClick={handleSend} className="p-2.5 bg-[#111] rounded-full">
-          <svg className="size-5" viewBox="0 0 20 20" fill="none">
-            <path d="M2 10L18 2L14 10L18 18L2 10Z" fill="white" />
-          </svg>
-        </button>
       </div>
     </div>
   );
@@ -1396,6 +1418,7 @@ export default function App() {
 
   // 패키지 및 FIT 인터랙션 메시지 상태
   const [packageMessages, setPackageMessages] = useState<Array<{ type: "user" | "bot"; content: React.ReactNode }>>([]);
+  const recommendedPackagesRegionRef = useRef<HTMLDivElement>(null);
   const [fitMessages, setFitMessages] = useState<Array<{ type: "user" | "bot"; content: React.ReactNode }>>([]);
   /** 패키지 조회 구분: 'package-only' = 직접 검색→패키지 (상품 1,2,3 모두 패키지) | 'recommended-mix' = 추천 검색 (상품 1,2 패키지 + 3 항공+호텔) */
   const [packageSearchMode, setPackageSearchMode] = useState<"package-only" | "recommended-mix" | null>(null);
@@ -1775,16 +1798,43 @@ export default function App() {
     }
   };
 
-  // 패키지 상세보기 (바텀시트 팝업으로 바로 표시)
-  const handlePackageClick = (pkg: PackageData) => {
-    setSelectedPackage(pkg);
-    setShowDetail(true);
+  /** 인라인 상세의「추천 상품 목록가기」— 상세 메시지 제거 후 상품 카드 영역으로 스크롤 */
+  const focusRecommendedPackagesList = () => {
+    setPackageMessages([]);
+    window.requestAnimationFrame(() => {
+      const el = recommendedPackagesRegionRef.current;
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        el.focus({ preventScroll: true });
+        return;
+      }
+      const root = document.querySelector("[data-sheet-scroll-root]");
+      root?.scrollTo({ top: 0, behavior: "smooth" });
+    });
   };
 
-  // 패키지 비교 (직접검색 전용)
+  // 패키지 상세보기 — 채팅창 인라인으로 렌더링
+  const handlePackageClick = (pkg: PackageData) => {
+    setPackageMessages((prev) => [
+      ...prev,
+      { type: "user", content: "상세 정보 보여줘" },
+      {
+        type: "bot",
+        content: (
+          <PackageInlineDetail
+            package={pkg}
+            onGoBack={focusRecommendedPackagesList}
+            onBooking={() => handleBooking(pkg)}
+          />
+        ),
+      },
+    ]);
+  };
+
+  // 패키지 비교 (직접검색 전용) — 채팅창 인라인으로 렌더링
   const handleComparePackages = () => {
     if (recommendedPackages.length >= PRODUCT_COUNTS.directPackage) {
-      setPackageMessages([
+      setPackageMessages(() => [
         { type: "user", content: "상품 비교해주세요" },
         {
           type: "bot",
@@ -1802,15 +1852,30 @@ export default function App() {
                     ? [...base, ...mockPackages.filter((p) => !ids.has(p.id)).slice(0, need)]
                     : base;
                 setComparisonPackages(filled);
-                setShowComparison(true);
-                setPackageMessages(prev => [...prev, {
-                  type: "bot",
-                  content: "선택하신 상품들의 가격, 호텔등급, 항공사 등을 비교해 드립니다!"
-                }]);
+                setPackageMessages((prev) => [
+                  ...prev,
+                  {
+                    type: "bot",
+                    content: (
+                      <PackageComparisonInline
+                        packages={filled}
+                        onSelect={(pkg) => {
+                          setPackageMessages([]);
+                          handlePackageClick(pkg);
+                        }}
+                        onBack={() => setPackageMessages([])}
+                      />
+                    ),
+                  },
+                ]);
+                setTimeout(() => {
+                  const root = document.querySelector("[data-sheet-scroll-root]");
+                  root?.scrollTo({ top: root.scrollHeight, behavior: "smooth" });
+                }, 50);
               }}
             />
-          )
-        }
+          ),
+        },
       ]);
     }
   };
@@ -2158,13 +2223,24 @@ export default function App() {
 
         {(step === "packages" || step === "booking" || step === "payment" || step === "confirmed")
           && (packageSearchMode === "package-only" ? recommendedPackages.length > 0 : packageSearchMode === "recommended-mix") && (
-          <div className="px-5 space-y-4 mt-4 mb-4">
+          <div
+            ref={recommendedPackagesRegionRef}
+            tabIndex={-1}
+            role="region"
+            aria-label="추천 상품 목록"
+            className="px-5 space-y-4 mt-4 mb-4 scroll-mt-[60px] outline-none focus-visible:ring-2 focus-visible:ring-[#3780ff]/30 focus-visible:ring-offset-2 rounded-lg"
+          >
+            {packageSearchMode === "package-only" && (
+              <div className="space-y-1">
+                <h2 className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#3780ff]">H-AI 추천</h2>
+                <p className="text-[13px] leading-snug text-[#666]">상품의 자세한 정보도 확인하실 수 있어요.</p>
+              </div>
+            )}
             {packageSearchMode === "package-only"
-              ? recommendedPackages.slice(0, PRODUCT_COUNTS.directPackage).map((pkg, index) => (
+              ? recommendedPackages.slice(0, PRODUCT_COUNTS.directPackage).map((pkg) => (
                   <PackageCard
                     key={pkg.id}
                     package={pkg}
-                    rank={index + 1}
                     onClick={() => handlePackageClick(pkg)}
                     onBooking={() => handleBooking(pkg)}
                   />
@@ -2191,8 +2267,6 @@ export default function App() {
                     <PackageCard
                       key={airtelPackage.id}
                       package={airtelPackage}
-                      rank={2}
-                      productLabel="에어텔"
                       onClick={() => handlePackageClick(airtelPackage)}
                       onBooking={() => handleBooking(airtelPackage)}
                     />
@@ -2213,30 +2287,45 @@ export default function App() {
                   </>
                 )}
             {step === "packages" && packageSearchMode === "package-only" && recommendedPackages.length >= PRODUCT_COUNTS.directPackage && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-1">
                 <button
+                  type="button"
                   onClick={handleComparePackages}
-                  className="flex-1 py-3 bg-white border-2 border-[#3780ff] text-[#3780ff] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f0f7ff] transition-colors"
+                  className="flex-1 rounded-full border border-[#e5e5e5] bg-white py-3 font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] transition-colors hover:bg-[#fafafa]"
                 >
-                  상품 비교하기
+                  추천상품 비교하기
                 </button>
                 <button
+                  type="button"
                   onClick={handleReRecommend}
-                  className="flex-1 py-3 bg-white border-2 border-[#e5e7eb] text-[#666] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f9fa] transition-colors"
+                  className="flex-1 rounded-full border border-[#e5e5e5] bg-white py-3 font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] transition-colors hover:bg-[#fafafa]"
                 >
-                  추천 다시받기
+                  추천상품 새로고침
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {/* 패키지 추천 후 액션 유도 메시지 */}
-        {step === "packages" && recommendedPackages.length > 0 && packageMessages.length === 0 && (
-          <ChatMessage type="bot">
-            마음에 드는 패키지가 있으신가요? &apos;여행 일수&apos;, &apos;가격대&apos;, &apos;포함 액티비티&apos;, &apos;호텔 등급&apos; 등 원하는 조건을 알려주시면 더 잘 맞는 패키지를 찾아드릴게요!
-          </ChatMessage>
-        )}
+        {/* 패키지 추천 결과 — H-AI TIP (캡처 UI 정렬) */}
+        {step === "packages" &&
+          packageSearchMode === "package-only" &&
+          recommendedPackages.length > 0 &&
+          packageMessages.length === 0 && (
+            <div className="mx-5 mb-4">
+              <p className="text-[14px] leading-relaxed text-[#111]">
+                <span className="mr-1" aria-hidden>
+                  💡
+                </span>
+                <span className="font-['Pretendard:Bold',sans-serif] text-[rgba(55,127,255,1)]">H-AI TIP</span>
+                <span className="text-[#444]"> 관련해서 이런 질문도 이어갈 수 있어요.</span>
+              </p>
+              <ul className="mt-2 space-y-1.5 pl-0.5 text-[14px] text-[#333]">
+                <li>• 첫번째 일정을 요약해줘.</li>
+                <li>• 부산출발 상품만 추려줘.</li>
+              </ul>
+            </div>
+          )}
 
         {/* 패키지 인터랙션 메시지 (비교 등) - 카드 리스트 바깥 */}
         {step === "packages" && packageMessages.map((msg, index) => (
@@ -2272,8 +2361,6 @@ export default function App() {
             <PackageCard
               key={airtelPackage.id}
               package={airtelPackage}
-              rank={3}
-              productLabel="에어텔"
               onClick={() => handlePackageClick(airtelPackage)}
               onBooking={() => handleBooking(airtelPackage)}
             />
@@ -2457,11 +2544,15 @@ export default function App() {
       {showComparison && comparisonPackages.length > 0 && (
         <AIPackageComparison
           packages={comparisonPackages}
-          onClose={() => setShowComparison(false)}
+          onClose={() => {
+            setShowComparison(false);
+            setPackageMessages([]);
+          }}
           onSelect={(pkg) => {
             setSelectedPackage(pkg);
             setShowComparison(false);
             setShowDetail(true);
+            setPackageMessages([]);
           }}
         />
       )}

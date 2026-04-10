@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { X, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { PackageData } from "./PackageCard";
+import { Skeleton } from "./ui/skeleton";
 
 const COMPANION_OPTIONS = [
   { id: "children", label: "아이동반" },
@@ -32,7 +33,18 @@ const COMPANION_TIPS: Record<string, string> = {
   friends: "함께 즐기는 여행이라면 액티비티 선택 폭이 넓고, 자유시간과 즐길 요소가 균형 있게 구성된 상품을 추천드려요.",
 };
 
-const TABLE_GRID = { display: "grid", gridTemplateColumns: "minmax(48px, 72px) repeat(3, minmax(0, 1fr))" };
+/** 라벨 열은 좁게, 상품 A·B·C 열에 폭을 더 할당 */
+const TABLE_GRID = { display: "grid", gridTemplateColumns: "minmax(28px, 38px) repeat(3, minmax(0, 1fr))" };
+
+/** 라벨 열 폭 축소용: Unicode 코드포인트 기준 2글자마다 줄바꿈 */
+function splitLabelEveryTwoChars(label: string): string {
+  const chars = Array.from(label);
+  const lines: string[] = [];
+  for (let i = 0; i < chars.length; i += 2) {
+    lines.push(chars.slice(i, i + 2).join(""));
+  }
+  return lines.join("\n");
+}
 const ROW_BORDER_COLOR = "rgba(109, 108, 253, 0.12)";
 
 const PRODUCT_BADGE_COLORS: Record<string, { bg: string; color: string }> = {
@@ -50,15 +62,12 @@ const SELECT_BUTTON_BG: Record<string, string> = {
 
 /** 캡처 기준 비교표 본문 값 (A·B·C 3열) */
 const COMPARISON_BODY_VALUES: [string, string, string][] = [
-  ["10.24(금)~11.03(화)\n4박 5일", "10.25(토)~11.03(수)\n3박 4일", "10.26(일)"],
-  ["인천·대한항공, 18시 05분\n(7h 30m)", "김포·아시아나항공, 20시 20분\n(7h 30m)", "항공 불포함"],
+  ["10.24(금)~\n11.03(화)\n4박 5일", "10.25(토)~\n11.03(수)\n3박 4일", "10.26(일)"],
+  ["인천·대한항공 18:05\n(7h 30m)", "김포·아시아나항공 20:20\n(7h 30m)", "항공 불포함"],
   ["5성급", "4성급", "호텔 불포함"],
   ["O", "X", "O"],
   ["있음", "있음", "없음"],
-  ["O", "X", "O"],
-  ["있음", "없음", "있음"],
   ["O", "가이드만", "인솔자만"],
-  ["⭐ 4.5 (742)", "⭐ 4.5", "없음"],
 ];
 
 function TableRow({
@@ -68,6 +77,7 @@ function TableRow({
   labelColor,
   valueColor,
   labelAlign = "center",
+  isSkeleton = false,
 }: {
   label: string;
   values: string[];
@@ -75,36 +85,56 @@ function TableRow({
   labelColor?: string;
   valueColor?: string;
   labelAlign?: "left" | "center";
+  isSkeleton?: boolean;
 }) {
   const hasBottomBorder = rowStyle?.borderBottom != null && String(rowStyle.borderBottom) !== "none";
   const { borderBottom: _b, ...restRowStyle } = rowStyle ?? {};
+  const labelDisplay = label.includes("\n") ? label : splitLabelEveryTwoChars(label);
+
   return (
     <div className="w-full relative">
       <div className="w-full" style={{ ...TABLE_GRID, border: "none", ...restRowStyle }}>
         <div
-          className={`flex flex-col py-3.5 px-2.5 min-w-0 ${labelAlign === "left" ? "justify-center items-start" : "justify-center items-center"}`}
+          aria-label={label.replace(/\n/g, " ")}
+          className={`flex flex-col py-2 px-1 min-w-0 ${labelAlign === "left" ? "justify-center items-center text-left" : "justify-center items-center"}`}
         >
           <span
             className={`font-semibold ${labelAlign === "left" ? "text-left" : "text-center"}`}
-            style={{ fontSize: "12px", color: labelColor ?? "rgba(109, 108, 253, 1)", lineHeight: "16px" }}
+            style={{
+              fontSize: "12px",
+              color: labelColor ?? "rgba(109, 108, 253, 1)",
+              lineHeight: "15px",
+              whiteSpace: "pre-line",
+            }}
+            aria-hidden
           >
-            {label}
+            {labelDisplay}
           </span>
         </div>
         {values.map((value, i) => (
-          <div key={i} className="flex flex-col justify-center items-center py-3.5 px-2 min-w-0">
-            <span
-              className="text-center font-medium w-full"
-              style={{
-                fontSize: "12px",
-                color: valueColor ?? "#1A2B5B",
-                lineHeight: "18px",
-                whiteSpace: "pre-line",
-                wordBreak: "break-word",
-              }}
-            >
-              {value}
-            </span>
+          <div key={i} className="flex flex-col justify-center items-center py-[5px] px-[5px] min-w-0">
+            {isSkeleton ? (
+              <div
+                className="w-full flex flex-col gap-1 items-center justify-center min-h-[32px]"
+                aria-hidden
+              >
+                <Skeleton className="h-3 w-[88%] max-w-[72px] rounded-md bg-violet-200/50" />
+                <Skeleton className="h-3 w-[62%] max-w-[52px] rounded-md bg-violet-200/50" />
+              </div>
+            ) : (
+              <span
+                className="text-center font-medium w-full"
+                style={{
+                  fontSize: "12px",
+                  color: valueColor ?? "#1A2B5B",
+                  lineHeight: "16px",
+                  whiteSpace: "pre-line",
+                  wordBreak: "break-word",
+                }}
+              >
+                {value}
+              </span>
+            )}
           </div>
         ))}
       </div>
@@ -176,7 +206,16 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
   const labels = ["A", "B", "C"] as const;
   const rows = displayPackages.map(packageToDisplayValues);
   const tipText = COMPANION_TIPS[selectedCompanion] ?? COMPANION_TIPS.couple;
-  const detailRowStyle = { borderBottom: "1px solid rgba(109, 108, 253, 0.12)" } as const;
+
+  const llmSectionPackageKey = displayPackages.map((p) => p.id).join("|");
+  const [llmPointsReady, setLlmPointsReady] = useState(false);
+  useEffect(() => {
+    setLlmPointsReady(false);
+    const id = window.setTimeout(() => setLlmPointsReady(true), 3000);
+    return () => window.clearTimeout(id);
+  }, [llmSectionPackageKey]);
+
+  const PLACEHOLDER_VALUES = ["", "", ""] as const;
 
   return (
     <motion.div
@@ -287,44 +326,19 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                 <TableRow
                   label="식사포함"
                   values={COMPARISON_BODY_VALUES[4]}
-                  rowStyle={detailRowStyle}
                   labelColor="#64748b"
                   valueColor="#334155"
                 />
                 <TableRow
-                  label="쇼핑여부"
+                  label={"가이드\n인솔자"}
                   values={COMPARISON_BODY_VALUES[5]}
-                  rowStyle={detailRowStyle}
-                  labelColor="#64748b"
-                  valueColor="#334155"
-                />
-                <TableRow
-                  label="선택관광"
-                  values={COMPARISON_BODY_VALUES[6]}
-                  rowStyle={detailRowStyle}
-                  labelColor="#64748b"
-                  valueColor="#334155"
-                />
-                <TableRow
-                  label="가이드·인솔자"
-                  values={COMPARISON_BODY_VALUES[7]}
-                  rowStyle={detailRowStyle}
                   labelColor="#64748b"
                   valueColor="#334155"
                 />
               </>
             )}
 
-            {/* 평점·후기: 가이드·인솔자 아래에 표시 */}
-            <TableRow
-              label="평점·후기"
-              values={COMPARISON_BODY_VALUES[8]}
-              rowStyle={{ borderBottom: "none" }}
-              labelColor="#64748b"
-              valueColor="#334155"
-            />
-
-            {/* 상세정보 펼치기/접기 버튼: 후기 밑에 위치 */}
+            {/* 상세정보 펼치기/접기 버튼 */}
             <div className="flex justify-center w-full mt-1 mb-1">
               <button
                 type="button"
@@ -364,18 +378,22 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                   상품의 주요 포인트만 정리해봤어요
                 </span>
               </div>
-              <div style={{ backgroundColor: "#f7f7ff" }}>
+              <div
+                style={{ backgroundColor: "#f7f7ff" }}
+                aria-busy={!llmPointsReady}
+                aria-label={llmPointsReady ? undefined : "상품 주요 포인트 생성 중"}
+              >
                 {[
                   { label: "여행지역", values: rows.map((r) => r.summaryRegion), labelColor: "rgba(109, 108, 253, 0.95)" },
                   { label: "자연풍경", values: rows.map((r) => r.summaryScenery), labelColor: "rgba(109, 108, 253, 0.95)" },
                   { label: "대표체험", values: rows.map((r) => r.summaryExperience), labelColor: "rgba(109, 108, 253, 0.95)" },
-                  { label: "저녁볼거리", values: rows.map((r) => r.summaryEvening), labelColor: "rgba(109, 108, 253, 0.95)" },
-                  { label: "먹거리특징", values: rows.map((r) => r.summaryFood), labelColor: "rgba(109, 108, 253, 0.95)" },
+                  { label: "저녁\n볼거리", values: rows.map((r) => r.summaryEvening), labelColor: "rgba(109, 108, 253, 0.95)" },
+                  { label: "먹거리\n특징", values: rows.map((r) => r.summaryFood), labelColor: "rgba(109, 108, 253, 0.95)" },
                 ].map((row, idx) => (
                   <TableRow
                     key={row.label}
                     label={row.label}
-                    values={row.values}
+                    values={llmPointsReady ? row.values : [...PLACEHOLDER_VALUES]}
                     labelAlign="left"
                     rowStyle={{
                       backgroundColor: "#f7f7ff",
@@ -383,6 +401,7 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                     }}
                     labelColor={row.labelColor}
                     valueColor="#374151"
+                    isSkeleton={!llmPointsReady}
                   />
                 ))}
               </div>

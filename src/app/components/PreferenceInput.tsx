@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "motion/react";
 import { Calendar } from "lucide-react";
 import { TravelDatePickerSheet } from "./TravelDatePickerSheet";
@@ -29,24 +29,17 @@ interface PreferenceInputProps {
   initialDestination?: string;
   initialBudget?: string;
   initialTheme?: string;
-  initialTravelers?: number;
 }
 
-export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFlow = false, initialDestination = "", initialBudget = "", initialTheme = "", initialTravelers = 1 }: PreferenceInputProps) {
+export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFlow = false, initialDestination = "", initialBudget = "", initialTheme = "" }: PreferenceInputProps) {
   const [theme, setTheme] = useState(initialTheme);
   const [budget, setBudget] = useState(initialBudget);
   const [destination, setDestination] = useState(initialDestination);
   const defaultPeriod = useMemo(getOneMonthLaterRange, []);
   const [travelPeriodStart, setTravelPeriodStart] = useState(defaultPeriod.start);
   const [travelPeriodEnd, setTravelPeriodEnd] = useState(defaultPeriod.end);
-  const [adults, setAdults] = useState(initialTravelers >= 1 ? Math.max(1, initialTravelers) : 1);
-  const [children, setChildren] = useState(0);
-  /** 아동별 나이 (만2세=2 ~ 만17세=17, ''=미선택). length === children */
-  const [childAges, setChildAges] = useState<(number | string)[]>([]);
 
   const [calendarOpen, setCalendarOpen] = useState(false);
-
-  const travelers = adults + children;
 
   const themes = ["휴양", "문화탐방", "자연경관", "레저/액티비티", "쇼핑"];
   const budgets = ["100만원 이하", "100-200만원", "200-300만원", "300만원 이상"];
@@ -55,18 +48,17 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
     ? `${travelPeriodStart.slice(5, 7)}.${travelPeriodStart.slice(8, 10)}~${travelPeriodEnd.slice(5, 7)}.${travelPeriodEnd.slice(8, 10)}`
     : undefined;
 
+  const defaultParty = { travelers: 1, adults: 1, children: 0 };
+
   const handleSubmit = (submitMode: 'combo' | 'flight' | 'hotel') => {
     if (budget || destination || theme) {
       onSubmit({
         theme,
         budget,
         destination,
-        travelers,
+        ...defaultParty,
         searchMode: submitMode,
         travelPeriodDisplay,
-        adults,
-        children,
-        childAges: children > 0 ? childAges.map((a) => (a === "" ? 2 : a as number)) : undefined,
       });
     }
   };
@@ -77,32 +69,14 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
         theme,
         budget,
         destination,
-        travelers,
+        ...defaultParty,
         searchMode: 'combo',
         travelPeriodDisplay,
-        adults,
-        children,
-        childAges: children > 0 ? childAges.map((a) => (a === "" ? 2 : a as number)) : undefined,
       });
     }
   };
 
   const isValid = theme || budget || destination;
-
-  // 아동 수 변경 시 childAges 길이 동기화
-  useEffect(() => {
-    if (children === 0) {
-      setChildAges([]);
-      return;
-    }
-    setChildAges((prev) => {
-      if (prev.length === children) return prev;
-      if (prev.length < children) return [...prev, ...Array(children - prev.length).fill("")];
-      return prev.slice(0, children);
-    });
-  }, [children]);
-
-  const AGE_OPTIONS = useMemo(() => Array.from({ length: 18 }, (_, i) => ({ value: i, label: `만${i}세` })), []);
 
   return (
     <motion.div
@@ -192,88 +166,6 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="space-y-3">
-          <label className="block text-[14px] text-[#666] mb-2">여행 인원 수</label>
-          <div className="grid gap-3 grid-cols-2">
-            <div className="bg-[#f9f9f9] rounded-[12px] p-3">
-              <p className="text-[12px] text-[#666] mb-2">성인</p>
-              <div className="flex items-center justify-between gap-1">
-                <button
-                  type="button"
-                  onClick={() => setAdults((a) => Math.max(1, a - 1))}
-                  disabled={adults <= 1}
-                  className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shrink-0"
-                >
-                  −
-                </button>
-                <span className="text-[16px] font-['Pretendard:Bold',sans-serif] text-[#111] tabular-nums">
-                  {adults}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setAdults((a) => a + 1)}
-                  className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors flex items-center justify-center shrink-0"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            <div className="bg-[#f9f9f9] rounded-[12px] p-3">
-              <p className="text-[12px] text-[#666] mb-2">아동</p>
-              <div className="flex items-center justify-between gap-1">
-                <button
-                  type="button"
-                  onClick={() => setChildren((c) => Math.max(0, c - 1))}
-                  disabled={children <= 0}
-                  className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shrink-0"
-                >
-                  −
-                </button>
-                <span className="text-[16px] font-['Pretendard:Bold',sans-serif] text-[#111] tabular-nums">
-                  {children}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setChildren((c) => c + 1)}
-                  className="size-8 rounded-full bg-white border border-[#e5e5e5] text-[#111] font-['Pretendard:SemiBold',sans-serif] text-[16px] hover:bg-[#f0f0f0] transition-colors flex items-center justify-center shrink-0"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* 아동 1명 이상일 때 나이 선택 (만2세~만17세) */}
-          {children >= 1 && (
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {childAges.slice(0, children).map((age, index) => (
-                <select
-                  key={index}
-                  id={`child-age-${index}`}
-                  name={`아동${index + 1}`}
-                  value={age}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setChildAges((prev) => {
-                      const next = [...prev];
-                      next[index] = v === "" ? "" : Number(v);
-                      return next;
-                    });
-                  }}
-                  className="w-full px-3 py-2.5 rounded-[12px] bg-[#f5f5f5] text-[14px] text-[#111] focus:outline-none focus:ring-2 focus:ring-[#7b3ff2] border border-transparent"
-                >
-                  <option value="">아동{index + 1}</option>
-                  {AGE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* 패키지 모드: 단일 버튼 */}
