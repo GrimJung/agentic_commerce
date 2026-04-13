@@ -1704,6 +1704,12 @@ export default function App() {
     setShowPreferenceInput(false);
     setIsPersonaRecommendFlow(false);
 
+    const travelersText = data.travelers != null
+      ? (data.adults != null && data.children != null && data.infants != null)
+        ? `성인 ${data.adults}, 아동 ${data.children}, 유아 ${data.infants}`
+        : `${data.travelers}명`
+      : undefined;
+
     if (travelType === "fit") {
       // 자유여행 플로우: 선택한 인원만 노출, 유아 제외
       const mode = data.searchMode || 'combo';
@@ -1784,7 +1790,7 @@ export default function App() {
       const isPackageOnly = !isPersonaRecommendFlow;
       setPackageSearchMode(isPersonaRecommendFlow ? "recommended-mix" : "package-only");
 
-      const packageUserParts = [destText, themeText, budgetText, data.travelPeriodDisplay].filter(Boolean);
+      const packageUserParts = [destText, themeText, budgetText, data.travelPeriodDisplay, travelersText].filter(Boolean);
       setMessages(prev => [...prev,
       {
         type: "user",
