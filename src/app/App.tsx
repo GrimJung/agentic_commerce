@@ -6,6 +6,7 @@ import { PreferenceInput } from "./components/PreferenceInput";
 import { PackageCard, PackageData } from "./components/PackageCard";
 import { PackageDetail } from "./components/PackageDetail";
 import { PackageInlineDetail } from "./components/PackageInlineDetail";
+import { TravelerCountA2UI } from "./components/TravelerCountA2UI";
 import { AIPackageComparison } from "./components/AIPackageComparison";
 import { PackageComparisonInline } from "./components/PackageComparisonInline";
 import { FITPackageCard, FITPackageData } from "./components/FITPackageCard";
@@ -30,6 +31,7 @@ import { PaymentModal } from "./components/PaymentModal";
 import { BookingConfirmation } from "./components/BookingConfirmation";
 import { AgentReasoningBlock } from "./components/AgentReasoningBlock";
 import { REASONING_STEPS } from "./constants/reasoningSteps";
+import { scheduleScrollChatToLatestUserAnchor } from "./utils/scrollChatToUserAnchor";
 
 /** 내맘대로(항공+호텔) 항공예약정보 단계 진입 시 기본 예약자 정보 */
 const DEFAULT_NAMEMDAE_FLIGHT_BOOKING: BookingFormData = {
@@ -42,6 +44,47 @@ const DEFAULT_NAMEMDAE_FLIGHT_BOOKING: BookingFormData = {
   agreeTerms: true,
   agreeCancellation: true,
 };
+
+// 결제 완료 후 추천 질문 칩
+const POST_PAYMENT_QUESTIONS = [
+  { emoji: "📋", text: "여행 준비 체크리스트 만들어줘" },
+  { emoji: "✈️", text: "공항 가는 방법 알려줘" },
+  { emoji: "💱", text: "환전 얼마나 해가면 돼?" },
+  { emoji: "📱", text: "현지 유심 추천해줘" },
+  { emoji: "🧳", text: "짐 싸는 꿀팁 알려줘" },
+];
+
+function PostPaymentSuggestions({ onAsk }: { onAsk: (q: string) => void }) {
+  const [asked, setAsked] = useState<string | null>(null);
+  return (
+    <div className="space-y-2.5">
+      <p className="text-[14px] text-[#111] leading-relaxed">
+        예약이 완료됐어요! 🎉<br />
+        여행 준비에 대해 더 도움이 필요하신가요?
+      </p>
+      <div className="flex flex-col gap-2">
+        {POST_PAYMENT_QUESTIONS.map(({ emoji, text }) => (
+          <button
+            key={text}
+            type="button"
+            disabled={asked !== null}
+            onClick={() => { setAsked(text); onAsk(text); }}
+            className={`flex items-center gap-2 w-full text-left px-3.5 py-2.5 rounded-[12px] border text-[13px] font-['Pretendard:SemiBold',sans-serif] transition-colors
+              ${asked === text
+                ? "border-[#5e2bb8] bg-[#f7edff] text-[#5e2bb8]"
+                : asked !== null
+                  ? "border-[#e8e8e8] bg-[#fafafa] text-[#aaa] cursor-not-allowed"
+                  : "border-[#e8e8e8] bg-white text-[#333] hover:border-[#5e2bb8] hover:bg-[#f7edff] hover:text-[#5e2bb8]"
+              }`}
+          >
+            <span className="text-[16px] shrink-0">{emoji}</span>
+            <span>{text}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // 클릭 시 사라지는 버튼 그룹
 function DismissableButtons({ buttons }: { buttons: { label: string; onClick: () => void; className: string }[] }) {
@@ -1408,6 +1451,11 @@ export default function App() {
   const [showComparison, setShowComparison] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showPackageBookingSheet, setShowPackageBookingSheet] = useState(false);
+  /** 인라인 상세 → 인원 A2UI에서 확정한 성인/아동 수 (없으면 예약 시트 기본 1/0) */
+  const [packageBookingTravelers, setPackageBookingTravelers] = useState<{
+    adults: number;
+    children: number;
+  } | null>(null);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [showFitHotelComplete, setShowFitHotelComplete] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState(0);
@@ -1728,6 +1776,7 @@ export default function App() {
                 }]);
               }
               setStep("fit-packages");
+              scheduleScrollChatToLatestUserAnchor();
             }}
           />
         )
@@ -1790,6 +1839,7 @@ export default function App() {
                 content: packageResultMsg
               }]);
               setStep("packages");
+              scheduleScrollChatToLatestUserAnchor();
             }}
           />
         )
@@ -1824,7 +1874,7 @@ export default function App() {
           <PackageInlineDetail
             package={pkg}
             onGoBack={focusRecommendedPackagesList}
-            onBooking={() => handleBooking(pkg)}
+            onBooking={() => beginPackageBookingWithTravelerPicker(pkg)}
           />
         ),
       },
@@ -1868,10 +1918,7 @@ export default function App() {
                     ),
                   },
                 ]);
-                setTimeout(() => {
-                  const root = document.querySelector("[data-sheet-scroll-root]");
-                  root?.scrollTo({ top: root.scrollHeight, behavior: "smooth" });
-                }, 50);
+                scheduleScrollChatToLatestUserAnchor(50);
               }}
             />
           ),
@@ -1914,6 +1961,7 @@ export default function App() {
                 type: "bot",
                 content: `다른 추천 상품을 찾았습니다! 총 ${totalShow}개의 추천 상품을 확인해보세요.`
               }]);
+              scheduleScrollChatToLatestUserAnchor();
             }}
           />
         )
@@ -1939,6 +1987,7 @@ export default function App() {
                   type: "bot",
                   content: "항공+호텔 조합의 가격, 항공사, 호텔등급 등을 비교해 드립니다!"
                 }]);
+                scheduleScrollChatToLatestUserAnchor();
               }}
             />
           )
@@ -1965,6 +2014,7 @@ export default function App() {
                   type: "bot",
                   content: "항공편의 가격, 항공사, 비행시간 등을 비교해 드립니다!"
                 }]);
+                scheduleScrollChatToLatestUserAnchor();
               }}
             />
           )
@@ -1991,6 +2041,7 @@ export default function App() {
                   type: "bot",
                   content: "호텔의 가격, 등급, 위치 등을 비교해 드립니다!"
                 }]);
+                scheduleScrollChatToLatestUserAnchor();
               }}
             />
           )
@@ -2023,6 +2074,7 @@ export default function App() {
                 type: "bot",
                 content: `다른 추천 조합 ${newRecommendations.length}개를 찾았습니다! 확인해보세요.`
               }]);
+              scheduleScrollChatToLatestUserAnchor();
             }}
           />
         )
@@ -2054,6 +2106,7 @@ export default function App() {
                 type: "bot",
                 content: `다른 추천 항공편 ${newRecommendations.length}개를 찾았습니다! 확인해보세요.`
               }]);
+              scheduleScrollChatToLatestUserAnchor();
             }}
           />
         )
@@ -2085,6 +2138,7 @@ export default function App() {
                 type: "bot",
                 content: `다른 추천 호텔 ${newRecommendations.length}개를 찾았습니다! 확인해보세요.`
               }]);
+              scheduleScrollChatToLatestUserAnchor();
             }}
           />
         )
@@ -2092,13 +2146,62 @@ export default function App() {
     ]);
   };
 
-  // 예약하기 - 패키지 예약 시 캡처 화면 스타일 바텀시트 표시
-  const handleBooking = (pkg: PackageData) => {
+  // 예약하기 - 패키지 예약 시트 (travelers: 인라인 A2UI에서 전달 시 요금·인원 반영)
+  const handleBooking = (pkg: PackageData, travelers?: { adults: number; children: number }) => {
     setSelectedPackage(pkg);
+    if (travelers) {
+      setPackageBookingTravelers(travelers);
+    } else {
+      setPackageBookingTravelers(null);
+    }
     setShowDetail(false);
     setShowComparison(false);
     setShowPackageBookingSheet(true);
     setStep("booking");
+  };
+
+  /** 패키지 예약 — 채팅에 인원 선택 A2UI 후 예약 시트 (userBubble: 목록은「예약하기」등) */
+  const beginPackageBookingWithTravelerPicker = (
+    pkg: PackageData,
+    userBubbleText: string = "상품 예약하기",
+  ) => {
+    // 인라인 상세(PackageInlineDetail) 등 이전 메시지를 유지하면 예약 단계에서도 상세가 스크롤에 남음 → 예약만 표시
+    setPackageMessages([
+      { type: "user", content: userBubbleText },
+      {
+        type: "bot",
+        content: (
+          <div className="space-y-3">
+            <p className="font-['Pretendard',sans-serif] text-[14px] leading-relaxed text-[#111]">
+              몇명이서 가시는지 알려주세요. 예약단계로 바로 넘어갈 수 있도록 인원에 맞는 총 금액을 알려드릴게요
+            </p>
+            <TravelerCountA2UI
+              package={pkg}
+              onConfirm={(adults, children) => {
+                handleBooking(pkg, { adults, children });
+              }}
+              onCancel={() => {}}
+            />
+            <div className="pt-1">
+              <p className="text-[14px] leading-relaxed text-[#111]">
+                <span className="mr-1" aria-hidden>
+                  💡
+                </span>
+                <span className="font-['Pretendard:Bold',sans-serif] text-[rgba(55,127,255,1)]">H-AI TIP</span>
+                <span className="text-[#444]"> 관련해서 이런 질문도 이어갈 수 있어요.</span>
+              </p>
+              <ul className="mt-2 space-y-1.5 pl-0.5 text-[14px] text-[#333]">
+                <li>
+                  • 인원 구성을 바꾸면 적용되는 할인이나 유아·아동 요금 규정이 달라지는지 알려줘.
+                </li>
+                <li>• 선택한 인원 기준으로 예상 결제 금액을 항목별로 정리해줘.</li>
+              </ul>
+            </div>
+          </div>
+        ),
+      },
+    ]);
+    scheduleScrollChatToLatestUserAnchor(80);
   };
 
   // 자유여행 예약하기 - 바로 룸타입 선택 팝업 표시
@@ -2146,13 +2249,20 @@ export default function App() {
   const handlePaymentSuccess = () => {
     setShowPayment(false);
     setShowPaymentSheet(false);
+    setPackageBookingTravelers(null);
     const confirmationNumber = `HAI${Date.now().toString().slice(-8)}`;
     setBookingNumber(confirmationNumber);
 
-    setMessages(prev => [...prev, {
-      type: "bot",
-      content: "🎉 결제가 완료되었습니다! 예약이 확정되었습니다."
-    }]);
+    setMessages(prev => [...prev,
+      {
+        type: "bot",
+        content: "🎉 결제가 완료되었습니다! 예약이 확정되었습니다.",
+      },
+      {
+        type: "bot",
+        content: <PostPaymentSuggestions onAsk={handleSendMessage} />,
+      },
+    ]);
 
     // 호텔 전용: PaymentSheet 완료 화면만 사용, BookingConfirmation 없이 초기화
     if (selectedHotel && !selectedFitPackage) {
@@ -2242,7 +2352,7 @@ export default function App() {
                     key={pkg.id}
                     package={pkg}
                     onClick={() => handlePackageClick(pkg)}
-                    onBooking={() => handleBooking(pkg)}
+                    onBooking={() => beginPackageBookingWithTravelerPicker(pkg, "예약하기")}
                   />
                 ))
               : (
@@ -2268,7 +2378,7 @@ export default function App() {
                       key={airtelPackage.id}
                       package={airtelPackage}
                       onClick={() => handlePackageClick(airtelPackage)}
-                      onBooking={() => handleBooking(airtelPackage)}
+                      onBooking={() => beginPackageBookingWithTravelerPicker(airtelPackage, "예약하기")}
                     />
                     {/* 추천검색: 3번째 호텔 */}
                     <HotelCard
@@ -2328,7 +2438,8 @@ export default function App() {
           )}
 
         {/* 패키지 인터랙션 메시지 (비교 등) - 카드 리스트 바깥 */}
-        {step === "packages" && packageMessages.map((msg, index) => (
+        {(step === "packages" || step === "booking" || step === "payment") &&
+          packageMessages.map((msg, index) => (
           <ChatMessage
             key={`package-${index}`}
             type={msg.type}
@@ -2362,7 +2473,7 @@ export default function App() {
               key={airtelPackage.id}
               package={airtelPackage}
               onClick={() => handlePackageClick(airtelPackage)}
-              onBooking={() => handleBooking(airtelPackage)}
+              onBooking={() => beginPackageBookingWithTravelerPicker(airtelPackage, "예약하기")}
             />
             {step === "fit-packages" && fitPackages.length >= 2 && (
               <div className="flex gap-2">
@@ -2596,8 +2707,11 @@ export default function App() {
       {showPackageBookingSheet && selectedPackage && (
         <PackageBookingSheet
           package={selectedPackage}
+          travelerAdults={packageBookingTravelers?.adults}
+          travelerChildren={packageBookingTravelers?.children}
           onClose={() => {
             setShowPackageBookingSheet(false);
+            setPackageBookingTravelers(null);
             setStep(fitSearchMode === "combo" && fitPackages.length > 0 ? "fit-packages" : "packages");
           }}
           onSubmit={handleBookingSubmitFromSheet}
@@ -2609,7 +2723,10 @@ export default function App() {
         <PaymentSheet
           amount={paymentAmount}
           onSuccess={handlePaymentSuccess}
-          onClose={() => { setShowPaymentSheet(false); setStep("packages"); }}
+          onClose={() => {
+            setShowPaymentSheet(false);
+            setStep(fitSearchMode === "combo" && fitPackages.length > 0 ? "fit-packages" : "packages");
+          }}
           bookerName={bookingData?.name}
           reservationTitle={selectedHotel?.name ?? selectedPackage?.title ?? selectedFitPackage?.hotelInfo?.name ?? selectedFitPackage?.destination}
           isFitCombo={!!selectedFitPackage && !selectedHotel && !selectedPackage}

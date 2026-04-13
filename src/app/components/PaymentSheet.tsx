@@ -51,7 +51,17 @@ type PaymentMethod = "card" | "bank" | "kakao" | "payco" | "naver";
 
 type CardOption = "samsung" | "hana" | null;
 
-export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객", reservationTitle, completionDetails, isFitCombo = false, skipPayment = false, skipCompletion = false }: PaymentSheetProps) {
+export function PaymentSheet({
+  amount,
+  onSuccess,
+  onClose,
+  bookerName = "고객",
+  reservationTitle,
+  completionDetails,
+  isFitCombo = false,
+  skipPayment = false,
+  skipCompletion = false,
+}: PaymentSheetProps) {
   useLockBodyScroll();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [selectedCard, setSelectedCard] = useState<CardOption>(null);
@@ -101,22 +111,21 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
   };
 
   const displayName = bookerName.endsWith("님") ? bookerName : `${bookerName}님`;
+  const screenTransition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] as const };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-[60] flex items-end"
+    <div
+      className="fixed inset-0 z-[60] flex justify-center bg-black/25"
       onClick={onClose}
+      role="presentation"
     >
       <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={screenTransition}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-h-[90vh] flex flex-col justify-center items-center rounded-t-[24px]"
+        className="relative h-full w-full flex flex-col min-h-0 overflow-hidden bg-white shadow-[-10px_0_40px_rgba(0,0,0,0.12)]"
       >
         {isPaymentComplete ? (
           /* 결제완료 화면 — 캡처와 동일 구성 */
@@ -768,6 +777,6 @@ export function PaymentSheet({ amount, onSuccess, onClose, bookerName = "고객"
           </>
         )}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

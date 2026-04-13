@@ -1,4 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { scheduleScrollChatToLatestUserAnchor } from "../utils/scrollChatToUserAnchor";
+import icLikeFilled from "../../assets/icons/ic-like.svg?url";
+import icLikeOutline from "../../assets/icons/ic-like-1.svg?url";
 import { PackageData } from "./PackageCard";
 
 interface PackageInlineDetailProps {
@@ -70,15 +73,13 @@ function formatIncheonDepartureSchedule(pkg: PackageData): string {
 
 export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: PackageInlineDetailProps) {
   const [showFull, setShowFull] = useState(false);
+  const [liked, setLiked] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const itinerary = buildItinerary(pkg);
   const visible = showFull ? itinerary : itinerary.slice(0, 2);
 
   useLayoutEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-    el.focus({ preventScroll: true });
+    scheduleScrollChatToLatestUserAnchor();
   }, []);
 
   return (
@@ -105,12 +106,28 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
           <span className="absolute top-[9px] left-[9px] inline-flex items-center justify-center rounded-[4px] bg-[#F6F2FB] px-[6px] py-[4px] text-[10px] leading-[110%] text-[#5E2BB8]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
             패키지
           </span>
+          <button
+            type="button"
+            aria-label={liked ? "찜 해제" : "찜하기"}
+            aria-pressed={liked}
+            onClick={() => setLiked((v) => !v)}
+            className="absolute bottom-1.5 right-1.5 flex size-8 items-center justify-center rounded-full bg-transparent p-0 transition-opacity hover:opacity-90 active:opacity-80"
+          >
+            <img
+              src={liked ? icLikeFilled : icLikeOutline}
+              alt=""
+              width={24}
+              height={24}
+              className="size-6 select-none pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.28)]"
+              draggable={false}
+            />
+          </button>
         </div>
 
         {/* 콘텐츠 영역 */}
         <div className="mx-[14px]">
-          {/* 제목 — Inter 13px/500, #1A1A2E */}
-          <p className="mt-[6px] text-[13px] font-medium leading-[16px] text-[#1A1A2E] line-clamp-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+          {/* 제목 — Inter 15px/600, #1A1A2E */}
+          <p className="mt-[6px] text-[15px] font-semibold leading-[16px] text-[#1A1A2E] line-clamp-2" style={{ fontFamily: "'Inter', sans-serif" }}>
             {pkg.title}
           </p>
 
@@ -159,7 +176,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
             <span className="text-[11px] leading-[13px] text-[#36264D]" style={{ fontFamily: "'Inter', sans-serif" }}>
               1인 기준
             </span>
-            <span className="text-[13px] font-bold leading-[16px] text-[#5C3FD3] tabular-nums" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <span className="text-[15px] font-bold leading-[16px] text-[#5C3FD3] tabular-nums" style={{ fontFamily: "'Inter', sans-serif" }}>
               {pkg.price.toLocaleString()}원~
             </span>
           </div>
@@ -172,8 +189,8 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
           상세 일정
         </h4>
 
-        {/* 아이템 목록 — 2일차까지 완전히 노출 */}
-        <div>
+        {/* 아이템 목록 — 접힘 시 하단(2일차 일부)에 흰색 페이드 + 더보기 겹침 */}
+        <div className={!showFull && itinerary.length > 2 ? "relative pb-[52px]" : undefined}>
           {visible.map((day, i) => {
             const isLastRow = i === visible.length - 1;
             const rowBorder = isLastRow
@@ -207,28 +224,30 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
             </div>
             );
           })}
-        </div>
 
-        {/* 접힌 상태: 아이템 아래 페이드 힌트 영역 + 더보기 버튼 */}
-        {!showFull && itinerary.length > 2 && (
-          <div className="relative h-[68px]">
-            {/* 페이드 그라디언트 — 카드 배경(#fff)으로 서서히 사라짐 */}
-            <div
-              className="absolute inset-x-0 top-0 h-full pointer-events-none"
-              style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 30%, #ffffff 70%)" }}
-            />
-            {/* 더보기 버튼 — 페이드 위에 위치 */}
-            <div className="absolute inset-x-0 bottom-0 pb-3">
-              <button
-                type="button"
-                onClick={() => setShowFull(true)}
-                className="w-full py-2 rounded-full border border-[#e0e0e0] bg-white font-['Pretendard:SemiBold',sans-serif] text-[12px] text-[#555] shadow-sm hover:bg-[#f5f5f5] transition-colors"
-              >
-                더보기 ({itinerary.length - 2}개 일정 더 보기)
-              </button>
-            </div>
-          </div>
-        )}
+          {!showFull && itinerary.length > 2 && (
+            <>
+              {/* 2일차 하단을 덮는 흰색 투명 그라데이션 — 더보기 클릭 시(showFull) 비표시 */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[104px]"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.65) 28%, rgba(255, 255, 255, 0.9) 58%, rgba(255, 255, 255, 1) 100%)",
+                }}
+              />
+              <div className="absolute inset-x-0 bottom-0 z-[2] pb-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFull(true)}
+                  className="w-full py-2 rounded-full border border-[#e0e0e0] bg-white font-semibold font-['Pretendard:SemiBold',sans-serif] text-[12px] text-[#555] shadow-sm hover:bg-[#f5f5f5] transition-colors"
+                >
+                  더보기 ({itinerary.length - 2}개 일정 더 보기)
+                </button>
+              </div>
+            </>
+          )}
+        </div>
 
         <div className="h-1" />
       </div>

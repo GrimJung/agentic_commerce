@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "./ui/accordion";
 import { cn } from "./ui/utils";
+import { PACKAGE_PREVIEW_COUPON_DISCOUNT } from "./PackageBookingPricePreview";
 
 const DEPOSIT_AMOUNT = 100_000;
 
@@ -20,6 +21,9 @@ interface PackageBookingSheetProps {
   onSubmit: (data: BookingFormData) => void;
   /** 예약금/총액 버튼 클릭 시 결제하기 화면으로 이동할 때 호출 (금액 전달) */
   onRequestPayment: (amount: number) => void;
+  /** 미지정 시 성인 1·아동 0 (1인 기준 상품가) */
+  travelerAdults?: number;
+  travelerChildren?: number;
 }
 
 // 목업 예약자 정보
@@ -90,6 +94,8 @@ export function PackageBookingSheet({
   onClose,
   onSubmit,
   onRequestPayment,
+  travelerAdults,
+  travelerChildren,
 }: PackageBookingSheetProps) {
   useLockBodyScroll();
   const [travelerTab, setTravelerTab] = useState<"now" | "later">("now");
@@ -106,9 +112,19 @@ export function PackageBookingSheet({
   const [showFlightDetail, setShowFlightDetail] = useState(true);
 
   const endDate = parseEndDate(pkg.departure, pkg.duration);
-  const totalPrice = pkg.price;
-  const discountAmount = Math.min(Math.floor(totalPrice * 0.05), 50000);
-  const finalPrice = totalPrice - discountAmount;
+  const adultCount = Math.max(1, travelerAdults ?? 1);
+  const childCount = Math.max(0, travelerChildren ?? 0);
+  const childRate = 0.75;
+  const grossTotal = pkg.price * adultCount + Math.round(pkg.price * childRate) * childCount;
+  const discountAmount = Math.min(Math.floor(grossTotal * 0.05), 50000);
+  const couponDiscount = PACKAGE_PREVIEW_COUPON_DISCOUNT;
+  const finalPrice = Math.max(0, grossTotal - discountAmount - couponDiscount);
+  const travelerSummary =
+    childCount > 0
+      ? `성인 ${adultCount}명, 아동 ${childCount}명`
+      : adultCount > 1
+        ? `성인 ${adultCount}명`
+        : "성인 1";
 
   const handleAgreeAll = (checked: boolean) => {
     setAgreeAll(checked);
@@ -135,21 +151,21 @@ export function PackageBookingSheet({
   const handlePayFull = () => submitBookingAndRequestPayment(finalPrice);
   const handlePayDeposit = () => submitBookingAndRequestPayment(DEPOSIT_AMOUNT);
 
+  const screenTransition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] as const };
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 z-50 flex items-end"
+    <div
+      className="fixed inset-0 z-50 flex justify-center bg-black/25"
       onClick={onClose}
+      role="presentation"
     >
       <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={screenTransition}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-h-[90vh] flex flex-col justify-center items-center rounded-t-[24px]"
+        className="relative h-full w-full min-h-0 flex flex-col overflow-hidden bg-white shadow-[-10px_0_40px_rgba(0,0,0,0.12)]"
       >
         {/* 헤더: 예약하기 타이틀 + 우측 닫기 */}
         <div className="w-full shrink-0 flex items-center justify-between px-4 py-3 border-b border-[#eee]">
@@ -196,7 +212,7 @@ export function PackageBookingSheet({
             {/* 인원 */}
             <div className="mt-3 px-3 py-2 rounded-[10px] bg-[#f5f5f5] text-[13px]">
               <span className="text-[#888]">인원</span>
-              <span className="text-[#333] ml-1.5">성인 1</span>
+              <span className="text-[#333] ml-1.5">{travelerSummary}</span>
             </div>
 
             {/* 출발일 · 기간 · 도착일 카드 */}
@@ -608,16 +624,20 @@ export function PackageBookingSheet({
               <AccordionContent className="px-4 pb-4 text-[13px]">
                 <div className="flex justify-between font-['Pretendard:SemiBold',sans-serif] text-[15px] font-semibold text-[#111]">
                   <span>총 상품금액</span>
-                  <span>{totalPrice.toLocaleString()}원</span>
+                  <span>{grossTotal.toLocaleString()}원</span>
                 </div>
                 <div className="mt-2 space-y-1 text-[#666]">
                   <div className="flex justify-between">
                     <span>ㄴ 상품금액</span>
-                    <span>{totalPrice.toLocaleString()} 원</span>
+                    <span>{grossTotal.toLocaleString()} 원</span>
                   </div>
                   <div className="flex justify-between">
                     <span>ㄴ 즉시할인금액</span>
                     <span className="text-[#666]">-{discountAmount.toLocaleString()} 원</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ㄴ 쿠폰할인</span>
+                    <span className="text-[#c62828]">-{couponDiscount.toLocaleString()} 원</span>
                   </div>
                 </div>
                 <div className="border-t border-dashed border-[#ddd] my-3" />
@@ -681,6 +701,6 @@ export function PackageBookingSheet({
           </button>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

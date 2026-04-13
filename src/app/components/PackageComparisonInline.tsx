@@ -413,7 +413,11 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
           )}
         </div>
 
-        <div className="relative mb-4">
+        <div
+          className="relative mb-4"
+          aria-busy={!llmPointsReady}
+          aria-label={llmPointsReady ? undefined : "맞춤 분석 요약 생성 중"}
+        >
           <span
             className="absolute left-[17px] top-0 z-10 inline-flex -translate-y-1/2 items-center justify-center rounded-md px-2 py-0.5 text-[11px] font-semibold"
             style={{ backgroundColor: "rgba(204, 228, 255, 1)", color: "#3B82F6" }}
@@ -421,46 +425,92 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
             TIP
           </span>
           <div className="rounded-[10px] px-4 py-3" style={{ backgroundColor: "rgba(147,197,253,0.12)" }}>
-            <p className="m-0 min-w-0 pt-[5px] text-[13px] font-medium leading-[1.4] text-[#1e3a8a]">{tipText}</p>
+            {llmPointsReady ? (
+              <p className="m-0 min-w-0 pt-[5px] text-[13px] font-medium leading-[1.4] text-[#1e3a8a]">{tipText}</p>
+            ) : (
+              <div className="flex flex-col gap-2 pt-[5px] min-h-[44px]" aria-hidden>
+                <Skeleton className="h-3.5 w-full max-w-full rounded-md bg-sky-300/35" />
+                <Skeleton className="h-3.5 w-[94%] max-w-full rounded-md bg-sky-300/35" />
+                <Skeleton className="h-3.5 w-[72%] max-w-full rounded-md bg-sky-300/35" />
+              </div>
+            )}
           </div>
         </div>
 
         {/* 상품 요약 카드 — 뱃지·별·핵심문구 한 행, 설명은 하단 전체 너비 */}
-        <div className="w-full flex flex-col gap-2">
-          {displayPackages.map((pkg, index) => {
-            const id = labels[index];
-            const badgeStyle = PRODUCT_BADGE_COLORS[id] ?? PRODUCT_BADGE_COLORS.A;
-            const starCount = 3 - index;
-            const desc = pkg.recommendReason?.trim() ?? "";
-            const coreLine = keywordCoreRecommendationLine(pkg, selectedCompanion, selectedPurpose, selectedStyle);
-            return (
-              <div
-                key={pkg.id}
-                className={`flex flex-col gap-2 w-full min-w-0 rounded-lg border p-3 bg-white ${index === 0 ? "border-[#93C5FD]" : "border-gray-200"}`}
-                style={index === 0 ? { boxShadow: "0 0 0 1.5px rgba(147,197,253,0.9), 0 0 8px 2px rgba(147,197,253,0.4)" } : undefined}
-              >
-                <div className="flex min-w-0 w-full items-center gap-2">
-                  <span className="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium" style={{ background: badgeStyle.bg, color: badgeStyle.color }}>
-                    {id}
-                  </span>
-                  <div className="flex h-6 flex-shrink-0 items-center justify-start gap-[3px] px-0">
-                    {[1, 2, 3].map((i) => (
-                      <span key={i} className="inline-block flex-shrink-0 rounded-sm" style={{ width: "8px", height: "10px", backgroundColor: i <= starCount ? "#fbbf24" : "#E5E7EB" }} />
-                    ))}
-                  </div>
-                  <span
-                    className="min-w-0 flex-1 text-[12px] font-semibold leading-snug text-gray-800 line-clamp-2"
-                    title={pkg.title}
+        <div
+          className="w-full flex flex-col gap-2"
+          aria-busy={!llmPointsReady}
+          aria-label={llmPointsReady ? undefined : "상품별 맞춤 요약 생성 중"}
+        >
+          {!llmPointsReady
+            ? displayPackages.map((_, index) => {
+                const id = labels[index];
+                const isFirst = index === 0;
+                return (
+                  <div
+                    key={`keyword-skeleton-${id}`}
+                    className={`flex flex-col gap-2 w-full min-w-0 rounded-lg border p-3 bg-white ${isFirst ? "border-[#93C5FD]" : "border-gray-200"}`}
+                    style={
+                      isFirst
+                        ? { boxShadow: "0 0 0 1.5px rgba(147,197,253,0.9), 0 0 8px 2px rgba(147,197,253,0.4)" }
+                        : undefined
+                    }
+                    aria-hidden
                   >
-                    {coreLine}
-                  </span>
-                </div>
-                {desc ? (
-                  <span className="block w-full min-w-0 text-[11px] leading-snug text-gray-500 line-clamp-2">{desc}</span>
-                ) : null}
-              </div>
-            );
-          })}
+                    <div className="flex min-w-0 w-full items-center gap-2">
+                      <Skeleton className="h-6 w-6 flex-shrink-0 rounded-full bg-violet-200/45" />
+                      <div className="flex h-6 flex-shrink-0 items-center gap-[3px]">
+                        <Skeleton className="w-2 h-2.5 rounded-sm bg-amber-200/35" />
+                        <Skeleton className="w-2 h-2.5 rounded-sm bg-amber-200/35" />
+                        <Skeleton className="w-2 h-2.5 rounded-sm bg-amber-200/35" />
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col gap-1.5 justify-center">
+                        <Skeleton className="h-3 w-full rounded-md bg-gray-200/70" />
+                        <Skeleton className="h-3 w-[78%] rounded-md bg-gray-200/70" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 w-full pl-0">
+                      <Skeleton className="h-2.5 w-full rounded-md bg-gray-200/55" />
+                      <Skeleton className="h-2.5 w-[88%] rounded-md bg-gray-200/55" />
+                    </div>
+                  </div>
+                );
+              })
+            : displayPackages.map((pkg, index) => {
+                const id = labels[index];
+                const badgeStyle = PRODUCT_BADGE_COLORS[id] ?? PRODUCT_BADGE_COLORS.A;
+                const starCount = 3 - index;
+                const desc = pkg.recommendReason?.trim() ?? "";
+                const coreLine = keywordCoreRecommendationLine(pkg, selectedCompanion, selectedPurpose, selectedStyle);
+                return (
+                  <div
+                    key={pkg.id}
+                    className={`flex flex-col gap-2 w-full min-w-0 rounded-lg border p-3 bg-white ${index === 0 ? "border-[#93C5FD]" : "border-gray-200"}`}
+                    style={index === 0 ? { boxShadow: "0 0 0 1.5px rgba(147,197,253,0.9), 0 0 8px 2px rgba(147,197,253,0.4)" } : undefined}
+                  >
+                    <div className="flex min-w-0 w-full items-center gap-2">
+                      <span className="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-medium" style={{ background: badgeStyle.bg, color: badgeStyle.color }}>
+                        {id}
+                      </span>
+                      <div className="flex h-6 flex-shrink-0 items-center justify-start gap-[3px] px-0">
+                        {[1, 2, 3].map((i) => (
+                          <span key={i} className="inline-block flex-shrink-0 rounded-sm" style={{ width: "8px", height: "10px", backgroundColor: i <= starCount ? "#fbbf24" : "#E5E7EB" }} />
+                        ))}
+                      </div>
+                      <span
+                        className="min-w-0 flex-1 text-[12px] font-semibold leading-snug text-gray-800 line-clamp-2"
+                        title={pkg.title}
+                      >
+                        {coreLine}
+                      </span>
+                    </div>
+                    {desc ? (
+                      <span className="block w-full min-w-0 text-[11px] leading-snug text-gray-500 line-clamp-2">{desc}</span>
+                    ) : null}
+                  </div>
+                );
+              })}
         </div>
       </div>
 
@@ -500,6 +550,20 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
       >
         추천 상품 목록가기
       </button>
+
+      <div className="w-full pt-1" role="region" aria-label="이어서 물어보기">
+        <p className="text-[14px] leading-relaxed text-[#111] m-0">
+          <span className="mr-1" aria-hidden>
+            💡
+          </span>
+          <span className="font-['Pretendard:Bold',sans-serif] text-[rgba(55,127,255,1)]">H-AI TIP</span>
+          <span className="text-[#444]"> 관련해서 이런 질문도 이어갈 수 있어요.</span>
+        </p>
+        <ul className="mt-2 space-y-1.5 pl-0.5 text-[14px] text-[#333] list-none m-0 p-0">
+          <li>• 첫번째 상품을 빼고 비교해줘.</li>
+          <li>• 세번째 상품과 유사하지만 저렴한 상품으로 추천해줘.</li>
+        </ul>
+      </div>
     </div>
   );
 }
