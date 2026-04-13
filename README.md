@@ -59,8 +59,7 @@ src/
 ├── app/
 │   ├── App.tsx              # 단일 앱, step 기반 플로우 및 상태
 │   ├── constants/
-│   │   ├── reasoningSteps.ts # AI 추론 단계 메시지
-│   │   └── figmaDesign.ts    # Figma 디자인 URL·fileKey·nodeId (MCP·팀 공유)
+│   │   └── reasoningSteps.ts # AI 추론 단계 메시지
 │   └── components/
 │       ├── MainPage.tsx     # 랜딩 (칩 메뉴)
 │       ├── ChatMessage.tsx
@@ -212,31 +211,6 @@ git push -u origin main
 |------|------|
 | 2026-03-23 | **Archive**: 항공+호텔(FIT 조합) 예약·결제 프로세스를 `docs/archive/`에 저장 (신규 로직 작업 시 원복 참고) |
 | 2026-03-18 | **PackageDetail UI**: "H-AI 요약" 라벨 폰트 크기 12px → 10px 적용; "30% 자유시간 보장" 텍스트 줄바꿈 방지(`whitespace-nowrap`) 적용 |
-
----
-
-## 🎨 Figma 디자인과 연결하기
-
-**디자인 파일(하나투어):**  
-[figma.com/design/VW7b6yIt3R37ckL7XnRMGo … node 384-6](https://www.figma.com/design/VW7b6yIt3R37ckL7XnRMGo/%ED%95%98%EB%82%98%ED%88%AC%EC%96%B4?node-id=384-6)
-
-코드베이스에는 동일 링크와 MCP용 식별자가 `src/app/constants/figmaDesign.ts`에 있습니다 (`FIGMA_FILE_KEY`, `FIGMA_NODE_ID`).
-
-### 1) Cursor에서 Figma MCP로 이 파일과 맞추기
-
-1. **Settings → MCP**에서 Figma 공식 MCP(`plugin-figma-figma` 등)를 켜고 **로그인·인증**을 완료합니다.  
-2. 채팅에서 위 URL을 붙이거나, `fileKey` + `nodeId`로 디자인 컨텍스트를 요청합니다.  
-   - `fileKey`: `VW7b6yIt3R37ckL7XnRMGo`  
-   - `nodeId`: URL의 `384-6` → MCP/API에서는 **`384:6`** (하이픈을 콜론으로)
-
-### 2) Figma 쪽에서 “이 구현”과 묶고 싶을 때
-
-- **프로토타입·스펙**: Figma 파일/프레임 설명에 **이 저장소 URL** 또는 **Vercel 라이브 데모** 링크를 적어 두면 됩니다.  
-- **컴포넌트 단위 매핑**: [Figma Code Connect](https://www.figma.com/developers/code-connect)로 React 컴포넌트와 Figma 컴포넌트를 1:1로 연결할 수 있습니다. (별도 `@figma/code-connect` 설정·CLI가 필요합니다.)
-
-### 3) 로컬 전용 MCP(`user-figma`, `127.0.0.1:…`)를 쓰는 경우
-
-Figma **데스크톱**에서 MCP 서버를 켠 뒤, Cursor MCP URL의 **포트가 데스크톱에 표시된 값과 같은지** 확인합니다. 브라우저만 쓰면 로컬 포트에 연결되지 않을 수 있습니다.
 
 ---
 
