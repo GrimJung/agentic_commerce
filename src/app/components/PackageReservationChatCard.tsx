@@ -20,11 +20,18 @@ function Row({
 }) {
   const rowClass =
     variant === "title"
-      ? "flex items-start justify-between gap-3"
+      ? "flex items-start justify-between gap-3 border-b-0"
       : "flex items-start justify-between gap-3 border-b border-[#e6e6e6] py-2.5 last:border-b-0";
 
   return (
-    <div className={rowClass}>
+    <div
+      className={rowClass}
+      style={
+        variant === "title"
+          ? { borderBottomWidth: 0, borderBottomStyle: "none", paddingBlock: 0 }
+          : undefined
+      }
+    >
       <span className="shrink-0 pt-0.5 text-[13px] font-['Pretendard:Medium',sans-serif] text-[#888]">{label}</span>
       <span
         className={`max-w-[62%] min-w-0 text-right text-[13px] font-['Pretendard:SemiBold',sans-serif] leading-snug text-[#111] ${
