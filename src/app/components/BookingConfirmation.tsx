@@ -76,20 +76,13 @@ export function BookingConfirmation({
   const displayName = bookerName.endsWith("님") ? bookerName : `${bookerName}님`;
 
   const actionButtons = (
-    <div className="w-full space-y-2.5 px-4 pt-4 pb-3">
-      <button
-        type="button"
-        onClick={onClose}
-        className="w-full rounded-[14px] bg-[#3780ff] py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-white transition-colors hover:bg-[#2d6fdf] active:bg-[#256bd0]"
-      >
-        확인
-      </button>
+    <div className="w-full px-4 pt-4 pb-3">
       <button
         type="button"
         onClick={onClose}
         className="w-full rounded-[14px] border border-[#e5e5e5] bg-white py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#555] transition-colors hover:bg-[#f5f5f5]"
       >
-        예약 내역 보기
+        결제내역 보기
       </button>
     </div>
   );

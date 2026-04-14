@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Plus, Mic } from "lucide-react";
 import { MainPage } from "./components/MainPage";
-import { ChatMessage } from "./components/ChatMessage";
+import { ChatMessage, type ChatBotLayout, type ChatUserLayout } from "./components/ChatMessage";
+import { PackageReservationChatCard } from "./components/PackageReservationChatCard";
 import { PreferenceInput } from "./components/PreferenceInput";
 import { PackageCard, PackageData } from "./components/PackageCard";
 import { PackageDetail } from "./components/PackageDetail";
@@ -54,7 +55,13 @@ const POST_PAYMENT_QUESTIONS = [
   { emoji: "🧳", text: "짐 싸는 꿀팁 알려줘" },
 ];
 
-function PostPaymentSuggestions({ onAsk }: { onAsk: (q: string) => void }) {
+function PostPaymentSuggestions({
+  onAsk,
+  reservationCard,
+}: {
+  onAsk: (q: string) => void;
+  reservationCard?: ReactNode;
+}) {
   const [asked, setAsked] = useState<string | null>(null);
   return (
     <div className="space-y-2.5">
@@ -62,6 +69,9 @@ function PostPaymentSuggestions({ onAsk }: { onAsk: (q: string) => void }) {
         예약이 완료됐어요! 🎉<br />
         여행 준비에 대해 더 도움이 필요하신가요?
       </p>
+      {reservationCard ? (
+        <div className="max-w-[min(320px,calc(100vw-2.5rem))]">{reservationCard}</div>
+      ) : null}
       <div className="flex flex-col gap-2">
         {POST_PAYMENT_QUESTIONS.map(({ emoji, text }) => (
           <button
@@ -161,18 +171,19 @@ function ChatInput({ onSend }: { onSend: (message: string) => void }) {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="궁금한 내용을 H-AI에게 물어보..."
-            className="w-full rounded-full border border-[#e5e5e5] bg-white py-3 pl-4 pr-[88px] text-[14px] text-[#111] placeholder:text-[#999] focus:outline-none focus:ring-2 focus:ring-[#3780ff]/25"
+            className="w-full rounded-full border border-[#e5e5e5] bg-white py-3 pl-4 pr-[100px] text-[14px] text-[#111] placeholder:text-[#999] focus:outline-none focus:ring-2 focus:ring-[#3780ff]/25"
           />
-          <div className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2.5">
-            <Mic className="size-[18px] text-[#666]" strokeWidth={1.75} />
-            <svg className="size-[18px] text-[#7b3ff2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-              <path d="M4 12v-2a4 4 0 014-4" />
-              <path d="M4 6v6a4 4 0 004 4" />
-              <path d="M8 10v4" />
-              <path d="M12 8v8" />
-              <path d="M16 6v12" />
-              <path d="M20 9v6" />
-            </svg>
+          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2.5">
+            <Mic className="pointer-events-none size-[18px] text-[#666]" strokeWidth={1.75} aria-hidden />
+            <button
+              type="button"
+              aria-label="라이브"
+              className="size-[30px] shrink-0 rounded-[3.2rem] border-0 p-0 shadow-none outline-none focus-visible:ring-2 focus-visible:ring-[#3780ff]/40 focus-visible:ring-offset-2"
+              style={{
+                background:
+                  "#111 url(https://image.hanatour.com/usr/static/svg/icon_live_white.svg) no-repeat 50% / 14px",
+              }}
+            />
           </div>
         </div>
       </div>
@@ -193,6 +204,49 @@ const PRODUCT_COUNTS = {
   /** 자유여행 호텔: 호텔 3개 */
   fitHotel: 3,
 } as const;
+
+type AppChatMessage = {
+  type: "user" | "bot";
+  content: ReactNode;
+  userLayout?: ChatUserLayout;
+  botLayout?: ChatBotLayout;
+};
+
+function mapPackageReservationStatus(status: PackageData["reservationStatus"]): string {
+  switch (status) {
+    case "예약가능":
+      return "예약 가능";
+    case "예약대기":
+      return "예약 대기";
+    case "예약확정":
+      return "예약 확정";
+    case "출발예정":
+      return "출발 예정";
+    default:
+      return "예약 대기";
+  }
+}
+
+/** 결제 직후 안내 블록 안에 넣을 예약 요약 카드 (본문·제안 버튼 사이) */
+function packageReservationChatCardElement(pkg: PackageData | null): ReactNode {
+  const destShort = (pkg?.destination ?? "오사카").split(/[，,]/)[0]?.trim() || "오사카";
+  const title = pkg?.title ?? "미국 4일 #수쿰빗특급호텔 #현지가이드 포함";
+  const period =
+    pkg?.departure && pkg?.duration
+      ? `${pkg.departure} / ${pkg.duration}`
+      : "2024.08.01(금) ~ 2024.08.09(토) / 09박 10일";
+  const airline = pkg?.airline ?? "대한항공";
+  const flightInfo = `서울 ↔ ${destShort} / ${airline}`;
+
+  return (
+    <PackageReservationChatCard
+      productName={title}
+      reservationStatus={mapPackageReservationStatus(pkg?.reservationStatus)}
+      travelPeriod={period}
+      flightInfo={flightInfo}
+    />
+  );
+}
 
 // 목업 패키지 데이터
 const mockPackages: PackageData[] = [
@@ -1442,7 +1496,7 @@ const fitCompletionProposal: { type: "bot"; content: React.ReactNode } = {
 
 export default function App() {
   const [step, setStep] = useState<Step>("main");
-  const [messages, setMessages] = useState<Array<{ type: "user" | "bot"; content: React.ReactNode }>>([]);
+  const [messages, setMessages] = useState<AppChatMessage[]>([]);
   const [showPreferenceInput, setShowPreferenceInput] = useState(false);
   const [recommendedPackages, setRecommendedPackages] = useState<PackageData[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null);
@@ -1465,9 +1519,9 @@ export default function App() {
   const [bookingNumber, setBookingNumber] = useState("");
 
   // 패키지 및 FIT 인터랙션 메시지 상태
-  const [packageMessages, setPackageMessages] = useState<Array<{ type: "user" | "bot"; content: React.ReactNode }>>([]);
+  const [packageMessages, setPackageMessages] = useState<AppChatMessage[]>([]);
   const recommendedPackagesRegionRef = useRef<HTMLDivElement>(null);
-  const [fitMessages, setFitMessages] = useState<Array<{ type: "user" | "bot"; content: React.ReactNode }>>([]);
+  const [fitMessages, setFitMessages] = useState<AppChatMessage[]>([]);
   /** 패키지 조회 구분: 'package-only' = 직접 검색→패키지 (상품 1,2,3 모두 패키지) | 'recommended-mix' = 추천 검색 (상품 1,2 패키지 + 3 항공+호텔) */
   const [packageSearchMode, setPackageSearchMode] = useState<"package-only" | "recommended-mix" | null>(null);
 
@@ -2211,12 +2265,12 @@ export default function App() {
     setBookingData(data);
     setShowBookingForm(false);
     setShowPackageBookingSheet(false);
-    setMessages(prev => [...prev,
-    { type: "user", content: "{패키지 HP12345678} 예약완료" },
-    {
-      type: "bot",
-      content: "예약 정보를 확인했습니다. 결제를 진행해 주세요."
-    }
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "bot",
+        content: "예약 정보를 확인했습니다. 결제를 진행해 주세요.",
+      },
     ]);
     setShowPayment(true);
     setStep("payment");
@@ -2225,9 +2279,9 @@ export default function App() {
   // 패키지 예약 시트 전용: 예약 데이터만 저장 후 결제하기 시트는 onRequestPayment로 열기
   const handleBookingSubmitFromSheet = (data: BookingFormData) => {
     setBookingData(data);
-    setMessages(prev => [...prev,
-      { type: "user", content: "{패키지 HP12345678} 예약완료" },
-      { type: "bot", content: "예약 정보를 확인했습니다. 결제를 진행해 주세요." }
+    setMessages((prev) => [
+      ...prev,
+      { type: "bot", content: "예약 정보를 확인했습니다. 결제를 진행해 주세요." },
     ]);
   };
 
@@ -2247,14 +2301,20 @@ export default function App() {
     const confirmationNumber = `HAI${Date.now().toString().slice(-8)}`;
     setBookingNumber(confirmationNumber);
 
-    setMessages(prev => [...prev,
+    setMessages((prev) => [
+      ...prev,
       {
         type: "bot",
         content: "🎉 결제가 완료되었습니다! 예약이 확정되었습니다.",
       },
       {
         type: "bot",
-        content: <PostPaymentSuggestions onAsk={handleSendMessage} />,
+        content: (
+          <PostPaymentSuggestions
+            onAsk={handleSendMessage}
+            reservationCard={selectedPackage ? packageReservationChatCardElement(selectedPackage) : undefined}
+          />
+        ),
       },
     ]);
 
@@ -2308,6 +2368,8 @@ export default function App() {
           <ChatMessage
             key={index}
             type={msg.type}
+            userLayout={msg.userLayout ?? "bubble"}
+            botLayout={msg.botLayout ?? "default"}
             showActions={msg.type === "bot" && index === messages.length - 1 && step === "packages"}
           >
             {msg.content}
@@ -2437,6 +2499,8 @@ export default function App() {
           <ChatMessage
             key={`package-${index}`}
             type={msg.type}
+            userLayout={msg.userLayout ?? "bubble"}
+            botLayout={msg.botLayout ?? "default"}
           >
             {msg.content}
           </ChatMessage>
@@ -2594,6 +2658,8 @@ export default function App() {
           <ChatMessage
             key={`fit-${index}`}
             type={msg.type}
+            userLayout={msg.userLayout ?? "bubble"}
+            botLayout={msg.botLayout ?? "default"}
           >
             {msg.content}
           </ChatMessage>

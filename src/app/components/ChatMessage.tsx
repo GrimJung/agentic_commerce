@@ -1,7 +1,14 @@
 import { motion } from "motion/react";
 
+export type ChatUserLayout = "bubble";
+
+/** 봇(시스템) 메시지: 일반 텍스트 또는 예약정보 카드 등 블록 */
+export type ChatBotLayout = "default" | "reservationCard";
+
 interface ChatMessageProps {
   type: "user" | "bot";
+  userLayout?: ChatUserLayout;
+  botLayout?: ChatBotLayout;
   children: React.ReactNode;
   showActions?: boolean;
   onGood?: () => void;
@@ -9,7 +16,16 @@ interface ChatMessageProps {
   onCopy?: () => void;
 }
 
-export function ChatMessage({ type, children, showActions = false, onGood, onBad, onCopy }: ChatMessageProps) {
+export function ChatMessage({
+  type,
+  userLayout = "bubble",
+  botLayout = "default",
+  children,
+  showActions = false,
+  onGood,
+  onBad,
+  onCopy,
+}: ChatMessageProps) {
   if (type === "user") {
     return (
       <motion.div
@@ -26,6 +42,11 @@ export function ChatMessage({ type, children, showActions = false, onGood, onBad
     );
   }
 
+  const bodyClass =
+    botLayout === "reservationCard"
+      ? "max-w-[min(320px,calc(100vw-2.5rem))] text-[14px] text-[#111]"
+      : "text-[14px] text-[#111] max-w-full";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -33,10 +54,8 @@ export function ChatMessage({ type, children, showActions = false, onGood, onBad
       className="mb-4 px-5"
     >
       <div className="flex gap-2 items-start">
-        <div className="flex-1">
-          <div className="text-[14px] text-[#111] max-w-full">
-            {children}
-          </div>
+        <div className="min-w-0 flex-1">
+          <div className={bodyClass}>{children}</div>
           {showActions && (
             <div className="mt-2 flex items-center gap-4">
               <button onClick={onCopy} className="flex items-center gap-1.5 text-[12px] text-[#111]">
