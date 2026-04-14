@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { PackageData } from "./PackageCard";
 import { Skeleton } from "./ui/skeleton";
@@ -31,6 +31,39 @@ const COMPANION_TIPS: Record<string, string> = {
   couple: "두 분만의 시간을 즐기고 싶다면 자유시간이 포함되어 있고, 분위기 좋은 숙소나 특식이 포함된 일정을 고려해보세요.",
   friends: "함께 즐기는 여행이라면 액티비티 선택 폭이 넓고, 자유시간과 즐길 요소가 균형 있게 구성된 상품을 추천드려요.",
 };
+
+const PURPOSE_TIPS: Record<string, string> = {
+  relaxation: "휴양·힐링을 원하신다면 일정이 무리하지 않고 여유 있게 짜인 상품을 먼저 살펴보세요.",
+  activity: "액티비티를 즐기고 싶다면 체험 옵션이 다양하고 활동량이 균형 잡힌 일정을 추천드려요.",
+  shopping: "쇼핑·맛집이 중요하다면 자유시간과 시내 근처 동선이 확보된 상품을 비교해보세요.",
+  sightseeing: "관광 중심이라면 주요 명소 방문이 알차게 구성된 상품을 우선 확인해보세요.",
+};
+
+const STYLE_TIPS: Record<string, string> = {
+  relaxed: "여유로운 일정을 선호하신다면 강행 일정이 적고 자유시간이 넉넉한 상품이 잘 맞아요.",
+  packed: "알찬 일정을 원하신다면 하루 동선이 효율적으로 짜여 많은 코스를 경험할 수 있는지 비교해보세요.",
+  budget: "가성비를 중시하신다면 항공·숙박 구성과 불포함 항목을 꼼꼼히 비교해 실제 부담 금액을 가늠해보세요.",
+  satisfaction: "만족도를 중시하신다면 숙소·식사 구성과 인솔 여부 등 체감 품질 요소를 함께 살펴보세요.",
+};
+
+const KEYWORD_TIPS: Record<string, string> = {
+  ...COMPANION_TIPS,
+  ...PURPOSE_TIPS,
+  ...STYLE_TIPS,
+};
+
+function keywordIdsForLine(selectedId: string): { companionId: string; purposeId: string; styleId: string } {
+  if (COMPANION_OPTIONS.some((o) => o.id === selectedId)) {
+    return { companionId: selectedId, purposeId: "", styleId: "" };
+  }
+  if (PURPOSE_OPTIONS.some((o) => o.id === selectedId)) {
+    return { companionId: "", purposeId: selectedId, styleId: "" };
+  }
+  if (STYLE_OPTIONS.some((o) => o.id === selectedId)) {
+    return { companionId: "", purposeId: "", styleId: selectedId };
+  }
+  return { companionId: "couple", purposeId: "", styleId: "" };
+}
 
 function optionLabel<T extends readonly { id: string; label: string }[]>(options: T, id: string): string | undefined {
   return options.find((o) => o.id === id)?.label;
@@ -223,15 +256,15 @@ interface PackageComparisonInlineProps {
 
 /* ─── 메인 컴포넌트 ───────────────────────────────────── */
 export function PackageComparisonInline({ packages, onSelect, onBack }: PackageComparisonInlineProps) {
-  const [selectedCompanion, setSelectedCompanion] = useState<string>("couple");
-  const [selectedPurpose, setSelectedPurpose] = useState<string>("");
-  const [selectedStyle, setSelectedStyle] = useState<string>("");
+  /** 동반·목적·스타일 키워드 중 하나만 선택 */
+  const [selectedKeyword, setSelectedKeyword] = useState<string>("couple");
   const [isKeywordExpanded, setIsKeywordExpanded] = useState(false);
 
   const displayPackages = packages.slice(0, 3);
   const labels = ["A", "B", "C"] as const;
   const rows = displayPackages.map(packageToDisplayValues);
-  const tipText = COMPANION_TIPS[selectedCompanion] ?? COMPANION_TIPS.couple;
+  const { companionId, purposeId, styleId } = keywordIdsForLine(selectedKeyword);
+  const tipText = KEYWORD_TIPS[selectedKeyword] ?? KEYWORD_TIPS.couple;
 
   const llmSectionPackageKey = displayPackages.map((p) => p.id).join("|");
   const [llmPointsReady, setLlmPointsReady] = useState(false);
@@ -240,6 +273,21 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
     const id = window.setTimeout(() => setLlmPointsReady(true), 3000);
     return () => window.clearTimeout(id);
   }, [llmSectionPackageKey]);
+
+  /** 키워드 변경 시 TIP·상품별 맞춤 문구만 짧은 스켈레톤 (최초 마운트·동일값 재실행 제외) */
+  const [keywordMatchReady, setKeywordMatchReady] = useState(true);
+  const prevKeywordRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevKeywordRef.current === null) {
+      prevKeywordRef.current = selectedKeyword;
+      return;
+    }
+    if (prevKeywordRef.current === selectedKeyword) return;
+    prevKeywordRef.current = selectedKeyword;
+    setKeywordMatchReady(false);
+    const id = window.setTimeout(() => setKeywordMatchReady(true), 720);
+    return () => window.clearTimeout(id);
+  }, [selectedKeyword]);
 
   const PLACEHOLDER_VALUES = ["", "", ""] as const;
 
@@ -354,17 +402,17 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
         <h2 className="text-[15px] font-['Pretendard:Bold',sans-serif] font-bold text-[#111] mb-0.5">AI 키워드 분석</h2>
         <p className="text-[12px] text-gray-500 mt-0.5 mb-3 leading-snug">선택한 키워드를 기반으로 더 적합한 상품을 분석합니다.</p>
 
-        <div className="flex flex-col gap-[5px] mb-4">
+        <div className="flex flex-col gap-[3px] mb-4">
           {/* 동반자 유형 */}
           <div className="flex items-center gap-3 w-full min-w-0 mb-[5px]">
-            <div className="flex-1 min-w-0 overflow-x-auto flex items-center gap-2 flex-nowrap py-0.5" style={{ scrollbarWidth: "none" }}>
+            <div className="flex-1 min-w-0 overflow-x-auto flex items-center gap-[5px] flex-nowrap py-0.5" style={{ scrollbarWidth: "none" }}>
               {COMPANION_OPTIONS.map(({ id, label }) => (
                 <button
                   key={id}
                   type="button"
-                  onClick={() => setSelectedCompanion(id)}
+                  onClick={() => setSelectedKeyword(id)}
                   className={`flex flex-col justify-center items-center flex-shrink-0 px-3 py-2 rounded-full border text-[12px] h-[30px] transition-all ${
-                    selectedCompanion === id
+                    selectedKeyword === id
                       ? "bg-gradient-to-r from-[#6976FF] to-[#7B3FF2] border-transparent text-white"
                       : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#7B3FF2]"
                   }`}
@@ -385,20 +433,20 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
 
           {/* 여행목적·스타일 (펼쳤을 때) */}
           {isKeywordExpanded && (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-[3px]">
               {[
-                { title: "여행목적", options: PURPOSE_OPTIONS, selected: selectedPurpose, onSelect: setSelectedPurpose },
-                { title: "여행스타일", options: STYLE_OPTIONS, selected: selectedStyle, onSelect: setSelectedStyle },
-              ].map(({ title, options, selected, onSelect: onSel }) => (
+                { title: "여행목적", options: PURPOSE_OPTIONS },
+                { title: "여행스타일", options: STYLE_OPTIONS },
+              ].map(({ title, options }) => (
                 <div key={title} className="flex items-center gap-3 w-full min-w-0">
-                  <div className="flex-1 min-w-0 overflow-x-auto flex items-center gap-2 flex-nowrap py-0.5" style={{ scrollbarWidth: "none" }}>
+                  <div className="flex-1 min-w-0 overflow-x-auto flex items-center gap-[5px] flex-nowrap py-0.5" style={{ scrollbarWidth: "none" }}>
                     {options.map(({ id, label }) => (
                       <button
                         key={id}
                         type="button"
-                        onClick={() => onSel(selected === id ? "" : id)}
+                        onClick={() => setSelectedKeyword(id)}
                         className={`flex flex-col justify-center items-center flex-shrink-0 px-3 py-2 rounded-full border text-[12px] h-[30px] transition-all ${
-                          selected === id
+                          selectedKeyword === id
                             ? "bg-gradient-to-r from-[#6976FF] to-[#7B3FF2] border-transparent text-white"
                             : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#7B3FF2]"
                         }`}
@@ -415,8 +463,8 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
 
         <div
           className="relative mb-4"
-          aria-busy={!llmPointsReady}
-          aria-label={llmPointsReady ? undefined : "맞춤 분석 요약 생성 중"}
+          aria-busy={!keywordMatchReady}
+          aria-label={keywordMatchReady ? undefined : "맞춤 분석 요약 생성 중"}
         >
           <span
             className="absolute left-[17px] top-0 z-10 inline-flex -translate-y-1/2 items-center justify-center rounded-md px-2 py-0.5 text-[11px] font-semibold"
@@ -425,7 +473,7 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
             TIP
           </span>
           <div className="rounded-[10px] px-4 py-3" style={{ backgroundColor: "rgba(147,197,253,0.12)" }}>
-            {llmPointsReady ? (
+            {keywordMatchReady ? (
               <p className="m-0 min-w-0 pt-[5px] text-[13px] font-medium leading-[1.4] text-[#1e3a8a]">{tipText}</p>
             ) : (
               <div className="flex flex-col gap-2 pt-[5px] min-h-[44px]" aria-hidden>
@@ -440,10 +488,10 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
         {/* 상품 요약 카드 — 뱃지·별·핵심문구 한 행, 설명은 하단 전체 너비 */}
         <div
           className="w-full flex flex-col gap-2"
-          aria-busy={!llmPointsReady}
-          aria-label={llmPointsReady ? undefined : "상품별 맞춤 요약 생성 중"}
+          aria-busy={!keywordMatchReady}
+          aria-label={keywordMatchReady ? undefined : "상품별 맞춤 요약 생성 중"}
         >
-          {!llmPointsReady
+          {!keywordMatchReady
             ? displayPackages.map((_, index) => {
                 const id = labels[index];
                 const isFirst = index === 0;
@@ -482,7 +530,7 @@ export function PackageComparisonInline({ packages, onSelect, onBack }: PackageC
                 const badgeStyle = PRODUCT_BADGE_COLORS[id] ?? PRODUCT_BADGE_COLORS.A;
                 const starCount = 3 - index;
                 const desc = pkg.recommendReason?.trim() ?? "";
-                const coreLine = keywordCoreRecommendationLine(pkg, selectedCompanion, selectedPurpose, selectedStyle);
+                const coreLine = keywordCoreRecommendationLine(pkg, companionId, purposeId, styleId);
                 return (
                   <div
                     key={pkg.id}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { ChevronUp, ChevronDown, X, Info, User } from "lucide-react";
+import { ChevronUp, ChevronDown, ArrowLeft, Info, User } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { PackageData } from "./PackageCard";
 import type { BookingFormData } from "./BookingForm";
@@ -12,6 +12,7 @@ import {
 } from "./ui/accordion";
 import { cn } from "./ui/utils";
 import { PACKAGE_PREVIEW_COUPON_DISCOUNT } from "./PackageBookingPricePreview";
+import { PackageServiceFooter } from "./PackageServiceFooter";
 
 const DEPOSIT_AMOUNT = 100_000;
 
@@ -151,7 +152,7 @@ export function PackageBookingSheet({
   const handlePayFull = () => submitBookingAndRequestPayment(finalPrice);
   const handlePayDeposit = () => submitBookingAndRequestPayment(DEPOSIT_AMOUNT);
 
-  const screenTransition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] as const };
+  const screenTransition = { duration: 0.22, ease: [0.25, 0.1, 0.25, 1] as const };
 
   return (
     <div
@@ -160,30 +161,31 @@ export function PackageBookingSheet({
       role="presentation"
     >
       <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         transition={screenTransition}
         onClick={(e) => e.stopPropagation()}
-        className="relative h-full w-full min-h-0 flex flex-col overflow-hidden bg-white shadow-[-10px_0_40px_rgba(0,0,0,0.12)]"
+        className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-[-10px_0_40px_rgba(0,0,0,0.12)]"
       >
-        {/* 헤더: 예약하기 타이틀 + 우측 닫기 */}
-        <div className="w-full shrink-0 flex items-center justify-between px-4 py-3 border-b border-[#eee]">
-          <h1 className="font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">
-            예약하기
-          </h1>
+        {/* 헤더: 뒤로 + 예약하기 (캡처 기준) */}
+        <div className="w-full shrink-0 flex items-center gap-1 bg-white px-2 py-3 border-b border-[#eee]">
           <button
             type="button"
             onClick={onClose}
-            className="p-2 -mr-1 hover:bg-[#f5f5f5] rounded-full transition-colors"
-            aria-label="닫기"
+            className="p-2 -ml-0.5 shrink-0 rounded-full text-[#111] hover:bg-[#f5f5f5] transition-colors"
+            aria-label="뒤로"
           >
-            <X className="size-5 text-[#111]" />
+            <ArrowLeft className="size-5 text-[#111]" strokeWidth={2} />
           </button>
+          <h1 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111] leading-tight">
+            예약하기
+          </h1>
         </div>
 
         <div
-          className="flex-1 w-full overflow-y-auto pb-32"
+          data-package-booking-scroll
+          className="min-h-0 flex-1 w-full overflow-y-auto"
           onScroll={(e) => {
             const el = e.currentTarget;
             setShowScrollTop(el.scrollTop > 400);
@@ -668,37 +670,43 @@ export function PackageBookingSheet({
             </AccordionItem>
           </Accordion>
 
+          <div className="mt-8 bg-white pt-2">
+            <PackageServiceFooter />
+          </div>
+
           {showScrollTop && (
             <button
               type="button"
-              onClick={() => document.querySelector(".flex-1.overflow-y-auto")?.scrollTo({ top: 0, behavior: "smooth" })}
-              className="fixed right-4 bottom-36 w-9 h-9 rounded-full bg-[#333] text-white flex items-center justify-center shadow"
+              onClick={() =>
+                document.querySelector("[data-package-booking-scroll]")?.scrollTo({ top: 0, behavior: "smooth" })
+              }
+              className="fixed right-4 bottom-28 z-[1] flex size-9 items-center justify-center rounded-full bg-[#333] text-white shadow"
             >
               <ChevronUp className="size-5" />
             </button>
           )}
         </div>
 
-        {/* 하단 고정 버튼: 계약금 결제 / 전액 결제 */}
-        <div className="shrink-0 fixed bottom-0 left-0 right-0 bg-white border-t border-[#eee] px-4 py-2.5 flex gap-3">
-          <button
-            type="button"
-            onClick={handlePayDeposit}
-            disabled={!allRequiredAgreed}
-            className="flex-1 py-2 flex flex-col items-center justify-center gap-0 border border-[#ddd] bg-white text-[#111] rounded-[32px] hover:bg-[#f9f9f9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span className="text-[11px] font-['Pretendard:Medium',sans-serif] text-[#111] leading-tight">계약금 결제</span>
-            <span className="text-[14px] font-['Pretendard:Bold',sans-serif] text-[#111] leading-tight">{DEPOSIT_AMOUNT.toLocaleString()}원</span>
-          </button>
-          <button
-            type="button"
-            onClick={handlePayFull}
-            disabled={!allRequiredAgreed}
-            className="flex-1 py-2 flex flex-col items-center justify-center gap-0 bg-[#5e2bb8] text-white rounded-[30px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#4a2299] transition-colors"
-          >
-            <span className="text-[11px] font-['Pretendard:Medium',sans-serif] text-white leading-tight">전액 결제</span>
-            <span className="text-[14px] font-['Pretendard:Bold',sans-serif] text-white leading-tight">{finalPrice.toLocaleString()}원</span>
-          </button>
+        {/* 하단: 결제 CTA (본문·푸터와 분리, flex 고정 높이만 사용) */}
+        <div className="flex shrink-0 gap-3 border-t border-[#eee] bg-white px-4 py-2.5">
+            <button
+              type="button"
+              onClick={handlePayDeposit}
+              disabled={!allRequiredAgreed}
+              className="flex flex-1 flex-col items-center justify-center gap-0 rounded-[32px] border border-[#ddd] bg-white py-2 text-[#111] transition-colors hover:bg-[#f9f9f9] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <span className="text-[11px] font-['Pretendard:Medium',sans-serif] leading-tight text-[#111]">계약금 결제</span>
+              <span className="text-[14px] font-['Pretendard:Bold',sans-serif] leading-tight text-[#111]">{DEPOSIT_AMOUNT.toLocaleString()}원</span>
+            </button>
+            <button
+              type="button"
+              onClick={handlePayFull}
+              disabled={!allRequiredAgreed}
+              className="flex flex-1 flex-col items-center justify-center gap-0 rounded-[30px] bg-[#5e2bb8] py-2 font-['Pretendard:SemiBold',sans-serif] text-white transition-colors hover:bg-[#4a2299] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <span className="text-[11px] font-['Pretendard:Medium',sans-serif] leading-tight text-white">전액 결제</span>
+              <span className="text-[14px] font-['Pretendard:Bold',sans-serif] leading-tight text-white">{finalPrice.toLocaleString()}원</span>
+            </button>
         </div>
       </motion.div>
     </div>

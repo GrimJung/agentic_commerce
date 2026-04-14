@@ -2725,6 +2725,7 @@ export default function App() {
           reservationTitle={selectedHotel?.name ?? selectedPackage?.title ?? selectedFitPackage?.hotelInfo?.name ?? selectedFitPackage?.destination}
           isFitCombo={!!selectedFitPackage && !selectedHotel && !selectedPackage}
           skipCompletion={!!selectedPackage}
+          showPackageServiceFooter={!!selectedPackage}
           completionDetails={
             selectedFitPackage && !selectedHotel && !selectedPackage
               ? {
@@ -3020,6 +3021,7 @@ export default function App() {
           bookerName={bookingData.name}
           travelPeriod={`${selectedPackage.departure} / ${selectedPackage.duration}`}
           remainingAmount={0}
+          showServiceFooter
           onClose={() => {
             setShowConfirmation(false);
             setStep("initial");

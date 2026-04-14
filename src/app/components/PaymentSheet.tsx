@@ -4,6 +4,7 @@ import { ArrowLeft, CreditCard, Check, ChevronDown, ChevronUp, ShieldCheck, X } 
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { cn } from "./ui/utils";
 import { NamemdaeComboStepper } from "./NamemdaeComboStepper";
+import { PackageServiceFooter } from "./PackageServiceFooter";
 
 /** 결제완료 화면에 표시할 예약 상세 (캡처 기준) */
 export interface PaymentCompleteDetails {
@@ -45,6 +46,8 @@ interface PaymentSheetProps {
   skipPayment?: boolean;
   /** true면 결제 후 내부 완료 화면 없이 바로 onSuccess 호출 */
   skipCompletion?: boolean;
+  /** 패키지 결제 플로우에서만 하단 법무 푸터 표시 */
+  showPackageServiceFooter?: boolean;
 }
 
 type PaymentMethod = "card" | "bank" | "kakao" | "payco" | "naver";
@@ -61,6 +64,7 @@ export function PaymentSheet({
   isFitCombo = false,
   skipPayment = false,
   skipCompletion = false,
+  showPackageServiceFooter = false,
 }: PaymentSheetProps) {
   useLockBodyScroll();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
@@ -111,7 +115,7 @@ export function PaymentSheet({
   };
 
   const displayName = bookerName.endsWith("님") ? bookerName : `${bookerName}님`;
-  const screenTransition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] as const };
+  const screenTransition = { duration: 0.22, ease: [0.25, 0.1, 0.25, 1] as const };
 
   return (
     <div
@@ -120,18 +124,17 @@ export function PaymentSheet({
       role="presentation"
     >
       <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         transition={screenTransition}
         onClick={(e) => e.stopPropagation()}
         className="relative h-full w-full flex flex-col min-h-0 overflow-hidden bg-white shadow-[-10px_0_40px_rgba(0,0,0,0.12)]"
       >
         {isPaymentComplete ? (
-          /* 결제완료 화면 — 캡처와 동일 구성 */
-          <>
-            <div className="w-full self-stretch shrink-0 border-b border-[#eee]">
-              <div className="w-full max-w-none flex items-center justify-between px-4 py-3">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="w-full shrink-0 border-b border-[#eee]">
+              <div className="flex w-full max-w-none items-center justify-between px-4 py-3">
                 <h1 className="font-['Pretendard:SemiBold',sans-serif] text-[18px] text-[#111]">
                   {isFitCombo ? "호텔 결제완료" : "결제완료"}
                 </h1>
@@ -150,7 +153,7 @@ export function PaymentSheet({
                 </div>
               )}
             </div>
-            <div className="w-full self-stretch flex-1 min-h-0 overflow-y-auto px-4 py-6 pb-48">
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 pb-4">
               {/* 확인 헤더: 회색 원 + 검정 체크, 이름, 완료 문구 — 왼쪽 정렬 */}
               <div className="flex flex-col justify-start items-start text-left mb-6 pb-6 border-b border-[#eee]">
                 <span className="size-12 rounded-full border-2 border-[#c8c8c8] bg-white flex items-center justify-center text-[#111] mb-4">
@@ -222,26 +225,33 @@ export function PaymentSheet({
                   <dd className="font-['Pretendard:SemiBold',sans-serif] text-[#111] text-right">{finalAmount.toLocaleString()}원</dd>
                 </div>
               </dl>
+              {showPackageServiceFooter && (
+                <div className="mt-8 bg-white pt-2">
+                  <PackageServiceFooter />
+                </div>
+              )}
             </div>
-            <div className="shrink-0 fixed bottom-0 left-0 right-0 bg-white border-t border-[#eee] p-4 flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={onSuccess}
-                className="w-full py-4 bg-[#612bbc] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:opacity-90 transition-opacity"
-              >
-                확인
-              </button>
-              <button
-                type="button"
-                onClick={onSuccess}
-                className="w-full py-4 bg-white border border-[#e5e5e5] text-[#555] rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f9f9f9] transition-colors"
-              >
-                예약 내역 보기
-              </button>
+            <div className="shrink-0 border-t border-[#eee] bg-white">
+              <div className="flex flex-col gap-3 p-4">
+                <button
+                  type="button"
+                  onClick={onSuccess}
+                  className="w-full py-4 bg-[#612bbc] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:opacity-90 transition-opacity"
+                >
+                  확인
+                </button>
+                <button
+                  type="button"
+                  onClick={onSuccess}
+                  className="w-full py-4 bg-white border border-[#e5e5e5] text-[#555] rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f9f9f9] transition-colors"
+                >
+                  예약 내역 보기
+                </button>
+              </div>
             </div>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* 헤더 */}
         <div className="shrink-0 w-full flex items-center gap-3 px-4 py-3 border-b border-[#eee]">
           <button
@@ -256,7 +266,7 @@ export function PaymentSheet({
           </h1>
         </div>
 
-        <div className="flex-1 w-full overflow-y-auto pb-28">
+        <div className="min-h-0 flex-1 w-full overflow-y-auto">
           {/* 할인/혜택 적용 */}
           <section className="p-4 border-b-8 border-[#f0f0f0]">
             <h2 className="text-[17px] font-bold font-['Pretendard:Bold',sans-serif] text-[#111] mb-4">
@@ -751,30 +761,35 @@ export function PaymentSheet({
               )}
             </div>
           </section>
+          {showPackageServiceFooter && (
+            <div className="mt-8 bg-white pt-2">
+              <PackageServiceFooter />
+            </div>
+          )}
         </div>
 
-        {/* 하단 고정 버튼 */}
-        <div className="shrink-0 fixed bottom-0 left-0 right-0 bg-white border-t border-[#eee] p-4">
-          <button
-            type="button"
-            onClick={handlePay}
-            disabled={isProcessing}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[rgba(94,43,184,1)] transition-colors"
-          >
-            {isProcessing ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin size-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                결제 처리 중...
-              </span>
-            ) : (
-              `총 ${finalAmount.toLocaleString()}원 결제하기`
-            )}
-          </button>
+        {/* 하단: 결제 CTA (본문·푸터와 분리) */}
+        <div className="shrink-0 border-t border-[#eee] bg-white p-4">
+            <button
+              type="button"
+              onClick={handlePay}
+              disabled={isProcessing}
+              className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[rgba(94,43,184,1)] transition-colors"
+            >
+              {isProcessing ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin size-5" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  결제 처리 중...
+                </span>
+              ) : (
+                `총 ${finalAmount.toLocaleString()}원 결제하기`
+              )}
+            </button>
         </div>
-          </>
+          </div>
         )}
       </motion.div>
     </div>
