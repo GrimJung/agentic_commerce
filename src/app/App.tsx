@@ -1,4 +1,5 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type MutableRefObject, type ReactNode } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { Plus, Mic } from "lucide-react";
 import { MainPage } from "./components/MainPage";
 import { ChatMessage, type ChatBotLayout, type ChatUserLayout } from "./components/ChatMessage";
@@ -7,7 +8,7 @@ import { PreferenceInput } from "./components/PreferenceInput";
 import { PackageCard, PackageData } from "./components/PackageCard";
 import { PackageDetail } from "./components/PackageDetail";
 import { PackageInlineDetail } from "./components/PackageInlineDetail";
-import { TravelerCountA2UI } from "./components/TravelerCountA2UI";
+import { TravelerCountA2UI, type TravelerCountA2UIPhase } from "./components/TravelerCountA2UI";
 import { AIPackageComparison } from "./components/AIPackageComparison";
 import { PackageComparisonInline } from "./components/PackageComparisonInline";
 import { FITPackageCard, FITPackageData } from "./components/FITPackageCard";
@@ -33,6 +34,10 @@ import { BookingConfirmation } from "./components/BookingConfirmation";
 import { AgentReasoningBlock } from "./components/AgentReasoningBlock";
 import { REASONING_STEPS } from "./constants/reasoningSteps";
 import { scheduleScrollChatToLatestUserAnchor } from "./utils/scrollChatToUserAnchor";
+import {
+  scrollPackageSwipeFollowupIntoView,
+  scheduleScrollPackageSwipeFollowup,
+} from "./utils/scrollPackageSwipeFollowup";
 
 /** 내맘대로(항공+호텔) 항공예약정보 단계 진입 시 기본 예약자 정보 */
 const DEFAULT_NAMEMDAE_FLIGHT_BOOKING: BookingFormData = {
@@ -1494,6 +1499,158 @@ const fitCompletionProposal: { type: "bot"; content: React.ReactNode } = {
   ),
 };
 
+type PackageListPanelHost = "main" | "fit";
+
+type PackageListPanelState =
+  | { mode: "detail"; pkg: PackageData; host: PackageListPanelHost }
+  | { mode: "booking"; pkg: PackageData; returnTo: "list" | "detail"; host: PackageListPanelHost };
+
+const PACKAGE_LIST_SWIPE_VARIANTS = {
+  initial: (dir: number) => ({
+    x: dir >= 0 ? "104%" : "-104%",
+    /** transform 애니메이션 중 네이티브 select 등이 깨져 보이는 것을 줄이기 위해 페이드는 살짝 늦춤 */
+    opacity: 0,
+  }),
+  animate: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      x: { type: "spring" as const, stiffness: 400, damping: 36 },
+      opacity: { duration: 0.22, delay: 0.14, ease: [0.22, 1, 0.36, 1] as const },
+    },
+  },
+  exit: (dir: number) => ({
+    x: dir >= 0 ? "-36%" : "104%",
+    opacity: 0,
+    transition: {
+      x: { duration: 0.2, ease: [0.4, 0, 0.2, 1] as const },
+      opacity: { duration: 0.12, ease: [0.4, 0, 0.2, 1] as const },
+    },
+  }),
+};
+
+function PackageSwipeStack({
+  stackHost,
+  panel,
+  swipeDirRef,
+  children,
+  detail,
+  booking,
+}: {
+  stackHost: PackageListPanelHost;
+  panel: PackageListPanelState | null;
+  swipeDirRef: MutableRefObject<1 | -1>;
+  children: React.ReactNode;
+  detail: React.ReactNode;
+  booking: React.ReactNode;
+}) {
+  const foreign = panel !== null && panel.host !== stackHost;
+  if (foreign) {
+    return <div className="relative">{children}</div>;
+  }
+  const showList = !panel || panel.host !== stackHost;
+  const showDetail = panel?.host === stackHost && panel.mode === "detail";
+  const showBooking = panel?.host === stackHost && panel.mode === "booking";
+  return (
+    <div className="relative overflow-x-hidden">
+      <AnimatePresence initial={false} custom={swipeDirRef.current} mode="popLayout">
+        {showList && (
+          <motion.div
+            key={`pkg-list-${stackHost}`}
+            variants={PACKAGE_LIST_SWIPE_VARIANTS}
+            custom={swipeDirRef.current}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full"
+          >
+            {children}
+          </motion.div>
+        )}
+        {showDetail && panel.mode === "detail" && (
+          <motion.div
+            key={`pkg-detail-${stackHost}-${panel.pkg.id}`}
+            variants={PACKAGE_LIST_SWIPE_VARIANTS}
+            custom={swipeDirRef.current}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full"
+          >
+            {detail}
+          </motion.div>
+        )}
+        {showBooking && panel.mode === "booking" && (
+          <motion.div
+            key={`pkg-booking-${stackHost}-${panel.pkg.id}`}
+            variants={PACKAGE_LIST_SWIPE_VARIANTS}
+            custom={swipeDirRef.current}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full"
+          >
+            {booking}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/** 인원 선택 스와이프 패널 — 마운트 시 하단 H-AI TIP(추천 질문)이 스크롤 영역에 들어오도록 조정 */
+function PackageBookingSwipePanel({
+  pkg,
+  onConfirm,
+  onCancel,
+}: {
+  pkg: PackageData;
+  onConfirm: (adults: number, children: number) => void;
+  onCancel: () => void;
+}) {
+  const [travelerPhase, setTravelerPhase] = useState<TravelerCountA2UIPhase>("editing");
+
+  useLayoutEffect(() => {
+    scheduleScrollPackageSwipeFollowup();
+    const id = window.setTimeout(() => scrollPackageSwipeFollowupIntoView("smooth"), 360);
+    return () => window.clearTimeout(id);
+  }, [pkg.id]);
+
+  return (
+    <div className="space-y-3">
+      {travelerPhase === "editing" && (
+        <p className="font-['Pretendard',sans-serif] text-[14px] leading-relaxed text-[#111]">
+          몇명이서 가시는지 알려주세요. 예약단계로 바로 넘어갈 수 있도록 인원에 맞는 총 금액을 알려드릴게요
+        </p>
+      )}
+      <TravelerCountA2UI
+        package={pkg}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+        onPhaseChange={setTravelerPhase}
+      />
+      <div
+        className="pt-[15px] border-t border-[#f0f0f0] scroll-mt-4"
+        data-package-swipe-followup-anchor=""
+      >
+        <p className="text-[14px] leading-relaxed text-[#111]">
+          <span className="mr-1" aria-hidden>
+            💡
+          </span>
+          <span className="font-['Pretendard:Bold',sans-serif] text-[rgba(55,127,255,1)]">H-AI TIP</span>
+          <span className="text-[#444]"> 관련해서 이런 질문도 이어갈 수 있어요.</span>
+        </p>
+        <ul className="mt-2 space-y-0 pl-0.5 text-[14px] text-[#333]">
+          <li className="mb-0">
+            • 인원 구성을 바꾸면 적용되는 할인이나 유아·아동 요금 규정이 달라지는지 알려줘.
+          </li>
+          <li className="mb-0">• 선택한 인원 기준으로 예상 결제 금액을 항목별로 정리해줘.</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [step, setStep] = useState<Step>("main");
   const [messages, setMessages] = useState<AppChatMessage[]>([]);
@@ -1520,6 +1677,9 @@ export default function App() {
 
   // 패키지 및 FIT 인터랙션 메시지 상태
   const [packageMessages, setPackageMessages] = useState<AppChatMessage[]>([]);
+  /** 추천 목록 영역 내 스와이프: 상세 / 인원선택 (채팅 하단이 아닌 카드 영역 전환) */
+  const [packageListPanel, setPackageListPanel] = useState<PackageListPanelState | null>(null);
+  const packageListSwipeDirRef = useRef<1 | -1>(1);
   const recommendedPackagesRegionRef = useRef<HTMLDivElement>(null);
   const [fitMessages, setFitMessages] = useState<AppChatMessage[]>([]);
   /** 패키지 조회 구분: 'package-only' = 직접 검색→패키지 (상품 1,2,3 모두 패키지) | 'recommended-mix' = 추천 검색 (상품 1,2 패키지 + 3 항공+호텔) */
@@ -1896,8 +2056,17 @@ export default function App() {
     }
   };
 
+  const resolvePackageListPanelHost = (): PackageListPanelHost =>
+    fitSearchMode === "combo" &&
+    fitPackages.length > 0 &&
+    (step === "fit-packages" || step === "fit-activities" || step === "fit-summary")
+      ? "fit"
+      : "main";
+
   /** 인라인 상세의「추천 상품 목록가기」— 상세 메시지 제거 후 상품 카드 영역으로 스크롤 */
   const focusRecommendedPackagesList = () => {
+    packageListSwipeDirRef.current = -1;
+    setPackageListPanel(null);
     setPackageMessages([]);
     window.requestAnimationFrame(() => {
       const el = recommendedPackagesRegionRef.current;
@@ -1911,22 +2080,13 @@ export default function App() {
     });
   };
 
-  // 패키지 상세보기 — 채팅창 인라인으로 렌더링
+  // 패키지 상세보기 — 추천 목록 영역에서 스와이프 전환
   const handlePackageClick = (pkg: PackageData) => {
-    setPackageMessages((prev) => [
-      ...prev,
-      { type: "user", content: "상세 정보 보여줘" },
-      {
-        type: "bot",
-        content: (
-          <PackageInlineDetail
-            package={pkg}
-            onGoBack={focusRecommendedPackagesList}
-            onBooking={() => beginPackageBookingWithTravelerPicker(pkg)}
-          />
-        ),
-      },
-    ]);
+    // 추천상품 비교하기 이후 채팅에 남은 인라인 비교 UI 제거
+    setPackageMessages([]);
+    const host = resolvePackageListPanelHost();
+    packageListSwipeDirRef.current = 1;
+    setPackageListPanel({ mode: "detail", pkg, host });
   };
 
   // 패키지 비교 (직접검색 전용) — 채팅창 인라인으로 렌더링
@@ -1991,6 +2151,7 @@ export default function App() {
 
     setRecommendedPackages([]);
     setPackageMessages([]);
+    setPackageListPanel(null);
     setShowComparison(false);
     setComparisonPackages([]);
 
@@ -2196,6 +2357,7 @@ export default function App() {
 
   // 예약하기 - 패키지 예약 시트 (travelers: 인라인 A2UI에서 전달 시 요금·인원 반영)
   const handleBooking = (pkg: PackageData, travelers?: { adults: number; children: number }) => {
+    setPackageListPanel(null);
     setSelectedPackage(pkg);
     if (travelers) {
       setPackageBookingTravelers(travelers);
@@ -2208,48 +2370,37 @@ export default function App() {
     setStep("booking");
   };
 
-  /** 패키지 예약 — 채팅에 인원 선택 A2UI 후 예약 시트 (userBubble: 목록은「예약하기」등) */
+  const handlePackageBookingPanelCancel = () => {
+    const cur = packageListPanel;
+    if (!cur || cur.mode !== "booking") return;
+    packageListSwipeDirRef.current = -1;
+    if (cur.returnTo === "detail") {
+      setPackageListPanel({ mode: "detail", pkg: cur.pkg, host: cur.host });
+    } else {
+      setPackageListPanel(null);
+    }
+  };
+
+  /** 패키지 예약 — 추천 영역 스와이프로 인원 선택 A2UI 후 예약 시트 */
   const beginPackageBookingWithTravelerPicker = (
     pkg: PackageData,
-    userBubbleText: string = "상품 예약하기",
+    _userBubbleText: string = "상품 예약하기",
+    entry: "list" | "detail" = "list",
   ) => {
-    // 인라인 상세(PackageInlineDetail) 등 이전 메시지를 유지하면 예약 단계에서도 상세가 스크롤에 남음 → 예약만 표시
-    setPackageMessages([
-      { type: "user", content: userBubbleText },
-      {
-        type: "bot",
-        content: (
-          <div className="space-y-3">
-            <p className="font-['Pretendard',sans-serif] text-[14px] leading-relaxed text-[#111]">
-              몇명이서 가시는지 알려주세요. 예약단계로 바로 넘어갈 수 있도록 인원에 맞는 총 금액을 알려드릴게요
-            </p>
-            <TravelerCountA2UI
-              package={pkg}
-              onConfirm={(adults, children) => {
-                handleBooking(pkg, { adults, children });
-              }}
-              onCancel={() => {}}
-            />
-            <div className="pt-1">
-              <p className="text-[14px] leading-relaxed text-[#111]">
-                <span className="mr-1" aria-hidden>
-                  💡
-                </span>
-                <span className="font-['Pretendard:Bold',sans-serif] text-[rgba(55,127,255,1)]">H-AI TIP</span>
-                <span className="text-[#444]"> 관련해서 이런 질문도 이어갈 수 있어요.</span>
-              </p>
-              <ul className="mt-2 space-y-1.5 pl-0.5 text-[14px] text-[#333]">
-                <li>
-                  • 인원 구성을 바꾸면 적용되는 할인이나 유아·아동 요금 규정이 달라지는지 알려줘.
-                </li>
-                <li>• 선택한 인원 기준으로 예상 결제 금액을 항목별로 정리해줘.</li>
-              </ul>
-            </div>
-          </div>
-        ),
-      },
-    ]);
-    scheduleScrollChatToLatestUserAnchor(80);
+    // 추천상품 비교하기 이후 채팅에 남은 인라인 비교 UI 제거
+    setPackageMessages([]);
+    const fromOpenDetail =
+      packageListPanel?.mode === "detail" && packageListPanel.pkg.id === pkg.id;
+    const host: PackageListPanelHost = fromOpenDetail
+      ? packageListPanel.host
+      : resolvePackageListPanelHost();
+    packageListSwipeDirRef.current = 1;
+    setPackageListPanel({
+      mode: "booking",
+      pkg,
+      returnTo: entry === "detail" ? "detail" : "list",
+      host,
+    });
   };
 
   // 자유여행 예약하기 - 바로 룸타입 선택 팝업 표시
@@ -2399,77 +2550,111 @@ export default function App() {
             {packageSearchMode === "package-only" && (
               <div className="space-y-1">
                 <h2 className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#3780ff]">H-AI 추천</h2>
-                <p className="text-[13px] leading-snug text-[#666]">상품의 자세한 정보도 확인하실 수 있어요.</p>
-              </div>
-            )}
-            {packageSearchMode === "package-only"
-              ? recommendedPackages.slice(0, PRODUCT_COUNTS.directPackage).map((pkg) => (
-                  <PackageCard
-                    key={pkg.id}
-                    package={pkg}
-                    onClick={() => handlePackageClick(pkg)}
-                    onBooking={() => beginPackageBookingWithTravelerPicker(pkg, "예약하기")}
-                  />
-                ))
-              : (
-                  <>
-                    {/* 추천검색: 1번째 항공+호텔 */}
-                    <FITPackageCard
-                      key={mockFITPackages[0].id}
-                      package={mockFITPackages[0]}
-                      rank={1}
-                      onClick={() => {
-                        setSelectedFitPackage(mockFITPackages[0]);
-                        setShowFitDetail(true);
-                      }}
-                      onBooking={() => {
-                        setSelectedFitPackage(mockFITPackages[0]);
-                        setCurrentHotelForRoomSelection(mockFITPackages[0].id);
-                        setRoomSelectorSource("booking");
-                        setShowRoomTypeSelector(true);
-                      }}
-                    />
-                    {/* 추천검색: 2번째 에어텔 */}
-                    <PackageCard
-                      key={airtelPackage.id}
-                      package={airtelPackage}
-                      onClick={() => handlePackageClick(airtelPackage)}
-                      onBooking={() => beginPackageBookingWithTravelerPicker(airtelPackage, "예약하기")}
-                    />
-                    {/* 추천검색: 3번째 호텔 */}
-                    <HotelCard
-                      key={mockHotels[0].id}
-                      hotel={mockHotels[0]}
-                      rank={3}
-                      onClick={() => {
-                        setSelectedHotel(mockHotels[0]);
-                        setShowHotelDetail(true);
-                      }}
-                      onBooking={() => {
-                        setSelectedHotel(mockHotels[0]);
-                        setShowHotelDetail(true);
-                      }}
-                    />
-                  </>
+                {!(
+                  packageListPanel?.host === "main" &&
+                  (packageListPanel.mode === "detail" || packageListPanel.mode === "booking")
+                ) && (
+                  <p className="text-[13px] leading-snug text-[#666]">상품의 자세한 정보도 확인하실 수 있어요.</p>
                 )}
-            {step === "packages" && packageSearchMode === "package-only" && recommendedPackages.length >= PRODUCT_COUNTS.directPackage && (
-              <div className="flex gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={handleComparePackages}
-                  className="flex-1 rounded-full border border-[#e5e5e5] bg-white py-3 font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] transition-colors hover:bg-[#fafafa]"
-                >
-                  추천상품 비교하기
-                </button>
-                <button
-                  type="button"
-                  onClick={handleReRecommend}
-                  className="flex-1 rounded-full border border-[#e5e5e5] bg-white py-3 font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] transition-colors hover:bg-[#fafafa]"
-                >
-                  추천상품 새로고침
-                </button>
               </div>
             )}
+            <PackageSwipeStack
+              stackHost="main"
+              panel={packageListPanel}
+              swipeDirRef={packageListSwipeDirRef}
+              detail={
+                packageListPanel?.mode === "detail" ? (
+                  <PackageInlineDetail
+                    package={packageListPanel.pkg}
+                    onGoBack={focusRecommendedPackagesList}
+                    onBooking={() =>
+                      beginPackageBookingWithTravelerPicker(packageListPanel.pkg, "상품 예약하기", "detail")
+                    }
+                  />
+                ) : null
+              }
+              booking={
+                packageListPanel?.mode === "booking" ? (
+                  <PackageBookingSwipePanel
+                    key={packageListPanel.pkg.id}
+                    pkg={packageListPanel.pkg}
+                    onConfirm={(adults, children) =>
+                      handleBooking(packageListPanel.pkg, { adults, children })
+                    }
+                    onCancel={handlePackageBookingPanelCancel}
+                  />
+                ) : null
+              }
+            >
+              {packageSearchMode === "package-only"
+                ? recommendedPackages.slice(0, PRODUCT_COUNTS.directPackage).map((pkg) => (
+                    <PackageCard
+                      key={pkg.id}
+                      package={pkg}
+                      onClick={() => handlePackageClick(pkg)}
+                      onBooking={() => beginPackageBookingWithTravelerPicker(pkg, "예약하기", "list")}
+                    />
+                  ))
+                : (
+                    <>
+                      {/* 추천검색: 1번째 항공+호텔 */}
+                      <FITPackageCard
+                        key={mockFITPackages[0].id}
+                        package={mockFITPackages[0]}
+                        rank={1}
+                        onClick={() => {
+                          setSelectedFitPackage(mockFITPackages[0]);
+                          setShowFitDetail(true);
+                        }}
+                        onBooking={() => {
+                          setSelectedFitPackage(mockFITPackages[0]);
+                          setCurrentHotelForRoomSelection(mockFITPackages[0].id);
+                          setRoomSelectorSource("booking");
+                          setShowRoomTypeSelector(true);
+                        }}
+                      />
+                      {/* 추천검색: 2번째 에어텔 */}
+                      <PackageCard
+                        key={airtelPackage.id}
+                        package={airtelPackage}
+                        onClick={() => handlePackageClick(airtelPackage)}
+                        onBooking={() => beginPackageBookingWithTravelerPicker(airtelPackage, "예약하기", "list")}
+                      />
+                      {/* 추천검색: 3번째 호텔 */}
+                      <HotelCard
+                        key={mockHotels[0].id}
+                        hotel={mockHotels[0]}
+                        rank={3}
+                        onClick={() => {
+                          setSelectedHotel(mockHotels[0]);
+                          setShowHotelDetail(true);
+                        }}
+                        onBooking={() => {
+                          setSelectedHotel(mockHotels[0]);
+                          setShowHotelDetail(true);
+                        }}
+                      />
+                    </>
+                  )}
+              {step === "packages" && packageSearchMode === "package-only" && recommendedPackages.length >= PRODUCT_COUNTS.directPackage && (
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleComparePackages}
+                    className="flex-1 rounded-full border border-[#e5e5e5] bg-white py-3 font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] transition-colors hover:bg-[#fafafa]"
+                  >
+                    추천상품 비교하기
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleReRecommend}
+                    className="flex-1 rounded-full border border-[#e5e5e5] bg-white py-3 font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111] transition-colors hover:bg-[#fafafa]"
+                  >
+                    추천상품 새로고침
+                  </button>
+                </div>
+              )}
+            </PackageSwipeStack>
           </div>
         )}
 
@@ -2477,7 +2662,8 @@ export default function App() {
         {step === "packages" &&
           packageSearchMode === "package-only" &&
           recommendedPackages.length > 0 &&
-          packageMessages.length === 0 && (
+          packageMessages.length === 0 &&
+          !packageListPanel && (
             <div className="mx-5 mb-4">
               <p className="text-[14px] leading-relaxed text-[#111]">
                 <span className="mr-1" aria-hidden>
@@ -2509,46 +2695,75 @@ export default function App() {
         {/* 자유여행 FIT 패키지 표시 (항공+호텔 조합) — 1·2번 FIT, 3번 에어텔 */}
         {(step === "fit-packages" || step === "fit-activities" || step === "fit-summary" || step === "booking" || step === "payment" || step === "confirmed") && fitSearchMode === 'combo' && fitPackages.length > 0 && (
           <div className="px-5 space-y-4 mt-4 mb-4">
-            {fitPackages.map((pkg, index) => (
-              <FITPackageCard
-                key={pkg.id}
-                package={pkg}
-                rank={index + 1}
-                onClick={() => {
-                  setSelectedFitPackage(pkg);
-                  setShowFitDetail(true);
-                }}
-                onBooking={() => {
-                  setSelectedFitPackage(pkg);
-                  setCurrentHotelForRoomSelection(pkg.id);
-                  setRoomSelectorSource("booking");
-                  setShowRoomTypeSelector(true);
-                }}
+            <PackageSwipeStack
+              stackHost="fit"
+              panel={packageListPanel}
+              swipeDirRef={packageListSwipeDirRef}
+              detail={
+                packageListPanel?.mode === "detail" ? (
+                  <PackageInlineDetail
+                    package={packageListPanel.pkg}
+                    onGoBack={focusRecommendedPackagesList}
+                    onBooking={() =>
+                      beginPackageBookingWithTravelerPicker(packageListPanel.pkg, "상품 예약하기", "detail")
+                    }
+                  />
+                ) : null
+              }
+              booking={
+                packageListPanel?.mode === "booking" ? (
+                  <PackageBookingSwipePanel
+                    key={packageListPanel.pkg.id}
+                    pkg={packageListPanel.pkg}
+                    onConfirm={(adults, children) =>
+                      handleBooking(packageListPanel.pkg, { adults, children })
+                    }
+                    onCancel={handlePackageBookingPanelCancel}
+                  />
+                ) : null
+              }
+            >
+              {fitPackages.map((pkg, index) => (
+                <FITPackageCard
+                  key={pkg.id}
+                  package={pkg}
+                  rank={index + 1}
+                  onClick={() => {
+                    setSelectedFitPackage(pkg);
+                    setShowFitDetail(true);
+                  }}
+                  onBooking={() => {
+                    setSelectedFitPackage(pkg);
+                    setCurrentHotelForRoomSelection(pkg.id);
+                    setRoomSelectorSource("booking");
+                    setShowRoomTypeSelector(true);
+                  }}
+                />
+              ))}
+              {/* 3번째: 에어텔 상품 (패키지 상세·예약·결제 플로우 동일) */}
+              <PackageCard
+                key={airtelPackage.id}
+                package={airtelPackage}
+                onClick={() => handlePackageClick(airtelPackage)}
+                onBooking={() => beginPackageBookingWithTravelerPicker(airtelPackage, "예약하기", "list")}
               />
-            ))}
-            {/* 3번째: 에어텔 상품 (패키지 상세·예약·결제 플로우 동일) */}
-            <PackageCard
-              key={airtelPackage.id}
-              package={airtelPackage}
-              onClick={() => handlePackageClick(airtelPackage)}
-              onBooking={() => beginPackageBookingWithTravelerPicker(airtelPackage, "예약하기")}
-            />
-            {step === "fit-packages" && fitPackages.length >= 2 && (
-              <div className="flex gap-2">
-                <button
-                  onClick={handleFitCompare}
-                  className="flex-1 py-3 bg-white border-2 border-[#7b3ff2] text-[#7b3ff2] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
-                >
-                  조합 비교하기
-                </button>
-                <button
-                  onClick={handleFitReRecommend}
-                  className="flex-1 py-3 bg-white border-2 border-[#e5e7eb] text-[#666] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f9fa] transition-colors"
-                >
-                  추천 다시받기
-                </button>
-              </div>
-            )}
+              {step === "fit-packages" && fitPackages.length >= 2 && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleFitCompare}
+                    className="flex-1 py-3 bg-white border-2 border-[#7b3ff2] text-[#7b3ff2] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
+                  >
+                    조합 비교하기
+                  </button>
+                  <button
+                    onClick={handleFitReRecommend}
+                    className="flex-1 py-3 bg-white border-2 border-[#e5e7eb] text-[#666] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f9fa] transition-colors"
+                  >
+                    추천 다시받기
+                  </button>
+                </div>
+              )}
+            </PackageSwipeStack>
           </div>
         )}
 

@@ -1,5 +1,8 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { scheduleScrollChatToLatestUserAnchor } from "../utils/scrollChatToUserAnchor";
+import {
+  scrollPackageSwipeFollowupIntoView,
+  scheduleScrollPackageSwipeFollowup,
+} from "../utils/scrollPackageSwipeFollowup";
 import icLikeFilled from "../../assets/icons/ic-like.svg?url";
 import icLikeOutline from "../../assets/icons/ic-like-1.svg?url";
 import { PackageData } from "./PackageCard";
@@ -79,7 +82,9 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
   const visible = showFull ? itinerary : itinerary.slice(0, 2);
 
   useLayoutEffect(() => {
-    scheduleScrollChatToLatestUserAnchor();
+    scheduleScrollPackageSwipeFollowup();
+    const id = window.setTimeout(() => scrollPackageSwipeFollowupIntoView("smooth"), 360);
+    return () => window.clearTimeout(id);
   }, []);
 
   return (
@@ -92,12 +97,12 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
     >
       {/* 여행봇 안내 — 요약 카드 상단 (채팅 본문과 동일 톤) */}
       <div className="space-y-1 text-[14px] leading-[1.5] text-[#111] font-['Pretendard',sans-serif]">
-        <p>상품 정보를 보기 쉽게 정리해드렸어요.</p>
+        <p className="mb-0">상품 정보를 보기 쉽게 정리해드렸어요.</p>
         <p>일정과 포함내역 등 핵심정보 기준으로 정리해봤어요.</p>
       </div>
 
       {/* ── 1. 패키지 요약 카드 ───────────────────────── */}
-      <div className="rounded-[16px] overflow-hidden bg-white shadow-[0px_2px_12px_rgba(0,0,0,0.07)]">
+      <div className="rounded-[16px] overflow-hidden bg-white border border-[#f0f0f0] shadow-[0px_2px_12px_rgba(0,0,0,0.07)]">
 
         {/* 이미지 영역 — 14px 내부 패딩, 120px 높이 */}
         <div className="relative mx-[14px] mt-[13px] h-[120px] rounded-[12px] overflow-hidden">
@@ -310,6 +315,29 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
         >
           상품 예약하기
         </button>
+      </div>
+
+      {/* ── H-AI TIP (상세 하단 · 목록/비교 UI와 동일 톤) ── */}
+      <div
+        className="w-full border-t border-[#f0f0f0] pt-[15px] scroll-mt-4"
+        role="region"
+        aria-label="H-AI 추천 안내"
+        data-package-swipe-followup-anchor=""
+      >
+        <p className="text-[14px] leading-relaxed text-[#111] m-0">
+          <span className="mr-1" aria-hidden>
+            💡
+          </span>
+          <span className="font-['Pretendard:Bold',sans-serif] text-[rgba(55,127,255,1)]">H-AI TIP</span>
+        </p>
+        {pkg.recommendReason ? (
+          <p className="mt-1.5 text-[14px] leading-relaxed text-[#333] m-0">{pkg.recommendReason}</p>
+        ) : null}
+        <p className="mt-2 text-[14px] leading-relaxed text-[#444] m-0">관련해서 이런 질문도 이어갈 수 있어요.</p>
+        <ul className="mt-1.5 space-y-1.5 pl-0.5 text-[14px] text-[#333] list-none m-0 p-0">
+          <li>• 포함·불포함 항목만 짧게 정리해줘.</li>
+          <li>• 비슷한 일정인데 가격대가 다른 상품도 추천해줘.</li>
+        </ul>
       </div>
     </div>
   );

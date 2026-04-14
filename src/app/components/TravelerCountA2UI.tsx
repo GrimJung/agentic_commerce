@@ -19,10 +19,14 @@ function formatChildAgeLabel(y: number): string {
   return `만 ${y}세`;
 }
 
+export type TravelerCountA2UIPhase = "editing" | "pricePreview" | "submitted" | "cancelled";
+
 interface TravelerCountA2UIProps {
   package: PackageData;
   onConfirm: (adults: number, children: number, childAges: number[]) => void;
   onCancel: () => void;
+  /** 스와이프 패널 등 부모가 단계별로 안내 문구를 바꿀 때 사용 */
+  onPhaseChange?: (phase: TravelerCountA2UIPhase) => void;
 }
 
 function StepperRow({
@@ -83,11 +87,20 @@ function StepperRow({
 /**
  * 채팅 내 A2UI — 여행 인원(성인/아동) 선택 후 예약 단계로 진행
  */
-export function TravelerCountA2UI({ package: pkg, onConfirm, onCancel }: TravelerCountA2UIProps) {
+export function TravelerCountA2UI({
+  package: pkg,
+  onConfirm,
+  onCancel,
+  onPhaseChange,
+}: TravelerCountA2UIProps) {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childAges, setChildAges] = useState<number[]>([]);
-  const [phase, setPhase] = useState<"editing" | "pricePreview" | "submitted" | "cancelled">("editing");
+  const [phase, setPhase] = useState<TravelerCountA2UIPhase>("editing");
+
+  useEffect(() => {
+    onPhaseChange?.(phase);
+  }, [phase, onPhaseChange]);
 
   useEffect(() => {
     setChildAges((prev) => {
@@ -105,10 +118,6 @@ export function TravelerCountA2UI({ package: pkg, onConfirm, onCancel }: Travele
       <div className="space-y-3">
         <p className="font-['Pretendard',sans-serif] text-[14px] leading-relaxed text-[#111]">
           예약하고자 하는 상품 정보와 금액을 다시 한번 확인해주세요.
-        </p>
-        <p className="font-['Pretendard',sans-serif] text-[14px] leading-relaxed text-[#111]">
-          예약자 정보 및 쿠폰 사용 등은 예약페이지에서 확인 후 진행할 수 있습니다. 정보가 틀리지 않는다면{" "}
-          <span className="font-['Pretendard:SemiBold',sans-serif]">(예약하러가기)</span>를 선택해주세요.
         </p>
         <PackageBookingPricePreview
           package={pkg}
@@ -159,7 +168,10 @@ export function TravelerCountA2UI({ package: pkg, onConfirm, onCancel }: Travele
   }
 
   return (
-    <div className="rounded-[18px] border border-[#f0f0f0] bg-white px-4 py-4 shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
+    <div
+      className="isolate rounded-[18px] border border-[#f0f0f0] bg-white px-4 py-4 shadow-[0_2px_16px_rgba(0,0,0,0.08)] [transform:translateZ(0)] [backface-visibility:hidden]"
+      style={{ WebkitBackfaceVisibility: "hidden" }}
+    >
       <h2 className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#111]">여행 인원 수</h2>
       <div className="mt-4 space-y-3">
         <StepperRow

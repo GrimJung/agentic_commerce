@@ -43,7 +43,7 @@ export function PackageCard({ package: pkg, onClick, onBooking }: PackageCardPro
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-white rounded-[16px] overflow-hidden border border-[#e8e8e8] shadow-sm"
+      className="mb-2 bg-white rounded-[16px] overflow-hidden border border-[#e8e8e8] shadow-sm"
     >
       <div className="flex gap-3 p-3">
         {/* 좌측: 세로로 긴 이미지 */}
