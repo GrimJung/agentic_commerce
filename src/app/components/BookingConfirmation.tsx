@@ -4,6 +4,47 @@ import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { cn } from "./ui/utils";
 import { PackageServiceFooter } from "./PackageServiceFooter";
 
+/** 패키지 결제완료 화면 우측 하단 H-AI 플로팅 (토스트 + 채팅 이동 FAB) */
+function PackageTravelPrepHaiFab({ onOpenChat }: { onOpenChat: () => void }) {
+  return (
+    <div
+      className="pointer-events-none fixed z-[75] flex flex-col items-end gap-2"
+      style={{
+        bottom: "max(1.25rem, env(safe-area-inset-bottom, 0px))",
+        right: "max(1rem, env(safe-area-inset-right, 0px))",
+      }}
+    >
+      <div className="flex max-w-[min(288px,calc(100vw-2rem))] flex-col items-end gap-2">
+        <div className="pointer-events-none relative rounded-full bg-[rgba(55,128,255,0.8)] px-4 py-2.5 pr-5 shadow-[0_4px_14px_rgba(55,128,255,0.45)]">
+          <p className="m-0 text-center text-[12px] font-['Pretendard:SemiBold',sans-serif] font-semibold leading-snug text-white sm:text-[13px]">
+            여행준비를 도와드릴 수 있어요
+          </p>
+          <span
+            className="absolute -bottom-1 right-5 size-0 border-l-[7px] border-r-[7px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#3780ff]"
+            aria-hidden
+          />
+        </div>
+        <button
+          type="button"
+          onClick={onOpenChat}
+          aria-label="H-AI 채팅으로 이동"
+          className="pointer-events-auto size-14 shrink-0 overflow-hidden rounded-full p-0 shadow-[0_6px_20px_rgba(42,127,255,0.45)] transition-transform active:scale-95"
+        >
+          <img
+            src="/hai-travel-prep-fab.png"
+            alt=""
+            width={56}
+            height={56}
+            className="size-full object-cover"
+            decoding="async"
+            draggable={false}
+          />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 interface BookingConfirmationProps {
   bookingNumber: string;
   packageTitle: string;
@@ -136,7 +177,7 @@ export function BookingConfirmation({
       </div>
 
       {showServiceFooter ? (
-        <div className="min-h-0 flex-1 w-full overflow-y-auto pb-2">
+        <div className="min-h-0 flex-1 w-full overflow-y-auto pb-28">
           {summaryBlock}
           {actionButtons}
           <PackageCompletionPromoSections />
@@ -150,6 +191,8 @@ export function BookingConfirmation({
           <div className="w-full shrink-0 border-t border-[#eee] bg-white">{actionButtons}</div>
         </>
       )}
+
+      {showServiceFooter ? <PackageTravelPrepHaiFab onOpenChat={onClose} /> : null}
     </motion.div>
   );
 }
