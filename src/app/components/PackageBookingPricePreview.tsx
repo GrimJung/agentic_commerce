@@ -54,6 +54,14 @@ function computeTravelerGrossTotal(pkg: PackageData, adults: number, children: n
   return pkg.price * a + Math.round(pkg.price * CHILD_RATE) * c;
 }
 
+/** 인원 기준 총액(회원즉시·쿠폰 반영) — 인원 선택 UI·요약과 동일 숫자 */
+export function computePackageEstimatedFinalPrice(pkg: PackageData, adults: number, children: number): number {
+  const grossTotal = computeTravelerGrossTotal(pkg, adults, children);
+  const memberInstant = Math.min(Math.floor(grossTotal * 0.05), 50_000);
+  const afterMember = grossTotal - memberInstant;
+  return Math.max(0, afterMember - PACKAGE_PREVIEW_COUPON_DISCOUNT);
+}
+
 interface PackageBookingPricePreviewProps {
   package: PackageData;
   adults: number;
@@ -71,9 +79,7 @@ export function PackageBookingPricePreview({
 }: PackageBookingPricePreviewProps) {
   const { dep, ret } = flightLines(pkg);
   const grossTotal = computeTravelerGrossTotal(pkg, adults, children);
-  const memberInstant = Math.min(Math.floor(grossTotal * 0.05), 50_000);
-  const afterMember = grossTotal - memberInstant;
-  const finalPrice = Math.max(0, afterMember - PACKAGE_PREVIEW_COUPON_DISCOUNT);
+  const finalPrice = computePackageEstimatedFinalPrice(pkg, adults, children);
   const paxLabel =
     children > 0 ? `성인 ${adults}, 아동 ${children}` : adults > 1 ? `성인 ${adults}` : "성인 1";
 

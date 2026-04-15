@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import type { PackageData } from "./PackageCard";
-import { PackageBookingPricePreview } from "./PackageBookingPricePreview";
+import {
+  PackageBookingPricePreview,
+  computePackageEstimatedFinalPrice,
+} from "./PackageBookingPricePreview";
 
 const ROW_BG = "rgba(94, 43, 184, 0.06)";
 const CANCEL_BG = "#ede8ff";
@@ -226,6 +229,21 @@ export function TravelerCountA2UI({
           </div>
         )}
       </div>
+
+      <div className="mt-3 border-t border-[#eee] pt-3">
+        <div className="flex items-baseline justify-between gap-3 text-[17px]">
+          <p className="m-0 shrink-0 font-['Pretendard:Bold',sans-serif] text-[14px] font-semibold leading-none text-[#111]">
+            총 결제 예정 금액
+          </p>
+          <p className="m-0 min-w-0 shrink text-right font-['Pretendard:Bold',sans-serif] text-[22px] leading-none text-[#111] tabular-nums">
+            {computePackageEstimatedFinalPrice(pkg, adults, children).toLocaleString()}원
+          </p>
+        </div>
+        <p className="m-0 mt-1 text-right font-['Pretendard',sans-serif] text-[11px] leading-snug text-[#888]">
+          유류할증료&제세공과금 포함
+        </p>
+      </div>
+
       <div className="mt-5 flex gap-2">
         <button
           type="button"

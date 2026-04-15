@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, CreditCard, Check, ChevronDown, ChevronUp, ShieldCheck, X } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import { cn } from "./ui/utils";
 import { NamemdaeComboStepper } from "./NamemdaeComboStepper";
 import { PackageServiceFooter } from "./PackageServiceFooter";
+import AgentToast from "./AgentToast";
+import { PAYMENT_TOAST_DATA, PAYMENT_TRIGGERS } from "./payment-toast-config";
 
 /** 결제완료 화면에 표시할 예약 상세 (캡처 기준) */
 export interface PaymentCompleteDetails {
@@ -67,6 +69,7 @@ export function PaymentSheet({
   showPackageServiceFooter = false,
 }: PaymentSheetProps) {
   useLockBodyScroll();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [selectedCard, setSelectedCard] = useState<CardOption>(null);
   const [rememberPaymentMethod, setRememberPaymentMethod] = useState(true);
@@ -266,9 +269,9 @@ export function PaymentSheet({
           </h1>
         </div>
 
-        <div className="min-h-0 flex-1 w-full overflow-y-auto">
+        <div ref={scrollRef} className="min-h-0 flex-1 w-full overflow-y-auto">
           {/* 할인/혜택 적용 */}
-          <section className="p-4 border-b-8 border-[#f0f0f0]">
+          <section id="payment-section-discount" className="p-4 border-b-8 border-[#f0f0f0]">
             <h2 className="text-[17px] font-bold font-['Pretendard:Bold',sans-serif] text-[#111] mb-4">
               할인/혜택 적용
             </h2>
@@ -463,7 +466,7 @@ export function PaymentSheet({
             <div className="rounded-[16px] border border-[#e5e5e5] bg-white overflow-hidden">
 
               {/* 신용카드 */}
-              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer" onClick={() => setPaymentMethod("card")}>
+              <label id="payment-section-card" className="flex items-center gap-3 px-4 py-4 cursor-pointer" onClick={() => setPaymentMethod("card")}>
                 {/* 커스텀 라디오 */}
                 <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center transition-colors ${paymentMethod === "card" ? "border-[#7b3ff2] bg-white" : "border-[#ccc] bg-white"}`}>
                   {paymentMethod === "card" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
@@ -526,7 +529,7 @@ export function PaymentSheet({
                       <span className="text-[14px] text-[#aaa]">카드사</span>
                       <ChevronDown className="size-4 text-[#aaa]" />
                     </div>
-                    <div className="flex items-center justify-between px-4 py-3.5 border border-[#e0e0e0] rounded-[12px] bg-white">
+                    <div id="payment-section-installment" className="flex items-center justify-between px-4 py-3.5 border border-[#e0e0e0] rounded-[12px] bg-white">
                       <span className="text-[14px] text-[#aaa]">할부기간을 선택해 주세요</span>
                       <ChevronDown className="size-4 text-[#aaa]" />
                     </div>
@@ -551,7 +554,7 @@ export function PaymentSheet({
               </label>
 
               {/* 카카오페이 */}
-              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
+              <label id="payment-section-simplepay" className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
                 <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "kakao" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
                   {paymentMethod === "kakao" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
                 </span>
@@ -626,7 +629,7 @@ export function PaymentSheet({
           </section>
 
           {/* 현금영수증 등록 관리 — 항공결제 화면과 동일 */}
-          <section className="p-4">
+          <section id="payment-section-receipt" className="p-4">
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-normal font-['Pretendard:Regular',sans-serif] text-[15px] text-[#111]">
@@ -766,10 +769,15 @@ export function PaymentSheet({
               <PackageServiceFooter />
             </div>
           )}
+          <AgentToast
+            toastData={PAYMENT_TOAST_DATA}
+            triggers={PAYMENT_TRIGGERS}
+            scrollContainerRef={scrollRef}
+          />
         </div>
 
         {/* 하단: 결제 CTA (본문·푸터와 분리) */}
-        <div className="shrink-0 border-t border-[#eee] bg-white p-4">
+        <div id="payment-section-cta" className="shrink-0 border-t border-[#eee] bg-white p-4">
             <button
               type="button"
               onClick={handlePay}

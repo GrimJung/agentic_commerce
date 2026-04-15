@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "motion/react";
 import { ChevronUp, ChevronDown, ArrowLeft, Info, User } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
@@ -13,6 +13,8 @@ import {
 import { cn } from "./ui/utils";
 import { PACKAGE_PREVIEW_COUPON_DISCOUNT } from "./PackageBookingPricePreview";
 import { PackageServiceFooter } from "./PackageServiceFooter";
+import AgentToast from "./AgentToast";
+import { BOOKING_TOAST_DATA, BOOKING_TRIGGERS } from "./booking-toast-config";
 
 const DEPOSIT_AMOUNT = 100_000;
 
@@ -99,6 +101,7 @@ export function PackageBookingSheet({
   travelerChildren,
 }: PackageBookingSheetProps) {
   useLockBodyScroll();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [travelerTab, setTravelerTab] = useState<"now" | "later">("now");
   const [sameAsBooker, setSameAsBooker] = useState(true);
   const [travelerGender, setTravelerGender] = useState<"남" | "여" | null>(null);
@@ -184,6 +187,7 @@ export function PackageBookingSheet({
         </div>
 
         <div
+          ref={scrollRef}
           data-package-booking-scroll
           className="min-h-0 flex-1 w-full overflow-y-auto"
           onScroll={(e) => {
@@ -301,7 +305,7 @@ export function PackageBookingSheet({
 
           {/* 아코디언: 섹션 구분선은 시트 전폭 — 패딩은 트리거·콘텐츠에만 */}
           <Accordion type="multiple" defaultValue={["hotel", "booker", "traveler", "terms", "payment"]} className="w-full">
-            <AccordionItem value="hotel" className="w-full border-b border-[#eee]">
+            <AccordionItem value="hotel" id="booking-section-hotel" className="w-full border-b border-[#eee]">
               <AccordionTrigger className="group w-full px-4 py-4 text-[18px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span>이용호텔 및 선택관광</span>
                 <span className="flex items-center gap-1 shrink-0">
@@ -339,7 +343,7 @@ export function PackageBookingSheet({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="booker" className="w-full border-b border-[#eee]">
+            <AccordionItem value="booker" id="booking-section-booker" className="w-full border-b border-[#eee]">
               <AccordionTrigger className="group w-full px-4 py-4 text-[18px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   예약자정보
@@ -374,7 +378,7 @@ export function PackageBookingSheet({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="traveler" className="w-full border-b border-[#eee]">
+            <AccordionItem value="traveler" id="booking-section-traveler" className="w-full border-b border-[#eee]">
               <AccordionTrigger className="w-full px-4 py-4 font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline [&>svg]:size-5">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   여행자정보
@@ -531,7 +535,7 @@ export function PackageBookingSheet({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="terms" className="w-full border-b border-[#eee]">
+            <AccordionItem value="terms" id="booking-section-terms" className="w-full border-b border-[#eee]">
               <AccordionTrigger className="group w-full px-4 py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   약관 및 개인정보 동의
@@ -618,7 +622,7 @@ export function PackageBookingSheet({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="payment" className="w-full border-b border-[#eee]">
+            <AccordionItem value="payment" id="booking-section-price" className="w-full border-b border-[#eee]">
               <AccordionTrigger className="group w-full px-4 py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span className="text-[18px] font-bold">결제상세 내역</span>
                 <ChevronDown className="size-4 text-[#111] shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
@@ -685,10 +689,15 @@ export function PackageBookingSheet({
               <ChevronUp className="size-5" />
             </button>
           )}
+          <AgentToast
+            toastData={BOOKING_TOAST_DATA}
+            triggers={BOOKING_TRIGGERS}
+            scrollContainerRef={scrollRef}
+          />
         </div>
 
         {/* 하단: 결제 CTA (본문·푸터와 분리, flex 고정 높이만 사용) */}
-        <div className="flex shrink-0 gap-3 border-t border-[#eee] bg-white px-4 py-2.5">
+        <div id="booking-section-cta" className="flex shrink-0 gap-3 border-t border-[#eee] bg-white px-4 py-2.5">
             <button
               type="button"
               onClick={handlePayDeposit}
