@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 
 export interface ToastConfig {
   msg: string;
@@ -18,8 +18,10 @@ interface AgentToastProps {
   toastData: Record<string, ToastConfig>;
   triggers: ScrollTrigger[];
   scrollContainerRef?: React.RefObject<HTMLElement>;
-  /** 목업: 스크롤 구간에 맞춰 토스트가 유지되므로 미사용 (API 호환용으로만 남김) */
+  /** 컴팩트 토스트 자동 숨김 시간 (기본 3초). 구간(toastKey)이 바뀌면 다시 표시 */
   autoHideMs?: number;
+  /** 스크롤 구간보다 우선 표시 (예: 카드 선택 시). `toastData`에 동일 키가 있어야 함 */
+  interactionToastKey?: string | null;
 }
 
 const HAI_AVATAR_SRC = "/hai-travel-prep-fab.png";
@@ -138,35 +140,95 @@ const S = {
 };
 
 const AgentToast: React.FC<AgentToastProps> = ({
-  toastData, triggers, scrollContainerRef,
+  toastData,
+  triggers,
+  scrollContainerRef,
+  autoHideMs = 3000,
+  interactionToastKey = null,
 }) => {
   const [toastVisible, setToastVisible] = useState(false);
   const [panelVisible, setPanelVisible] = useState(false);
   const [currentKey, setCurrentKey] = useState<string | null>(null);
   const panelVisibleRef = React.useRef(panelVisible);
   panelVisibleRef.current = panelVisible;
+  const interactionToastKeyRef = React.useRef<string | null>(null);
+  interactionToastKeyRef.current = interactionToastKey ?? null;
   const rafScrollRef = React.useRef<number | null>(null);
+  const prevActiveKeyRef = React.useRef<string | null>(null);
+  const toastDismissedForKeyRef = React.useRef<string | null>(null);
+  const hideTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const panelRootRef = React.useRef<HTMLDivElement>(null);
+
+  const runScrollSync = useCallback(() => {
+    if (panelVisibleRef.current) return;
+
+    const ik = interactionToastKeyRef.current;
+    if (ik && toastData[ik]) {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
+      }
+      setCurrentKey(ik);
+      setToastVisible(true);
+      return;
+    }
+
+    const container = (scrollContainerRef?.current ?? window) as Window | HTMLElement;
+    const activeKey = computeActiveToastKey(triggers, container);
+    setCurrentKey(activeKey);
+
+    const clearHideTimer = () => {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
+      }
+    };
+
+    if (activeKey == null) {
+      clearHideTimer();
+      setToastVisible(false);
+      prevActiveKeyRef.current = null;
+      toastDismissedForKeyRef.current = null;
+      return;
+    }
+
+    const prev = prevActiveKeyRef.current;
+    const keyChanged = activeKey !== prev;
+
+    if (keyChanged) {
+      prevActiveKeyRef.current = activeKey;
+      toastDismissedForKeyRef.current = null;
+    }
+
+    if (toastDismissedForKeyRef.current === activeKey) {
+      setToastVisible(false);
+      return;
+    }
+
+    if (keyChanged) {
+      clearHideTimer();
+      setToastVisible(true);
+      hideTimerRef.current = setTimeout(() => {
+        setToastVisible(false);
+        toastDismissedForKeyRef.current = activeKey;
+        hideTimerRef.current = null;
+      }, autoHideMs);
+    }
+  }, [triggers, scrollContainerRef, autoHideMs, toastData]);
 
   useEffect(() => {
     const container = (scrollContainerRef?.current ?? window) as Window | HTMLElement;
-
-    const syncToastFromScroll = () => {
-      if (panelVisibleRef.current) return;
-      const activeKey = computeActiveToastKey(triggers, container);
-      setCurrentKey(activeKey);
-      setToastVisible(activeKey != null);
-    };
 
     const handleScroll = () => {
       if (rafScrollRef.current != null) return;
       rafScrollRef.current = requestAnimationFrame(() => {
         rafScrollRef.current = null;
-        syncToastFromScroll();
+        runScrollSync();
       });
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
-    queueMicrotask(syncToastFromScroll);
+    queueMicrotask(runScrollSync);
 
     return () => {
       container.removeEventListener('scroll', handleScroll);
@@ -174,17 +236,23 @@ const AgentToast: React.FC<AgentToastProps> = ({
         cancelAnimationFrame(rafScrollRef.current);
         rafScrollRef.current = null;
       }
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
+      }
     };
-  }, [triggers, scrollContainerRef]);
+  }, [runScrollSync, scrollContainerRef]);
 
-  /** 상세 패널을 닫은 뒤 스크롤 없이도 현재 구간 토스트가 다시 보이도록 */
+  useEffect(() => {
+    queueMicrotask(() => runScrollSync());
+  }, [interactionToastKey, runScrollSync]);
+
+  /** 상세 패널을 닫은 뒤: 타임아웃으로 숨겼던 동일 구간이어도 토스트를 다시 띄울 수 있게 한 뒤 동기화 */
   useEffect(() => {
     if (panelVisible) return;
-    const container = (scrollContainerRef?.current ?? window) as Window | HTMLElement;
-    const activeKey = computeActiveToastKey(triggers, container);
-    setCurrentKey(activeKey);
-    setToastVisible(activeKey != null);
-  }, [panelVisible, triggers, scrollContainerRef]);
+    toastDismissedForKeyRef.current = null;
+    runScrollSync();
+  }, [panelVisible, runScrollSync]);
 
   /** 상세 도움말 패널이 열린 뒤 스크롤하면 기존 전환 애니메이션으로 자연스럽게 닫힘 */
   useEffect(() => {
@@ -206,8 +274,41 @@ const AgentToast: React.FC<AgentToastProps> = ({
     return () => container.removeEventListener('scroll', handleScrollDismiss);
   }, [panelVisible, scrollContainerRef]);
 
+  /** 상세 패널이 열린 상태에서 패널 바깥 포인터·포커스 액션 시 즉시 닫힘 */
+  useEffect(() => {
+    if (!panelVisible) return;
+    const onPointerDownOutside = (e: PointerEvent) => {
+      const root = panelRootRef.current;
+      if (!root) return;
+      if (root.contains(e.target as Node)) return;
+      setPanelVisible(false);
+    };
+    const onFocusIn = (e: FocusEvent) => {
+      const root = panelRootRef.current;
+      if (!root) return;
+      const t = e.target;
+      if (t instanceof Node && root.contains(t)) return;
+      setPanelVisible(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPanelVisible(false);
+    };
+    document.addEventListener("pointerdown", onPointerDownOutside, true);
+    document.addEventListener("focusin", onFocusIn, true);
+    document.addEventListener("keydown", onKeyDown, true);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDownOutside, true);
+      document.removeEventListener("focusin", onFocusIn, true);
+      document.removeEventListener("keydown", onKeyDown, true);
+    };
+  }, [panelVisible]);
+
   const handleToastClick = () => {
     if (!currentKey) return;
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
     setToastVisible(false);
     setPanelVisible(true);
   };
@@ -223,7 +324,7 @@ const AgentToast: React.FC<AgentToastProps> = ({
 
   return (
     <>
-      <div style={S.panel(panelVisible)} aria-hidden={!panelVisible}>
+      <div ref={panelRootRef} style={S.panel(panelVisible)} aria-hidden={!panelVisible}>
         {current && (
           <>
             <div style={S.panelHeader}>

@@ -305,7 +305,7 @@ export function PackageBookingSheet({
 
           {/* 아코디언: 섹션 구분선은 시트 전폭 — 패딩은 트리거·콘텐츠에만 */}
           <Accordion type="multiple" defaultValue={["hotel", "booker", "traveler", "terms", "payment"]} className="w-full">
-            <AccordionItem value="hotel" id="booking-section-hotel" className="w-full border-b border-[#eee]">
+            <AccordionItem value="hotel" className="w-full border-b border-[#eee]">
               <AccordionTrigger className="group w-full px-4 py-4 text-[18px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span>이용호텔 및 선택관광</span>
                 <span className="flex items-center gap-1 shrink-0">
@@ -535,7 +535,7 @@ export function PackageBookingSheet({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="terms" id="booking-section-terms" className="w-full border-b border-[#eee]">
+            <AccordionItem value="terms" className="w-full border-b border-[#eee]">
               <AccordionTrigger className="group w-full px-4 py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   약관 및 개인정보 동의
@@ -674,7 +674,7 @@ export function PackageBookingSheet({
             </AccordionItem>
           </Accordion>
 
-          <div className="mt-8 bg-white pt-2">
+          <div id="booking-section-cta" className="mt-8 bg-white pt-2">
             <PackageServiceFooter />
           </div>
 
@@ -697,7 +697,7 @@ export function PackageBookingSheet({
         </div>
 
         {/* 하단: 결제 CTA (본문·푸터와 분리, flex 고정 높이만 사용) */}
-        <div id="booking-section-cta" className="flex shrink-0 gap-3 border-t border-[#eee] bg-white px-4 py-2.5">
+        <div className="flex shrink-0 gap-3 border-t border-[#eee] bg-white px-4 py-2.5">
             <button
               type="button"
               onClick={handlePayDeposit}

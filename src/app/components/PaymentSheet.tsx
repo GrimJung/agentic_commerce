@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, CreditCard, Check, ChevronDown, ChevronUp, ShieldCheck, X } from "lucide-react";
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
@@ -6,6 +6,7 @@ import { cn } from "./ui/utils";
 import { NamemdaeComboStepper } from "./NamemdaeComboStepper";
 import { PackageServiceFooter } from "./PackageServiceFooter";
 import AgentToast from "./AgentToast";
+import type { ToastConfig } from "./AgentToast";
 import { PAYMENT_TOAST_DATA, PAYMENT_TRIGGERS } from "./payment-toast-config";
 
 /** 결제완료 화면에 표시할 예약 상세 (캡처 기준) */
@@ -70,6 +71,8 @@ export function PaymentSheet({
 }: PaymentSheetProps) {
   useLockBodyScroll();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const cardPickToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [interactionToastKey, setInteractionToastKey] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [selectedCard, setSelectedCard] = useState<CardOption>(null);
   const [rememberPaymentMethod, setRememberPaymentMethod] = useState(true);
@@ -104,6 +107,56 @@ export function PaymentSheet({
   const totalDiscount = couponDiscount + mileageUse;
   const finalAmount = Math.max(0, amount - totalDiscount);
   const amountUsd = (amount / 1493).toFixed(1);
+
+  const paymentToastData = useMemo((): Record<string, ToastConfig> => {
+    const n = couponDiscount.toLocaleString();
+    const couponBlock: ToastConfig =
+      couponApplied && couponDiscount > 0
+        ? {
+            msg: `즉시할인쿠폰 ${n}원이 적용됐어요`,
+            body: `<p style="margin-bottom:6px;"><strong>즉시할인 쿠폰</strong> <strong>${n}원</strong>이 결제 금액에 반영됐어요.</p><p>결제 상세의 <strong>총 할인금액</strong>에서도 확인할 수 있어요.</p>`,
+            highlight: "🎟 「변경」에서 다른 즉시할인 쿠폰으로 바꿀 수 있어요.",
+            chips: ["다른 쿠폰도 쓸 수 있나요?", "쿠폰 중복 적용 되나요?"],
+          }
+        : {
+            msg: "적용 가능한 할인·쿠폰이 있어요",
+            body: `<p style="margin-bottom:6px;">즉시할인 쿠폰이나 프로모션을 적용하면 결제 금액이 줄어들어요.</p><p>사용 가능한 쿠폰이 있다면 <strong>변경</strong>에서 선택할 수 있어요.</p>`,
+            highlight: "💡 결제 상세의 총 할인금액을 꼭 확인해 주세요.",
+            chips: ["어떤 쿠폰이 있나요?", "최대 할인은 얼마까지예요?"],
+          };
+    return { ...PAYMENT_TOAST_DATA, coupon: couponBlock };
+  }, [couponApplied, couponDiscount]);
+
+  useEffect(() => {
+    if (paymentMethod !== "card") {
+      setInteractionToastKey(null);
+      if (cardPickToastTimerRef.current) {
+        clearTimeout(cardPickToastTimerRef.current);
+        cardPickToastTimerRef.current = null;
+      }
+      return;
+    }
+    if (selectedCard !== "samsung" && selectedCard !== "hana") {
+      setInteractionToastKey(null);
+      return;
+    }
+    const key = selectedCard === "samsung" ? "cardSamsung" : "cardHana";
+    if (cardPickToastTimerRef.current) {
+      clearTimeout(cardPickToastTimerRef.current);
+      cardPickToastTimerRef.current = null;
+    }
+    setInteractionToastKey(key);
+    cardPickToastTimerRef.current = setTimeout(() => {
+      setInteractionToastKey(null);
+      cardPickToastTimerRef.current = null;
+    }, 3000);
+    return () => {
+      if (cardPickToastTimerRef.current) {
+        clearTimeout(cardPickToastTimerRef.current);
+        cardPickToastTimerRef.current = null;
+      }
+    };
+  }, [selectedCard, paymentMethod]);
 
   const handlePay = () => {
     setIsProcessing(true);
@@ -271,13 +324,13 @@ export function PaymentSheet({
 
         <div ref={scrollRef} className="min-h-0 flex-1 w-full overflow-y-auto">
           {/* 할인/혜택 적용 */}
-          <section id="payment-section-discount" className="p-4 border-b-8 border-[#f0f0f0]">
+          <section className="p-4 border-b-8 border-[#f0f0f0]">
             <h2 className="text-[17px] font-bold font-['Pretendard:Bold',sans-serif] text-[#111] mb-4">
               할인/혜택 적용
             </h2>
 
             {/* 쿠폰할인 */}
-            <div className="flex items-center justify-between py-3">
+            <div id="payment-section-coupon" className="flex items-center justify-between py-3">
               <span className="text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">쿠폰할인</span>
               <div className="flex items-center gap-2">
                 {couponApplied ? (
@@ -466,7 +519,7 @@ export function PaymentSheet({
             <div className="rounded-[16px] border border-[#e5e5e5] bg-white overflow-hidden">
 
               {/* 신용카드 */}
-              <label id="payment-section-card" className="flex items-center gap-3 px-4 py-4 cursor-pointer" onClick={() => setPaymentMethod("card")}>
+              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer" onClick={() => setPaymentMethod("card")}>
                 {/* 커스텀 라디오 */}
                 <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center transition-colors ${paymentMethod === "card" ? "border-[#7b3ff2] bg-white" : "border-[#ccc] bg-white"}`}>
                   {paymentMethod === "card" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
@@ -554,7 +607,7 @@ export function PaymentSheet({
               </label>
 
               {/* 카카오페이 */}
-              <label id="payment-section-simplepay" className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
+              <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
                 <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "kakao" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
                   {paymentMethod === "kakao" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
                 </span>
@@ -629,7 +682,7 @@ export function PaymentSheet({
           </section>
 
           {/* 현금영수증 등록 관리 — 항공결제 화면과 동일 */}
-          <section id="payment-section-receipt" className="p-4">
+          <section className="p-4">
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-normal font-['Pretendard:Regular',sans-serif] text-[15px] text-[#111]">
@@ -770,9 +823,10 @@ export function PaymentSheet({
             </div>
           )}
           <AgentToast
-            toastData={PAYMENT_TOAST_DATA}
+            toastData={paymentToastData}
             triggers={PAYMENT_TRIGGERS}
             scrollContainerRef={scrollRef}
+            interactionToastKey={interactionToastKey}
           />
         </div>
 
