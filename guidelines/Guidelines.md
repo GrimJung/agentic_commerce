@@ -1,8 +1,10 @@
 # H-AI 프로젝트 가이드라인
 
 - **선호도 입력(PreferenceInput)**: 패키지 직접 검색 시 인원=성인/아동/유아 3종. FIT 또는 추천 검색 시 인원=성인+아동만, 아동 1명 이상 시 아동별 나이(만0~만17세) 선택 박스 표시. `personaRecommendFlow` prop으로 추천 검색 플로우 구분.
-- **문서·다이어그램**: README, mvp.md, research.md, PUML(user-flow, state-diagram, simple-flowchart)은 최신 플로우(추천 검색, 인원 옵션) 및 UI 변경 이력 반영하여 유지.
+- **문서·다이어그램**: README, mvp.md, research.md, AGENTIC_COMMERCE_ANALYSIS.md, PUML(`user-flow.puml`, `state-diagram.puml`, `simple-flowchart.puml`)은 최신 플로우(추천 검색, 인원 옵션, **패키지 PackageBookingSheet·PaymentSheet·AgentToast**, FIT·숙소 `BookingForm`/PaymentSheet 분기) 및 UI 변경 이력 반영하여 유지.
 - **PackageDetail UI**: "H-AI 요약" 라벨은 `text-[10px]` 유지; "30% 자유시간 보장" 텍스트는 `whitespace-nowrap`으로 줄바꿈 방지 유지. (2026-03-18 반영)
+- **AgentToast (예약·결제 시트)**: 스크롤 컨테이너는 `scrollRef`로 전달. 섹션 트리거는 `booking-toast-config.ts` / `payment-toast-config.ts`의 `sectionId`·`toastKey`와 시트 내 DOM `id`를 일치시킬 것. 카드 선택 등 일시 안내는 `interactionToastKey`로 우선 표시. 상세 패널은 포커스·포인터 바깥 영역·Escape로 닫힘.
+- **패키지 인원·가격**: `TravelerCountA2UI`는 상품 요약+인원+금액을 **한 카드**에서 처리(`onPhaseChange`: `editing` | `cancelled`). 금액 블록은 `PackageBookingPriceSummaryBlock`·`PackageBookingTripSummary`와 `PackageBookingPricePreview`가 동일 로직·상수(`PACKAGE_PREVIEW_COUPON_DISCOUNT`)를 공유한다.
 
 ---
 

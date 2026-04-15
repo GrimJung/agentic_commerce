@@ -73,7 +73,7 @@ state fit_packages <<fit>> {
   FITComparison --> FITDetail : 항목 선택
 }
 
-packages --> booking : [예약하기] 클릭
+packages --> package_sheet : [예약하기]\n패키지 상품
 
 fit_packages --> room_type : [예약하기] (조합 or 숙소만)
 fit_packages --> flight_booking : [예약하기] (항공만)
@@ -95,9 +95,18 @@ state room_type <<booking>> {
   RoomTypeSelector --> booking : 룸타입 선택 완료
 }
 
+state package_sheet <<booking>> {
+  [*] --> PackageBooking
+  PackageBooking : PackageBookingSheet\n(통합 예약 바텀시트)
+  PackageBooking : TravelerCountA2UI\n(스와이프 인원 + 가격 미리보기)
+  PackageBooking : 예약자·여행자·총액·계약금/전액
+  PackageBooking : **AgentToast** + booking-toast-config\n(스크롤 구간 트리거)
+  PackageBooking --> payment : 제출 → PaymentSheet
+}
+
 state booking <<booking>> {
   [*] --> BookingForm
-  BookingForm : 예약자 정보 입력
+  BookingForm : 예약자 정보 입력\n(FIT·숙소만 등, 패키지 제외)
   BookingForm : 이름, 연락처, 여행자 수
   BookingForm --> payment : 제출
 }
@@ -105,11 +114,12 @@ state booking <<booking>> {
 booking --> payment : 예약 정보 확인 메시지
 
 state payment <<payment>> {
-  [*] --> PaymentModal
-  PaymentModal : 결제 모달
-  PaymentModal : 결제 방법 선택
-  PaymentModal --> confirmed : 결제 완료
-  PaymentModal --> booking : 취소
+  [*] --> PayUI
+  PayUI : **PaymentSheet** (패키지·FIT 호텔 등)
+  PayUI : 또는 **PaymentModal** (기타 목업 경로)
+  PayUI : **AgentToast** + payment-toast-config\n(쿠폰·할부·CTA·카드 interaction)
+  PayUI --> confirmed : 결제 완료
+  PayUI --> booking : 취소 → 이전 단계\n(경로별)
 }
 
 payment --> confirmed : 결제 성공
@@ -166,6 +176,11 @@ note right of flight_booking
   FlightBookingSheet 단일 바텀시트
 end note
 
+note right of package_sheet
+  showPackageBookingSheet = true
+  scrollRef + 섹션 id\n→ AgentToast 트리거
+end note
+
 note right of booking
   step = "booking"
   showBookingForm = true
@@ -173,7 +188,7 @@ end note
 
 note right of payment
   step = "payment"
-  showPayment = true
+  showPaymentSheet / showPayment\n(경로별)
 end note
 
 note right of confirmed
@@ -190,6 +205,8 @@ end note
 note bottom of packages
   PackageDetail UI: H-AI 요약 10px, 30% 자유시간 보장 줄바꿈 방지
   (2026-03-18 반영)
+  패키지 예약: PackageBookingSheet → PaymentSheet
+  + AgentToast (2026-04 반영)
 end note
 
 @enduml

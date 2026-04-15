@@ -54,7 +54,8 @@
 - AI 추론 시각화(검색·비교 시 단계별 진행 메시지)
 - 통합 추천·탐색(패키지/FIT 조합·항공·숙소 카드, 상세·비교·재추천)
 - 운임·룸 타입 선택(FIT·숙소 예약 시)
-- 예약·결제·확정(BookingForm → PaymentModal → BookingConfirmation)
+- 예약·결제·확정: 패키지는 `PackageBookingSheet` → `PaymentSheet` → 확정/완료; 그 외 경로는 `BookingForm` 등 → `PaymentSheet` 또는 `PaymentModal` → `BookingConfirmation`(또는 시트 완료)
+- 예약·결제 시트 **컨텍스트 안내(AgentToast)**: 스크롤 구간·선택 인터랙션에 따른 짧은 가이드 + 상세 패널(목업 문구, `booking-toast-config` / `payment-toast-config`)
 - 취소·복귀(결제 취소, 헤더 뒤로가기 → 랜딩)
 
 ### 6.2 사용자 플로우
@@ -67,7 +68,8 @@
      (패키지: 인원=성인/아동/유아 | FIT·추천: 인원=성인+아동, 아동 나이 만0~17)
   → AI 검색(추론 시각화) → 추천 카드(최대 3개)
   → 상세/비교/재추천 반복 → [예약하기]
-  → (해당 시) 운임·룸 타입 선택 → 예약자 정보 → 결제 → 예약 확정
+  → (패키지) PackageBookingSheet(예약자·여행자·금액·결제 방식) 내 AgentToast 안내
+  → (해당 시) 운임·룸 타입 선택 → 예약자 정보 → 결제(PaymentSheet 등) → 예약 확정
 ```
 
 ### 6.3 어떤 입력을 받는지
@@ -90,7 +92,7 @@
 - **상세:** PackageDetail, FITPackageDetail, FlightDetail, HotelDetail(바텀시트)
 - **비교:** PackageComparison, FITComparison, FlightComparison, HotelComparison(바텀시트)
 - **예약 확정:** bookingNumber(HAI+8자리), packageTitle, travelers, amount
-- **기타:** AgentReasoningBlock(검색·비교 시), 채팅 메시지, FIT 완료 제안 메시지
+- **기타:** AgentReasoningBlock(검색·비교 시), AgentToast(패키지 예약·결제 시트), 채팅 메시지, FIT 완료 제안 메시지
 
 ### 6.5 성공 기준
 
@@ -100,7 +102,7 @@
 | 2 | 여행 타입 선택 후 선호도 입력 | 패키지/FIT 선택 시 선호도 폼 노출, 필수 입력 후 검색 실행 |
 | 3 | 추천 결과 표시 | AI 추론 단계 표시 후 해당 타입 추천 카드 최대 3개 표시 |
 | 4 | 상세·비교·재추천 | 카드 클릭 → 상세 바텀시트, 비교하기 → 비교 바텀시트, 추천 다시받기 → 새 카드 |
-| 5 | 예약 플로우 완주 | 예약하기 → (해당 시 운임·룸 타입) → 예약자 정보 → 결제 → 예약 확정 모달 |
+| 5 | 예약 플로우 완주 | 예약하기 → (패키지) PackageBookingSheet·PaymentSheet 또는 (기타) 운임·룸 타입·BookingForm → 결제 → 예약 확정·완료 화면 |
 | 6 | 예약 확정 출력 | 예약 번호, 상품명, 여행자 수, 결제 금액 표시 |
 | 7 | 취소·뒤로가기 | 결제 취소 시 이전 단계, 헤더 뒤로가기 시 랜딩 복귀 |
 
@@ -138,9 +140,14 @@
 
 ## 9. 즉시 실행할 것 (This Week)
 
-1. [ ] 추천·비교·예약·결제 플로우 E2E 검증(목업 기준)
+1. [ ] 추천·비교·예약·결제 플로우 E2E 검증(목업 기준, AgentToast 구간 포함)
 2. [ ] 성공 기준 7항목 체크리스트 점검
-3. [ ] 예외 상황(선호도 미입력, 결제 취소 등) 처리 확인
+3. [ ] 예외 상황(선호도 미입력, 결제 취소, 토스트 패널 닫기 등) 처리 확인
+
+### 최근 완료 (2026-04-07 ~ 2026-04-14)
+
+- **AgentToast**: `PackageBookingSheet`·`PaymentSheet`에 스크롤 트리거·일부 카드 선택 시 컨텍스트 토스트, 상세 패널·자동 숨김 동작 적용. 예약/결제별 `booking-toast-config`·`payment-toast-config`로 문구·섹션 `id` 관리.
+- **패키지 인원 UI**: `TravelerCountA2UI` 스와이프형 단계, `PackageBookingPricePreview`로 예상 최종 금액·항공 일정 요약; 총 결제 예정 금액 라인 타이포 정리.
 
 ### 최근 완료 (2026-03-18)
 

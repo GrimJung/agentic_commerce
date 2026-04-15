@@ -22,7 +22,9 @@
 - 🛏️ **룸타입 선택**: 호텔별 RoomTypeSelector 바텀시트
 - 🎫 **액티비티 추가**: 현지 투어·티켓 선택(ActivityTicketSelector)
 - 👤 **페르소나 기반 Smart-Fill**: 추천 검색 시 목적지·예산·테마 등 자동 채움. 추천 검색 시 인원은 자유여행과 동일하게 성인+아동만 표시, 아동 선택 시 나이 선택 박스 제공
-- 💳 **예약·결제**: BookingForm → PaymentModal → BookingConfirmation
+- 💬 **예약·결제 컨텍스트 토스트 (AgentToast)**: 패키지 `PackageBookingSheet`·`PaymentSheet`에서 스크롤 구간·일부 인터랙션(카드 선택 등)에 맞춰 하이(H-AI) 안내 토스트·상세 패널 표시. 설정은 `booking-toast-config.ts`, `payment-toast-config.ts`
+- 👥 **패키지 인원·가격 미리보기**: `TravelerCountA2UI`(스와이프형 단계 UI) + `PackageBookingPricePreview`로 인원 확정 전 예상 결제 금액·항공 일정 요약 표시
+- 💳 **예약·결제**: 패키지는 `PackageBookingSheet` → `PaymentSheet` → 예약 확정·완료 UI; FIT·숙소·항공 등은 `BookingForm` / `FlightBookingSheet` 등 경로별 분기 후 `PaymentSheet` 또는 `PaymentModal` → `BookingConfirmation`(또는 시트 내 완료)
 
 ---
 
@@ -69,7 +71,10 @@ src/
 │       ├── FlightCard.tsx, FlightDetail.tsx, FlightComparison.tsx
 │       ├── HotelCard.tsx, HotelDetail.tsx, HotelComparison.tsx
 │       ├── RoomTypeSelector.tsx, ActivityTicketSelector.tsx
-│       ├── BookingForm.tsx, PaymentModal.tsx, BookingConfirmation.tsx
+│       ├── BookingForm.tsx, PackageBookingSheet.tsx, PackageBookingPricePreview.tsx
+│       ├── PaymentSheet.tsx, PaymentModal.tsx, BookingConfirmation.tsx
+│       ├── AgentToast.tsx, booking-toast-config.ts, payment-toast-config.ts
+│       ├── TravelerCountA2UI.tsx
 │       ├── AgentReasoningBlock.tsx
 │       └── ui/              # 공통 UI (button, card, dialog, sheet 등)
 ├── styles/
@@ -137,7 +142,8 @@ npm run preview
 - 액티비티 티켓 선택 후 예약 진행
 
 ### 6. 예약·결제
-- 예약자 정보(BookingForm) → 결제(PaymentModal) → 예약 확정(BookingConfirmation)
+- **패키지**: 상세에서 예약 시 `PackageBookingSheet`(예약자·여행자·금액·결제 방식 등) → 제출 시 `PaymentSheet` → 완료/확정. 시트 내 스크롤 시 **AgentToast**로 구간별 안내.
+- **그 외(FIT·숙소 등)**: `BookingForm` 등 → `PaymentSheet` 또는 `PaymentModal` → `BookingConfirmation` 또는 시트 완료 화면.
 
 ---
 
@@ -153,7 +159,7 @@ npm run preview
 **2) 터미널에서 커밋 후 푸시**
 
 ```bash
-cd /Users/hg229/Documents/바이브코딩/ai_project-main/projects/agentic_commerce_2
+cd /Users/hg229/Documents/바이브코딩/ai_project-main/projects/agentic_commerce_3
 
 # 이미 git init 되어 있다면 아래만 실행
 git add .
@@ -169,7 +175,7 @@ git push -u origin main
 처음부터 Git 초기화가 필요하면:
 
 ```bash
-cd /Users/hg229/Documents/바이브코딩/ai_project-main/projects/agentic_commerce_2
+cd /Users/hg229/Documents/바이브코딩/ai_project-main/projects/agentic_commerce_3
 git init
 git add .
 git commit -m "feat: H-AI 여행 예약 챗봇 초기 버전"
@@ -185,7 +191,7 @@ git push -u origin main
 2. **Add New** → **Project**  
 3. **Import Git Repository**에서 방금 푸시한 저장소 선택  
 4. **Framework Preset**: Vite 자동 감지  
-5. **Root Directory**: 비워두거나 `projects/agentic_commerce_2` (모노레포인 경우만)  
+5. **Root Directory**: 비워두거나 `projects/agentic_commerce_3` (모노레포인 경우만)  
 6. **Deploy** 클릭  
 7. 완료 후 `https://프로젝트명.vercel.app` 형태의 URL 발급  
 
@@ -203,12 +209,18 @@ git push -u origin main
 - **`docs/archive/`**: 신규 로직 전 **기존 플로우·UI**를 기록한 문서.  
 - **항공+호텔(FIT 조합)** 예약·결제: [`docs/archive/FIT_COMBO_AIR_HOTEL_BOOKING_PAYMENT.md`](./docs/archive/FIT_COMBO_AIR_HOTEL_BOOKING_PAYMENT.md)
 
+### UI 목업 샘플 (문서·기획용)
+
+- `public/samples/hai-toast/hai-agent-toast-compact.png` — 컴팩트 토스트  
+- `public/samples/hai-toast/hai-agent-toast-detail-panel.png` — 상세 패널
+
 ---
 
 ## 📝 변경 이력
 
 | 일자 | 내용 |
 |------|------|
+| 2026-04-07 ~ 2026-04-14 | **AgentToast**: 패키지 예약·결제 시트에 스크롤·섹션 연동 토스트, 상세 패널(바깥 클릭·Escape 닫기, 구간 전환 시 자동 숨김). **토스트 구성**: 예약=`booker`·`traveler`·`price`·`payment`(계약금/전액); 결제=`coupon`·`installment`·`cta` + 삼성/하나 카드 선택 시 `interactionToastKey`. **패키지 UX**: `TravelerCountA2UI` 스와이프형 인원 단계, `PackageBookingPricePreview`와 결제 시트 할인 정책 정렬, 총액 행 타이포 조정. **샘플 PNG**: `public/samples/hai-toast/` 툴 전용 2종 정리. 결제 완료 등 화면 미세 조정. |
 | 2026-03-23 | **Archive**: 항공+호텔(FIT 조합) 예약·결제 프로세스를 `docs/archive/`에 저장 (신규 로직 작업 시 원복 참고) |
 | 2026-03-18 | **PackageDetail UI**: "H-AI 요약" 라벨 폰트 크기 12px → 10px 적용; "30% 자유시간 보장" 텍스트 줄바꿈 방지(`whitespace-nowrap`) 적용 |
 

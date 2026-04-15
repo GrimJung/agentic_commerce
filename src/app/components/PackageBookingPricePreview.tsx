@@ -48,7 +48,7 @@ function flightLines(pkg: PackageData): { dep: string; ret: string } {
   };
 }
 
-function computeTravelerGrossTotal(pkg: PackageData, adults: number, children: number): number {
+export function computeTravelerGrossTotal(pkg: PackageData, adults: number, children: number): number {
   const a = Math.max(1, adults);
   const c = Math.max(0, children);
   return pkg.price * a + Math.round(pkg.price * CHILD_RATE) * c;
@@ -60,6 +60,80 @@ export function computePackageEstimatedFinalPrice(pkg: PackageData, adults: numb
   const memberInstant = Math.min(Math.floor(grossTotal * 0.05), 50_000);
   const afterMember = grossTotal - memberInstant;
   return Math.max(0, afterMember - PACKAGE_PREVIEW_COUPON_DISCOUNT);
+}
+
+/** 상품 썸네일·제목·항공 일정 (인원+금액 통합 카드 상단 등 재사용) */
+export function PackageBookingTripSummary({ package: pkg }: { package: PackageData }) {
+  const { dep, ret } = flightLines(pkg);
+  return (
+    <div className="flex gap-3">
+      <div className="size-[72px] shrink-0 overflow-hidden rounded-[12px]">
+        <img src={pkg.image} alt="" className="size-full object-cover" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] font-semibold leading-snug text-[#111] line-clamp-3">
+          {pkg.title}
+        </p>
+        <div className="mt-2 space-y-1 font-['Pretendard',sans-serif] text-[11px] leading-relaxed text-[#555]">
+          <p className="flex gap-1.5">
+            <span className="shrink-0" aria-hidden>
+              ✈️
+            </span>
+            <span>{dep}</span>
+          </p>
+          <p className="flex gap-1.5">
+            <span className="shrink-0" aria-hidden>
+              ✈️
+            </span>
+            <span>{ret}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** 인원 라벨·회원할인 배지·최종금액·정가 취소선 (버튼 없음) */
+export function PackageBookingPriceSummaryBlock({
+  package: pkg,
+  adults,
+  children,
+  className = "mt-4 border-t border-[#eee] pt-4",
+}: {
+  package: PackageData;
+  adults: number;
+  children: number;
+  className?: string;
+}) {
+  const grossTotal = computeTravelerGrossTotal(pkg, adults, children);
+  const finalPrice = computePackageEstimatedFinalPrice(pkg, adults, children);
+  const paxLabel =
+    children > 0 ? `성인 ${adults}, 아동 ${children}` : adults > 1 ? `성인 ${adults}` : "성인 1";
+
+  return (
+    <div className={className}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex shrink-0 flex-col items-start gap-0.5">
+          <span className="mt-[5px] font-['Pretendard:Medium',sans-serif] text-[12px] text-[#666]">{paxLabel}</span>
+          <span className="mt-[12px] font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111]">총 금액</span>
+        </div>
+        <div className="flex min-w-0 flex-col items-end text-right">
+          <div className="mb-2 inline-flex shrink-0 items-center gap-0.5 rounded-[6px] border border-[#e0e0e0] bg-white px-2 py-1">
+            <span className="font-['Pretendard:SemiBold',sans-serif] text-[11px] text-[#e91e8c]">
+              회원 즉시 할인
+            </span>
+            <span className="font-['Pretendard:Medium',sans-serif] text-[11px] text-[#555]">적용가</span>
+          </div>
+          <span className="font-['Pretendard:Bold',sans-serif] text-[22px] font-bold leading-tight text-[#5e2bb8] tabular-nums">
+            {finalPrice.toLocaleString()}원
+          </span>
+          <span className="font-['Pretendard:Medium',sans-serif] text-[13px] text-[#999] line-through tabular-nums decoration-[#bbb]">
+            {grossTotal.toLocaleString()}원
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface PackageBookingPricePreviewProps {
@@ -77,61 +151,10 @@ export function PackageBookingPricePreview({
   onReserve,
   onCancel,
 }: PackageBookingPricePreviewProps) {
-  const { dep, ret } = flightLines(pkg);
-  const grossTotal = computeTravelerGrossTotal(pkg, adults, children);
-  const finalPrice = computePackageEstimatedFinalPrice(pkg, adults, children);
-  const paxLabel =
-    children > 0 ? `성인 ${adults}, 아동 ${children}` : adults > 1 ? `성인 ${adults}` : "성인 1";
-
   return (
     <div className="rounded-[18px] border border-[#f0f0f0] bg-white px-4 py-4 shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
-      <div className="flex gap-3">
-        <div className="size-[72px] shrink-0 overflow-hidden rounded-[12px]">
-          <img src={pkg.image} alt="" className="size-full object-cover" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] font-semibold leading-snug text-[#111] line-clamp-3">
-            {pkg.title}
-          </p>
-          <div className="mt-2 space-y-1 font-['Pretendard',sans-serif] text-[11px] leading-relaxed text-[#555]">
-            <p className="flex gap-1.5">
-              <span className="shrink-0" aria-hidden>
-                ✈️
-              </span>
-              <span>{dep}</span>
-            </p>
-            <p className="flex gap-1.5">
-              <span className="shrink-0" aria-hidden>
-                ✈️
-              </span>
-              <span>{ret}</span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4 border-t border-[#eee] pt-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex shrink-0 flex-col items-start gap-0.5">
-            <span className="mt-[5px] font-['Pretendard:Medium',sans-serif] text-[12px] text-[#666]">{paxLabel}</span>
-            <span className="mt-[12px] font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111]">총 금액</span>
-          </div>
-          <div className="flex min-w-0 flex-col items-end text-right">
-            <div className="mb-2 inline-flex shrink-0 items-center gap-0.5 rounded-[6px] border border-[#e0e0e0] bg-white px-2 py-1">
-              <span className="font-['Pretendard:SemiBold',sans-serif] text-[11px] text-[#e91e8c]">
-                회원 즉시 할인
-              </span>
-              <span className="font-['Pretendard:Medium',sans-serif] text-[11px] text-[#555]">적용가</span>
-            </div>
-            <span className="font-['Pretendard:Bold',sans-serif] text-[22px] font-bold leading-tight text-[#5e2bb8] tabular-nums">
-              {finalPrice.toLocaleString()}원
-            </span>
-            <span className="font-['Pretendard:Medium',sans-serif] text-[13px] text-[#999] line-through tabular-nums decoration-[#bbb]">
-              {grossTotal.toLocaleString()}원
-            </span>
-          </div>
-        </div>
-      </div>
+      <PackageBookingTripSummary package={pkg} />
+      <PackageBookingPriceSummaryBlock package={pkg} adults={adults} children={children} />
 
       <div className="mt-5 flex gap-2">
         <button

@@ -84,14 +84,16 @@ repeat
 repeat while (더 탐색?) is (yes) not (no)
 
 if (예약 타입?) then (패키지)
-  :👤 **예약자 정보 입력**\n(BookingForm)\n이름 / 연락처 / 여행자 수;
-  :💳 **결제 진행**\n(PaymentModal)\n결제 방법 선택 → 결제하기;
-  :🎉 **예약 확정**\n(BookingConfirmation);
+  #FFF3E0:📋 **PackageBookingSheet**\nTravelerCountA2UI(스와이프 인원)\n+ PackageBookingPricePreview\n예약자·여행자·계약금/전액;
+  :💬 **AgentToast**\n(booking-toast-config, 스크롤 구간);
+  :💳 **PaymentSheet**\n쿠폰·무이자·결제수단;
+  :💬 **AgentToast**\n(payment-toast-config, 카드 선택 등);
+  :🎉 **예약 확정**\n(BookingConfirmation 등);
   stop
 else if (FIT 조합 or 숙소만?)
   :🏨 **룸타입 선택**\n(RoomTypeSelector 바텀시트);
   :👤 **예약자 정보 입력**\n(BookingForm)\n이름 / 연락처 / 여행자 수;
-  :💳 **결제 진행**\n(PaymentModal)\n결제 방법 선택 → 결제하기;
+  :💳 **결제 진행**\n(**PaymentSheet** 또는 PaymentModal)\n(+ AgentToast 가능);
   :🎉 **예약 확정**\n(BookingConfirmation);
   stop
 else (항공만)
@@ -104,9 +106,9 @@ else (항공만)
 endif
 
 note right
-  문서 최종 업데이트: 2026-03-18
-  PackageDetail UI: H-AI 요약 10px,
-  30% 자유시간 보장 줄바꿈 방지 반영
+  문서 최종 업데이트: 2026-04-14
+  PackageDetail: H-AI 요약 10px, 30% 자유시간 nowrap (2026-03-18)
+  패키지: PackageBookingSheet → PaymentSheet + AgentToast
 end note
 
 @enduml

@@ -1605,7 +1605,7 @@ function PackageBookingSwipePanel({
   onCancel,
 }: {
   pkg: PackageData;
-  onConfirm: (adults: number, children: number) => void;
+  onConfirm: (adults: number, children: number, childAges: number[]) => void;
   onCancel: () => void;
 }) {
   const [travelerPhase, setTravelerPhase] = useState<TravelerCountA2UIPhase>("editing");
@@ -2578,7 +2578,7 @@ export default function App() {
                   <PackageBookingSwipePanel
                     key={packageListPanel.pkg.id}
                     pkg={packageListPanel.pkg}
-                    onConfirm={(adults, children) =>
+                    onConfirm={(adults, children, _childAges) =>
                       handleBooking(packageListPanel.pkg, { adults, children })
                     }
                     onCancel={handlePackageBookingPanelCancel}
@@ -2715,7 +2715,7 @@ export default function App() {
                   <PackageBookingSwipePanel
                     key={packageListPanel.pkg.id}
                     pkg={packageListPanel.pkg}
-                    onConfirm={(adults, children) =>
+                    onConfirm={(adults, children, _childAges) =>
                       handleBooking(packageListPanel.pkg, { adults, children })
                     }
                     onCancel={handlePackageBookingPanelCancel}

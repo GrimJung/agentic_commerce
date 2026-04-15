@@ -13,6 +13,7 @@
 - ✅ **실시간 AI 추론** 과정 시각화 (투명성)
 - ✅ **개인화 추천 엔진** (페르소나 기반 Smart-Fill)
 - ✅ **복잡한 조합 상품 자동 생성** (항공+숙소 최적화)
+- ✅ **예약·결제 단계 컨텍스트 가이드** (`AgentToast`: 스크롤·인터랙션 연동)
 
 ---
 
@@ -244,6 +245,20 @@ FIT_SEARCH_COMBO: [
 
 ---
 
+### 💬 Agent 6: 예약·결제 컨텍스트 가이드 (AgentToast)
+
+**구현 위치**: `AgentToast.tsx`, `booking-toast-config.ts`, `payment-toast-config.ts`, `PackageBookingSheet.tsx`, `PaymentSheet.tsx`
+
+**Agentic 특성**:
+- ✅ **상황 인식 (Context Awareness)**: 시트 내 스크롤 위치·섹션 `id`에 따라 다른 안내 메시지 표시
+- ✅ **선제 설명 (Proactive Explanation)**: 계약금/전액, 쿠폰 반영, 무이자 할부, 특정 카드 선택 시 혜택 등 **복잡한 결정**을 짧은 요약 + 상세 패널로 풀어 줌
+- ✅ **간섭 최소화**: 구간이 바뀔 때만 자동 숨김 타이머 등으로 노출 빈도 제어; 필요 시 칩 질문으로 심화 탐색
+
+**설계 포인트**:
+- 검색·비교 단계의 `AgentReasoningBlock`이 “왜 이 결과인가”를 보여준다면, AgentToast는 “**지금 이 화면에서 무엇을 결정하면 되는가**”에 초점을 둔 **마이크로 가이던스** 역할
+
+---
+
 ## 4️⃣ 왜 이렇게 설계했어야 했는가?
 
 ### 🎯 목표: 여행 예약의 고통점(Pain Points) 해결
@@ -446,7 +461,7 @@ type Step =
 #### 컴포넌트 설계 (Component Architecture)
 
 ```
-총 22개 전문화된 컴포넌트:
+주요 전문화 컴포넌트 (일부):
 
 상품 표시 (8개):
 - PackageCard, FITPackageCard, FlightCard, HotelCard
@@ -455,13 +470,17 @@ type Step =
 비교 분석 (4개):
 - PackageComparison, FITComparison, FlightComparison, HotelComparison
 
-AI 인터페이스 (2개):
+AI·가이드 인터페이스 (3개):
 - AgentReasoningBlock (추론 과정 시각화)
+- AgentToast + booking/payment toast config (예약·결제 시트 컨텍스트 안내)
 - ChatMessage (대화형 UI)
 
 선택/입력 (5개):
 - PreferenceInput, ActivityTicketSelector, RoomTypeSelector
-- BookingForm, PaymentModal
+- TravelerCountA2UI, PackageBookingPricePreview
+
+예약·결제 (4개):
+- BookingForm, PackageBookingSheet, PaymentSheet, PaymentModal
 
 확인 (1개):
 - BookingConfirmation
@@ -489,8 +508,8 @@ AI 인터페이스 (2개):
 **사용 위치**:
 - 상품 상세보기
 - 비교 테이블
-- 예약 정보 입력
-- 결제 모달
+- 예약 정보 입력 (`BookingForm`, `PackageBookingSheet` 등)
+- 결제 (`PaymentSheet`, `PaymentModal`, 항공 결제 시트 등)
 
 #### 2. 카드 기반 추천 (Card-based Recommendations)
 

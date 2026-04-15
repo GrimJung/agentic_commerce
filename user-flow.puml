@@ -12,6 +12,7 @@ participant "MainPage\n(랜딩)" as Main
 participant "H-AI\n챗봇" as Bot
 participant "PreferenceInput\n(선호도 입력)" as Pref
 participant "Agent\nReasoning" as Agent
+participant "AgentToast\n(예약·결제)" as Toast
 database "목업\n상품 데이터" as DB
 
 == 1. 앱 진입 & 채팅 시작 ==
@@ -173,7 +174,21 @@ User -> Bot: [예약하기] 버튼 클릭 (카드 또는 상세에서)
 activate Bot
 
 alt 패키지 상품 예약
-    Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)\n또는 PackageBookingSheet(예약금/총액 확인 후 결제 시트)
+    Bot -> User: **PackageBookingSheet** (통합 예약 바텀시트)\n• TravelerCountA2UI: 스와이프형 인원 확정 + PackageBookingPricePreview\n• 예약자·여행자·총액·계약금/전액 결제 방식\n• 섹션 스크롤 시 **AgentToast** 컨텍스트 안내
+    Bot -> Toast: BOOKING_TRIGGERS (booking-section-*)
+    Toast -> User: 구간별 짧은 안내 + 상세 패널(선택)
+    User -> Bot: 시트 제출 → 결제 금액 전달
+    Bot -> User: **PaymentSheet** (패키지 결제)\n• 쿠폰·무이자·결제수단·최종 금액\n• **AgentToast** (쿠폰/할부/CTA + 카드사 선택 시 interactionToastKey)
+    Bot -> Toast: PAYMENT_TRIGGERS (payment-section-*)
+    User -> Bot: 결제 실행 (목업)
+    Bot -> DB: 결제 처리 요청 (목업)
+    activate DB
+    DB -> Bot: 결제 완료
+    deactivate DB
+    Bot -> Bot: 예약 번호 생성 (HAI + timestamp 등)
+    Bot -> User: **BookingConfirmation** (또는 동일 step 내 확정 UI)\n예약 번호·상품명·금액
+    User -> Bot: [확인]
+    Bot -> User: 채팅 화면 복귀·추천 목록 초기화
     
 else FIT 조합 예약
     Bot -> User: 룸타입 선택 바텀시트 표시 (RoomTypeSelector)
@@ -184,7 +199,7 @@ else FIT 조합 예약
         User -> Bot: (선택) 호텔 예약 진행
     end
     Bot -> User: 예약자 정보 입력 폼 표시 (BookingForm)\n이름, 연락처, 여행자 수
-    note right: 액티비티 티켓(ActivityTicketSelector)은\n선택 경로로 확장 가능
+    note right: 액티비티 티켓(ActivityTicketSelector)은\n선택 경로로 확장 가능\n호텔 결제는 **PaymentSheet** (+ AgentToast 가능)
     
 else 항공만 예약
     Bot -> User: **항공 예약 시트** (FlightBookingSheet) 표시
@@ -202,40 +217,46 @@ else 숙소만 예약
 end
 deactivate Bot
 
-== 6. 예약 정보 입력 ==
-User -> Bot: 예약자 정보 입력 (BookingForm)\n이름, 연락처, 여행자 수 등
-activate Bot
-Bot -> Bot: 예약 데이터 저장 (bookingData)
-Bot -> User: "예약 정보를 확인했습니다. 결제를 진행해 주세요."
-Bot -> User: 결제 모달 표시 (PaymentModal)
-deactivate Bot
+opt 기타 경로 — BookingForm 제출 후 (FIT·숙소만 등, 패키지 제외)
+    == 6. 예약 정보 입력 ==
+    note over User, Bot
+      **패키지**는 5절에서 PackageBookingSheet까지 완료.\n여기서는 **BookingForm → PaymentSheet / PaymentModal** 경로만 표시.
+    end note
+    User -> Bot: 예약자 정보 입력 (BookingForm)\n이름, 연락처, 여행자 수 등
+    activate Bot
+    Bot -> Bot: 예약 데이터 저장 (bookingData)
+    Bot -> User: "예약 정보를 확인했습니다. 결제를 진행해 주세요."
+    Bot -> User: **PaymentSheet** 또는 PaymentModal 표시\n(FIT 호텔 등은 PaymentSheet + AgentToast 가능)
+    deactivate Bot
 
-== 7. 결제 진행 ==
-User -> Bot: 결제 방법 선택 및 [결제하기] 클릭
-activate Bot
-Bot -> DB: 결제 처리 요청 (현재 목업)
-activate DB
-DB -> Bot: 결제 완료
-deactivate DB
-Bot -> Bot: 예약 번호 생성\n(HAI + timestamp 8자리)
-Bot -> User: "🎉 결제가 완료되었습니다! 예약이 확정되었습니다."
-deactivate Bot
+    == 7. 결제 진행 ==
+    User -> Bot: 결제 방법 선택 및 [결제하기] 클릭
+    activate Bot
+    Bot -> DB: 결제 처리 요청 (현재 목업)
+    activate DB
+    DB -> Bot: 결제 완료
+    deactivate DB
+    Bot -> Bot: 예약 번호 생성\n(HAI + timestamp 8자리)
+    Bot -> User: "🎉 결제가 완료되었습니다! 예약이 확정되었습니다."
+    deactivate Bot
 
-== 8. 예약 확정 ==
-User -> Bot: 예약 확인
-activate Bot
-Bot -> User: 예약 확정 모달 표시 (BookingConfirmation)\n- 예약 번호\n- 상품명\n- 여행자 수\n- 총 결제 금액
-User -> Bot: [확인] 버튼 클릭
-Bot -> Bot: step = initial, 추천 목록 초기화
-Bot -> User: 채팅 화면으로 복귀
-alt FIT 예약 완료 시
-    Bot -> User: 완료 제안 메시지\n(AI 추천 일정, 체크리스트, 환율 예산 등)
+    == 8. 예약 확정 ==
+    User -> Bot: 예약 확인
+    activate Bot
+    Bot -> User: 예약 확정 모달 표시 (BookingConfirmation)\n- 예약 번호\n- 상품명\n- 여행자 수\n- 총 결제 금액
+    User -> Bot: [확인] 버튼 클릭
+    Bot -> Bot: step = initial, 추천 목록 초기화
+    Bot -> User: 채팅 화면으로 복귀
+    alt FIT 예약 완료 시
+        Bot -> User: 완료 제안 메시지\n(AI 추천 일정, 체크리스트, 환율 예산 등)
+    end
+    deactivate Bot
 end
-deactivate Bot
 
-note over Main, Bot
-  문서 최종 업데이트: 2026-03-18
-  PackageDetail UI: H-AI 요약 10px, 30% 자유시간 보장 줄바꿈 방지 반영
+note over Main, Toast
+  문서 최종 업데이트: 2026-04-14
+  PackageDetail UI: H-AI 요약 10px, 30% 자유시간 보장 줄바꿈 방지 (2026-03-18)
+  패키지: PackageBookingSheet → PaymentSheet, booking/payment-toast-config, AgentToast
 end note
 
 @enduml

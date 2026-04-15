@@ -18,7 +18,7 @@ interface AgentToastProps {
   toastData: Record<string, ToastConfig>;
   triggers: ScrollTrigger[];
   scrollContainerRef?: React.RefObject<HTMLElement>;
-  /** 컴팩트 토스트 자동 숨김 시간 (기본 3초). 구간(toastKey)이 바뀌면 다시 표시 */
+  /** 컴팩트 토스트 자동 숨김 시간 (기본 3초). 구간(toastKey)이 바뀌면 다시 표시. 마지막 트리거 섹션 하단을 지나면 즉시 숨김 */
   autoHideMs?: number;
   /** 스크롤 구간보다 우선 표시 (예: 카드 선택 시). `toastData`에 동일 키가 있어야 함 */
   interactionToastKey?: string | null;
@@ -26,24 +26,46 @@ interface AgentToastProps {
 
 const HAI_AVATAR_SRC = "/hai-travel-prep-fab.png";
 
+/**
+ * 스크롤 기반 활성 토스트 키.
+ * - 트리거 순서대로 `lineY >= 섹션 top` 인 마지막 키를 사용해, 인접한 두 섹션(예: 결제상세 vs CTA) 경계에서
+ *   스캔 라인이 좁은 간격 안에서 앞뒤로 움직일 때 `price`/`payment`가 번갈아 깜빡이지 않게 함.
+ * - 마지막 트리거 섹션의 bottom 아래로 스캔 라인이 내려가면 null → 컴팩트 토스트 즉시 비활성.
+ */
 function computeActiveToastKey(
   triggers: ScrollTrigger[],
   container: Window | HTMLElement,
 ): string | null {
+  if (!triggers.length) return null;
+
   const isWin = container === window;
   const scrollTop = isWin ? window.scrollY : (container as HTMLElement).scrollTop;
   const clientHeight = isWin ? window.innerHeight : (container as HTMLElement).clientHeight;
   const lineY = scrollTop + clientHeight * 0.65;
   const containerTop = isWin ? 0 : (container as HTMLElement).getBoundingClientRect().top;
+
   let activeKey: string | null = null;
   for (const { sectionId, toastKey } of triggers) {
     const el = document.getElementById(sectionId);
     if (!el) continue;
-    const elTop = el.getBoundingClientRect().top - containerTop + scrollTop;
-    if (lineY > elTop) {
+    const rect = el.getBoundingClientRect();
+    const elTop = rect.top - containerTop + scrollTop;
+    if (lineY >= elTop) {
       activeKey = toastKey;
     }
   }
+
+  const lastTrig = triggers[triggers.length - 1];
+  const lastEl = lastTrig ? document.getElementById(lastTrig.sectionId) : null;
+  if (lastEl) {
+    const rect = lastEl.getBoundingClientRect();
+    const lastTop = rect.top - containerTop + scrollTop;
+    const lastBottom = lastTop + Math.max(rect.height, 1);
+    if (lineY >= lastBottom) {
+      return null;
+    }
+  }
+
   return activeKey;
 }
 
@@ -103,16 +125,19 @@ const S = {
     position: 'sticky' as const,
     bottom: 0,
     background: '#fff',
-    borderRadius: 16,
-    border: '1.5px solid #5E2BB8',
-    padding: 16,
+    borderRadius: visible ? 16 : 0,
+    border: visible ? '1.5px solid #5E2BB8' : 'none',
+    padding: visible ? 16 : 0,
     zIndex: 200,
-    boxShadow: '0 8px 32px rgba(94,43,184,0.18)',
+    boxShadow: visible ? '0 8px 32px rgba(94,43,184,0.18)' : 'none',
     opacity: visible ? 1 : 0,
     transform: visible ? 'translateY(0)' : 'translateY(8px)',
-    transition: 'opacity 0.25s, transform 0.25s',
+    transition: 'opacity 0.25s, transform 0.25s, padding 0.2s',
     pointerEvents: visible ? 'all' : 'none',
-    margin: '0 12px 8px',
+    margin: visible ? '0 12px 8px' : 0,
+    maxHeight: visible ? undefined : 0,
+    overflow: visible ? undefined : 'hidden',
+    visibility: visible ? 'visible' : 'hidden',
   }),
   panelHeader: {
     display: 'flex', justifyContent: 'space-between',
@@ -158,12 +183,36 @@ const AgentToast: React.FC<AgentToastProps> = ({
   const toastDismissedForKeyRef = React.useRef<string | null>(null);
   const hideTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelRootRef = React.useRef<HTMLDivElement>(null);
+  /** interaction 토스트: 스크롤 구간 안에 들어간 적 있을 때만, 전 구간 이탈 시 즉시 숨김(최상단 일시 null 오탐 방지) */
+  const wasInScrollTriggerZoneRef = React.useRef(false);
+  const interactionLeftAllZonesRef = React.useRef(false);
 
   const runScrollSync = useCallback(() => {
     if (panelVisibleRef.current) return;
 
     const ik = interactionToastKeyRef.current;
     if (ik && toastData[ik]) {
+      const container = (scrollContainerRef?.current ?? window) as Window | HTMLElement;
+      if (triggers.length > 0) {
+        const scrollKey = computeActiveToastKey(triggers, container);
+        if (scrollKey != null) {
+          wasInScrollTriggerZoneRef.current = true;
+          interactionLeftAllZonesRef.current = false;
+        } else if (wasInScrollTriggerZoneRef.current) {
+          wasInScrollTriggerZoneRef.current = false;
+          interactionLeftAllZonesRef.current = true;
+          if (hideTimerRef.current) {
+            clearTimeout(hideTimerRef.current);
+            hideTimerRef.current = null;
+          }
+          setToastVisible(false);
+          return;
+        }
+        if (interactionLeftAllZonesRef.current) {
+          setToastVisible(false);
+          return;
+        }
+      }
       if (hideTimerRef.current) {
         clearTimeout(hideTimerRef.current);
         hideTimerRef.current = null;
@@ -175,7 +224,7 @@ const AgentToast: React.FC<AgentToastProps> = ({
 
     const container = (scrollContainerRef?.current ?? window) as Window | HTMLElement;
     const activeKey = computeActiveToastKey(triggers, container);
-    setCurrentKey(activeKey);
+    setCurrentKey((prev) => (prev === activeKey ? prev : activeKey));
 
     const clearHideTimer = () => {
       if (hideTimerRef.current) {
@@ -246,6 +295,11 @@ const AgentToast: React.FC<AgentToastProps> = ({
   useEffect(() => {
     queueMicrotask(() => runScrollSync());
   }, [interactionToastKey, runScrollSync]);
+
+  useEffect(() => {
+    wasInScrollTriggerZoneRef.current = false;
+    interactionLeftAllZonesRef.current = false;
+  }, [interactionToastKey]);
 
   /** 상세 패널을 닫은 뒤: 타임아웃으로 숨겼던 동일 구간이어도 토스트를 다시 띄울 수 있게 한 뒤 동기화 */
   useEffect(() => {
