@@ -25,6 +25,12 @@ export interface PackageData {
   bookedCount?: number;
   /** 최소 출발 인원 (상세 화면 표시용) */
   minDepartureCount?: number;
+  /** 인라인 상세 카드에서 평점 옆에 붙는 짧은 요약 문구 */
+  ratingSnippet?: string;
+  /** 자유일정 표기 (예: 있음 / 없음) */
+  freeSchedule?: string;
+  /** 쇼핑 일정 표기 (예: 없음 / 2회) */
+  shopping?: string;
   highlights: string[];
   recommendReason: string;
   reservationStatus?: '예약가능' | '예약대기' | '예약확정' | '출발예정';

@@ -15,19 +15,20 @@ function Row({
 }: {
   label: string;
   value: string;
-  /** 상품명 행: 구분선·세로 패딩 없음 */
-  variant?: "default" | "title";
+  /** 상품명 행: 구분선·세로 패딩 없음, 값은 얇은 굵기 */
+  /** 예약상태 등: 구분선·세로 패딩 없음(본문 행 스타일 유지) */
+  variant?: "default" | "title" | "flush";
 }) {
-  const rowClass =
-    variant === "title"
-      ? "flex items-start justify-between gap-3 border-b-0"
-      : "flex items-start justify-between gap-3 border-b border-[#e6e6e6] py-2.5 last:border-b-0";
+  const isCompactRow = variant === "title" || variant === "flush";
+  const rowClass = isCompactRow
+    ? "flex items-start justify-between gap-3 border-b-0"
+    : "flex items-start justify-between gap-3 border-b border-[#e6e6e6] py-2.5 last:border-b-0";
 
   return (
     <div
       className={rowClass}
       style={
-        variant === "title"
+        isCompactRow
           ? { borderBottomWidth: 0, borderBottomStyle: "none", paddingBlock: 0 }
           : undefined
       }
@@ -35,7 +36,7 @@ function Row({
       <span className="shrink-0 pt-0.5 text-[13px] font-['Pretendard:Medium',sans-serif] text-[#888]">{label}</span>
       <span
         className={`max-w-[62%] min-w-0 text-right text-[13px] font-['Pretendard:SemiBold',sans-serif] leading-snug text-[#111] ${
-          variant === "title" ? "truncate" : ""
+          variant === "title" ? "truncate font-light" : ""
         }`}
       >
         {value}
@@ -61,7 +62,7 @@ export function PackageReservationChatCard({
     <div className="rounded-[24px] bg-[#f2f2f2] px-4 py-4 shadow-sm">
       <div className="px-0.5">
         <Row label="상품명" value={productName} variant="title" />
-        <Row label="예약상태" value={reservationStatus} />
+        <Row label="예약상태" value={reservationStatus} variant="flush" />
         <Row label="여행기간" value={travelPeriod} />
         <Row label="항공정보" value={flightInfo} />
       </div>

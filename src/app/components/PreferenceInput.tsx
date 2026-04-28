@@ -31,7 +31,7 @@ interface PreferenceInputProps {
   initialTheme?: string;
 }
 
-export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFlow = false, initialDestination = "", initialBudget = "", initialTheme = "" }: PreferenceInputProps) {
+export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFlow = false, initialDestination = "도쿄", initialBudget = "", initialTheme = "" }: PreferenceInputProps) {
   const [theme, setTheme] = useState(initialTheme);
   const [budget, setBudget] = useState(initialBudget);
   const [destination, setDestination] = useState(initialDestination);

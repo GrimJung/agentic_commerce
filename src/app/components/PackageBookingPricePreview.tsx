@@ -21,31 +21,44 @@ function packageNightsFromDuration(duration: string): number {
   return m ? parseInt(m[1], 10) : 1;
 }
 
-function formatTripDateTime(d: Date, time: string, suffix: "출발" | "도착", airline: string): string {
-  const yy = d.getFullYear().toString().slice(-2);
-  const m = d.getMonth() + 1;
-  const day = d.getDate();
-  const w = WEEKDAYS_KO[d.getDay()];
-  return `${yy}.${String(m).padStart(2, "0")}.${String(day).padStart(2, "0")}(${w}) ${time} ${suffix} · ${airline}`;
+/** 도시명(쉼표 앞) → 표기 라벨·공항 코드 */
+function destinationAirport(pkg: PackageData): { label: string; code: string } {
+  const city = pkg.destination.split(",")[0]?.trim() ?? "";
+  const map: Record<string, { label: string; code: string }> = {
+    발리: { label: "발리", code: "DPS" },
+    파리: { label: "파리", code: "CDG" },
+    도쿄: { label: "도쿄", code: "NRT" },
+    몰디브: { label: "몰디브", code: "MLE" },
+    산토리니: { label: "산토리니", code: "JTR" },
+  };
+  return map[city] ?? { label: city || "목적지", code: "—" };
 }
 
-function flightLines(pkg: PackageData): { dep: string; ret: string } {
+/** 예: 대한항공  |  서울(ICN) ⇌ 발리(DPS) */
+function formatAirlineRouteLine(pkg: PackageData): string {
   const airline = pkg.airline ?? "대한항공";
+  const { label, code } = destinationAirport(pkg);
+  return `${airline}  |  서울(ICN) ⇌ ${label}(${code})`;
+}
+
+/** 예: 26.03.15(일) 20:30 ~ 26.03.19(목) 12:30 */
+function formatTripScheduleRangeLine(pkg: PackageData): string {
   const outT = pkg.outboundFlightTime ?? "20:30";
   const inT = pkg.returnFlightTime ?? "12:30";
   const start = parsePackageStartDate(pkg.departure);
   if (!start) {
-    return {
-      dep: `${pkg.departure} ${outT} 출발 · ${airline}`,
-      ret: `귀국 ${inT} 도착 · ${airline}`,
-    };
+    return `${pkg.departure} ${outT} ~ ${inT}`;
   }
   const end = new Date(start);
   end.setDate(end.getDate() + packageNightsFromDuration(pkg.duration));
-  return {
-    dep: formatTripDateTime(start, outT, "출발", airline),
-    ret: formatTripDateTime(end, inT, "도착", airline),
+  const fmt = (d: Date) => {
+    const yy = d.getFullYear().toString().slice(-2);
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const w = WEEKDAYS_KO[d.getDay()];
+    return `${yy}.${String(m).padStart(2, "0")}.${String(day).padStart(2, "0")}(${w})`;
   };
+  return `${fmt(start)} ${outT} ~ ${fmt(end)} ${inT}`;
 }
 
 export function computeTravelerGrossTotal(pkg: PackageData, adults: number, children: number): number {
@@ -64,7 +77,8 @@ export function computePackageEstimatedFinalPrice(pkg: PackageData, adults: numb
 
 /** 상품 썸네일·제목·항공 일정 (인원+금액 통합 카드 상단 등 재사용) */
 export function PackageBookingTripSummary({ package: pkg }: { package: PackageData }) {
-  const { dep, ret } = flightLines(pkg);
+  const routeLine = formatAirlineRouteLine(pkg);
+  const scheduleLine = formatTripScheduleRangeLine(pkg);
   return (
     <div className="flex gap-3">
       <div className="size-[72px] shrink-0 overflow-hidden rounded-[12px]">
@@ -75,18 +89,8 @@ export function PackageBookingTripSummary({ package: pkg }: { package: PackageDa
           {pkg.title}
         </p>
         <div className="mt-2 space-y-1 font-['Pretendard',sans-serif] text-[11px] leading-relaxed text-[#555]">
-          <p className="flex gap-1.5">
-            <span className="shrink-0" aria-hidden>
-              ✈️
-            </span>
-            <span>{dep}</span>
-          </p>
-          <p className="flex gap-1.5">
-            <span className="shrink-0" aria-hidden>
-              ✈️
-            </span>
-            <span>{ret}</span>
-          </p>
+          <p className="leading-relaxed break-words">{routeLine}</p>
+          <p className="leading-relaxed break-words tabular-nums">{scheduleLine}</p>
         </div>
       </div>
     </div>
@@ -120,7 +124,7 @@ export function PackageBookingPriceSummaryBlock({
         <div className="flex min-w-0 flex-col items-end text-right">
           <div className="mb-2 inline-flex shrink-0 items-center gap-0.5 rounded-[6px] border border-[#e0e0e0] bg-white px-2 py-1">
             <span className="font-['Pretendard:SemiBold',sans-serif] text-[11px] text-[#e91e8c]">
-              회원 즉시 할인
+              즉시할인
             </span>
             <span className="font-['Pretendard:Medium',sans-serif] text-[11px] text-[#555]">적용가</span>
           </div>

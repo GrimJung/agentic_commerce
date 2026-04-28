@@ -38,6 +38,7 @@ import {
   scrollPackageSwipeFollowupIntoView,
   scheduleScrollPackageSwipeFollowup,
 } from "./utils/scrollPackageSwipeFollowup";
+import { PostPaymentCrossSellStrip, getCrossSellItemsForBooking } from "./components/PostPaymentCrossSellStrip";
 
 /** 내맘대로(항공+호텔) 항공예약정보 단계 진입 시 기본 예약자 정보 */
 const DEFAULT_NAMEMDAE_FLIGHT_BOOKING: BookingFormData = {
@@ -51,51 +52,55 @@ const DEFAULT_NAMEMDAE_FLIGHT_BOOKING: BookingFormData = {
   agreeCancellation: true,
 };
 
-// 결제 완료 후 추천 질문 칩
-const POST_PAYMENT_QUESTIONS = [
-  { emoji: "📋", text: "여행 준비 체크리스트 만들어줘" },
-  { emoji: "✈️", text: "공항 가는 방법 알려줘" },
-  { emoji: "💱", text: "환전 얼마나 해가면 돼?" },
-  { emoji: "📱", text: "현지 유심 추천해줘" },
-  { emoji: "🧳", text: "짐 싸는 꿀팁 알려줘" },
-];
-
 function PostPaymentSuggestions({
   onAsk,
   reservationCard,
+  bookedPackage,
 }: {
   onAsk: (q: string) => void;
   reservationCard?: ReactNode;
+  bookedPackage?: PackageData | null;
 }) {
-  const [asked, setAsked] = useState<string | null>(null);
+  const crossSellItems = getCrossSellItemsForBooking(bookedPackage?.destination);
   return (
     <div className="space-y-2.5">
+      <p className="mb-0 text-[14px] text-[#111] leading-relaxed">
+        예약이 완료됐어요! 🎉
+      </p>
       <p className="text-[14px] text-[#111] leading-relaxed">
-        예약이 완료됐어요! 🎉<br />
-        여행 준비에 대해 더 도움이 필요하신가요?
+        이 상품과 함께하면 좋은 추천 상품과 꿀팁을 확인해보세요.
       </p>
       {reservationCard ? (
         <div className="max-w-[min(320px,calc(100vw-2.5rem))]">{reservationCard}</div>
       ) : null}
-      <div className="flex flex-col gap-2">
-        {POST_PAYMENT_QUESTIONS.map(({ emoji, text }) => (
-          <button
-            key={text}
-            type="button"
-            disabled={asked !== null}
-            onClick={() => { setAsked(text); onAsk(text); }}
-            className={`flex items-center gap-2 w-full text-left px-3.5 py-2.5 rounded-[12px] border text-[13px] font-['Pretendard:SemiBold',sans-serif] transition-colors
-              ${asked === text
-                ? "border-[#5e2bb8] bg-[#f7edff] text-[#5e2bb8]"
-                : asked !== null
-                  ? "border-[#e8e8e8] bg-[#fafafa] text-[#aaa] cursor-not-allowed"
-                  : "border-[#e8e8e8] bg-white text-[#333] hover:border-[#5e2bb8] hover:bg-[#f7edff] hover:text-[#5e2bb8]"
-              }`}
-          >
-            <span className="text-[16px] shrink-0">{emoji}</span>
-            <span>{text}</span>
-          </button>
-        ))}
+      <PostPaymentCrossSellStrip
+        items={crossSellItems}
+        onSelectItem={(item) => {
+          onAsk(`${item.title} 자세히 알려줘`);
+        }}
+      />
+      <div className="space-y-2 border-t border-[#f0f0f0] pt-3">
+        <p className="m-0 text-[14px] leading-relaxed text-[#111]">
+          <span className="mr-1" aria-hidden>
+            💡
+          </span>
+          <span className="font-['Pretendard:Bold',sans-serif] text-[#3780ff]">H-AI TIP</span>
+          <span className="text-[#444]"> 관련해서 이런 질문도 이어갈 수 있어요.</span>
+        </p>
+        <ul className="m-0 list-none space-y-1 p-0 font-['Pretendard',sans-serif] text-[14px] leading-relaxed text-[#111]">
+          <li className="flex gap-2">
+            <span className="shrink-0 select-none" aria-hidden>
+              •
+            </span>
+            <span>여행 준비 체크리스트 만들어줘</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0 select-none" aria-hidden>
+              •
+            </span>
+            <span>공항 가는 방법 알려줘</span>
+          </li>
+        </ul>
       </div>
     </div>
   );
@@ -123,14 +128,14 @@ function DismissableButtons({ buttons }: { buttons: { label: string; onClick: ()
 // 헤더 컴포넌트
 function Header({ onBack }: { onBack?: () => void }) {
   return (
-    <div className="relative flex h-[52px] items-center border-b border-[#f0f0f0] bg-white px-2">
-      <button type="button" className="absolute left-1 top-1/2 z-[1] -translate-y-1/2 p-2" onClick={onBack} aria-label="뒤로">
-        <svg className="size-6" viewBox="0 0 24 24" fill="none">
-          <path d="M15 18L9 12L15 6" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <div className="flex flex-1 items-center justify-center gap-1.5 pr-1">
-        <h1 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111]">
+    <div className="relative flex h-[52px] w-full items-center border-b border-[#f0f0f0] bg-white px-2">
+      <div className="flex min-h-0 min-w-0 flex-1 items-center gap-1.5 py-2 pr-14">
+        <button type="button" className="shrink-0 p-2 -ml-1" onClick={onBack} aria-label="뒤로">
+          <svg className="size-6" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <h1 className="min-w-0 truncate font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111]">
           H-AI 하이
         </h1>
         <button
@@ -164,7 +169,7 @@ function ChatInput({ onSend }: { onSend: (message: string) => void }) {
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[390px] -translate-x-1/2 border-t border-[#f0f0f0] bg-white px-4 py-3">
+    <div className="fixed inset-x-0 bottom-0 z-10 w-full border-t border-[#f0f0f0] bg-white px-4 py-3">
       <div className="flex items-center gap-2">
         <button type="button" aria-label="추가" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f5f5f5] text-[#666]">
           <Plus className="size-5 stroke-[2]" />
@@ -276,7 +281,11 @@ const mockPackages: PackageData[] = [
       "탄중 베노아 수상 스포츠",
       "발리 전통 무용 관람"
     ],
-    recommendReason: "5성급 풀빌라와 스파가 포함된 럭셔리 휴양 패키지예요. 예산 대비 가성비가 가장 뛰어납니다.",
+    recommendReason:
+      "세미냑 프라이빗 풀빌라에서 즐기는 완전한 휴식, 대한항공 직항·쇼핑 없는 일정으로 가족 여행객에게 특히 인기 높은 발리 베스트셀러 상품이에요.",
+    ratingSnippet: "가족여행으로 좋아요",
+    freeSchedule: "있음",
+    shopping: "없음",
   },
   {
     id: "3",
@@ -285,13 +294,17 @@ const mockPackages: PackageData[] = [
     duration: "4박 6일",
     price: 2390000,
     image: "https://images.unsplash.com/photo-1710195778783-a441adf75fda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXJpcyUyMGVpZmZlbCUyMHRvd2VyJTIwY2l0eXxlbnwxfHx8fDE3NzAyNzU4MTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    rating: 4.7,
+    rating: 4.3,
     reviewCount: 412,
     airline: "에어프랑스",
     hotel: "메르큐어 파리 센터",
     hotelGrade: "4성급",
     departure: "2026.03.18 (수)",
     availableSeats: 12,
+    bookedCount: 6,
+    ratingSnippet: "문화·미술 코스로 추천해요",
+    freeSchedule: "있음",
+    shopping: "없음",
     highlights: [
       "루브르 박물관 한국어 가이드",
       "베르사유 궁전 관람",
@@ -323,6 +336,9 @@ const mockPackages: PackageData[] = [
       "온천 료칸 체험"
     ],
     recommendReason: "벚꽃 시즌 한정 상품으로 잔여석이 빠르게 줄고 있어요. 가까운 거리와 합리적인 가격이 장점입니다.",
+    ratingSnippet: "벚꽃 시즌 인기 상품이에요",
+    freeSchedule: "있음",
+    shopping: "있음",
   },
   {
     id: "5",
@@ -346,6 +362,9 @@ const mockPackages: PackageData[] = [
       "프라이빗 디너 세팅"
     ],
     recommendReason: "올인클루시브 수상방으로 허니문 만족도 1위 리조트예요. 잔여 4석으로 조기 마감이 예상됩니다.",
+    ratingSnippet: "허니문 만족도 높아요",
+    freeSchedule: "없음",
+    shopping: "없음",
   }
 ];
 
@@ -475,6 +494,9 @@ const airtelPackage: PackageData = {
   hotelGrade: "5성급",
   departure: "2026.04.15 (월)",
   availableSeats: 6,
+  ratingSnippet: "비즈니스석·풀빌라 조합",
+  freeSchedule: "있음",
+  shopping: "없음",
   highlights: [
     "비즈니스석 항공 (인천-발리 직항)",
     "프라이빗 풀빌라 숙박",
@@ -1724,7 +1746,7 @@ export default function App() {
   const [currentHotelForRoomSelection, setCurrentHotelForRoomSelection] = useState<string>("");
   /** 'booking': 예약하기로 연 경우(선택 후 예약 단계 이동), 'change-room': 객실 변경으로 연 경우(선택만 반영) */
   const [roomSelectorSource, setRoomSelectorSource] = useState<"booking" | "change-room" | null>(null);
-  const [extractedDestination, setExtractedDestination] = useState("");
+  const [extractedDestination, setExtractedDestination] = useState("도쿄");
 
   // 사용자 페르소나 (개인화 추천용)
   const [userPersona] = useState<UserPersona | null>({
@@ -2416,13 +2438,6 @@ export default function App() {
     setBookingData(data);
     setShowBookingForm(false);
     setShowPackageBookingSheet(false);
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: "bot",
-        content: "예약 정보를 확인했습니다. 결제를 진행해 주세요.",
-      },
-    ]);
     setShowPayment(true);
     setStep("payment");
   };
@@ -2430,10 +2445,6 @@ export default function App() {
   // 패키지 예약 시트 전용: 예약 데이터만 저장 후 결제하기 시트는 onRequestPayment로 열기
   const handleBookingSubmitFromSheet = (data: BookingFormData) => {
     setBookingData(data);
-    setMessages((prev) => [
-      ...prev,
-      { type: "bot", content: "예약 정보를 확인했습니다. 결제를 진행해 주세요." },
-    ]);
   };
 
   // 예약금/총액 버튼 클릭 시 결제하기 바텀시트로 이동
@@ -2456,14 +2467,11 @@ export default function App() {
       ...prev,
       {
         type: "bot",
-        content: "🎉 결제가 완료되었습니다! 예약이 확정되었습니다.",
-      },
-      {
-        type: "bot",
         content: (
           <PostPaymentSuggestions
             onAsk={handleSendMessage}
             reservationCard={selectedPackage ? packageReservationChatCardElement(selectedPackage) : undefined}
+            bookedPackage={selectedPackage}
           />
         ),
       },
@@ -2504,17 +2512,18 @@ export default function App() {
   // 메인 페이지 렌더
   if (step === "main") {
     return (
-      <div className="size-full max-w-[390px] mx-auto relative">
+      <div className="flex min-h-[100dvh] w-full flex-col bg-white">
+        <Header onBack={() => {}} />
         <MainPage onStartRecommendation={handleStartFromMain} />
       </div>
     );
   }
 
   return (
-    <div className="size-full flex flex-col bg-white max-w-[390px] mx-auto relative">
+    <div className="size-full flex min-h-0 w-full flex-col bg-white relative">
       <Header onBack={() => setStep("main")} />
 
-      <div className="flex-1 overflow-y-auto px-0 py-4 pb-20" data-sheet-scroll-root>
+      <div className="min-w-0 flex-1 w-full overflow-y-auto px-0 py-4 pb-20" data-sheet-scroll-root>
         {messages.map((msg, index) => (
           <ChatMessage
             key={index}

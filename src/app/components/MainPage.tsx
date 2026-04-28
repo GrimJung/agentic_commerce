@@ -1,90 +1,121 @@
 import type { ComponentType } from "react";
-import { Mic, Heart, ShoppingBag, MessageCircle, Calendar, MapPin, Camera, Star, HelpCircle, Ticket, Compass } from "lucide-react";
+import {
+  Bell,
+  Calendar,
+  Camera,
+  ChevronRight,
+  Compass,
+  Heart,
+  HelpCircle,
+  MapPin,
+  MessageCircle,
+  Mic,
+  Search,
+  ShoppingBag,
+  Star,
+  Ticket,
+} from "lucide-react";
 
 interface MainPageProps {
   onStartRecommendation: () => void;
 }
 
-const chipRows = [
-  [
-    { label: "퀴즈쇼", Icon: HelpCircle },
-    { label: "오늘의 운세", Icon: Star },
-    { label: "AI 여행 한컷", Icon: Camera },
-  ],
-  [
-    { label: "관심 기반 추천", Icon: Heart },
-    { label: "찜 상품 비교", Icon: Compass },
-    { label: "예약 상담", Icon: MessageCircle },
-  ],
-  [
-    { label: "상품 추천받고 결제하기", Icon: ShoppingBag, isMain: true },
-    { label: "E-티켓 조회", Icon: Ticket },
-  ],
-  [
-    { label: "여행 일정 제안", Icon: Calendar },
-    { label: "여행지 둘러보기", Icon: MapPin },
-  ],
-] as { label: string; Icon: ComponentType<{ className?: string }>; isMain?: boolean }[][];
+const chips: {
+  label: string;
+  Icon: ComponentType<{ className?: string }>;
+  isMain?: boolean;
+}[] = [
+  { label: "퀴즈쇼", Icon: HelpCircle },
+  { label: "오늘의 운세", Icon: Star },
+  { label: "AI 여행 한컷", Icon: Camera },
+  { label: "관심 기반 추천", Icon: Heart },
+  { label: "찜 상품 비교", Icon: Compass },
+  { label: "상품 추천받고 예약하기", Icon: ShoppingBag, isMain: true },
+  { label: "상품 알아보기", Icon: Search },
+  { label: "예약 상담", Icon: MessageCircle },
+  { label: "E-티켓 조회", Icon: Ticket },
+  { label: "여행 일정 제안", Icon: Calendar },
+  { label: "여행지 둘러보기", Icon: MapPin },
+];
 
 export function MainPage({ onStartRecommendation }: MainPageProps) {
   return (
-    <div className="size-full flex flex-col bg-white overflow-hidden">
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto">
-        {/* Avatar */}
-        <div className="flex justify-center pt-12">
-          <div className="size-16 rounded-full overflow-hidden bg-[#d9d9d9]">
-            <img
-              src="/main-avatar.png"
-              alt="H-AI"
-              className="size-full object-cover"
-            />
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        {/* 공지 */}
+        <div className="px-4 pt-3">
+          <button
+            type="button"
+            className="flex w-full items-center gap-2.5 rounded-[20px] bg-[#f3f4f6] px-3 py-2.5 text-left transition-colors hover:bg-[#eceef2]"
+          >
+            <div className="relative shrink-0 text-[#555]">
+              <Bell className="size-[18px]" strokeWidth={1.75} aria-hidden />
+              <span className="absolute -right-1 -top-0.5 rounded px-[3px] py-px text-[8px] font-bold leading-none text-white bg-[#3780ff]">
+                NEW
+              </span>
+            </div>
+            <span className="min-w-0 flex-1 truncate text-[12px] font-medium text-[#555]">
+              공지 제목이 들어갑니다. 길어지면 말 줄임표로…
+            </span>
+            <ChevronRight className="size-4 shrink-0 text-[#aaa]" aria-hidden />
+          </button>
+        </div>
+
+        {/* 히어로 — H-AI 로고 (public/hai-logo.png) */}
+        <div className="flex flex-col items-center px-5 pt-8">
+          <img
+            src="/hai-logo.png"
+            alt="H-AI"
+            className="size-[88px] shrink-0 object-contain object-center"
+            width={88}
+            height={88}
+            draggable={false}
+          />
+          <h2 className="mt-5 text-center font-['Pretendard:Bold',sans-serif] text-[20px] font-bold text-[#111]">
+            안녕하세요, H-AI에요
+          </h2>
+          <div className="mt-2 flex max-w-[300px] flex-col gap-0.5 text-center text-[14px] leading-snug text-[#888]">
+            <p className="m-0">무엇을 도와드릴까요?</p>
+            <p className="m-0">최대 두줄까지 입력 가능합니다.</p>
           </div>
         </div>
 
-        {/* Greeting */}
-        <div className="flex flex-col items-center mt-4 mb-6">
-          <h2 className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#111] mb-1">
-            안녕하세요, H-AI에요
-          </h2>
-          <p className="text-[15px] text-[#666]">무엇을 도와드릴까요?</p>
-        </div>
-
-        {/* Search Input Bar */}
-        <div className="px-5 mb-5">
-          <div className="flex items-center gap-3 bg-white border border-[#e5e5e5] rounded-[26px] px-3 py-2.5 shadow-sm">
-            <div className="size-8 rounded-full bg-[#111] flex items-center justify-center flex-shrink-0">
-              <div className="size-2.5 rounded-sm bg-white" />
-            </div>
-            <span className="flex-1 text-[14px] text-[#bbbbbb] font-medium">
-              H-AI에게 질문하기
+        {/* 입력 바 (디자인: 플레이스홀더 + 마이크만) */}
+        <div className="px-5 pt-8 pb-5">
+          <div className="flex items-center gap-3 rounded-[26px] border border-[#e5e5e5] bg-white px-4 py-2.5 shadow-sm">
+            <span className="min-w-0 flex-1 truncate text-left text-[14px] font-medium text-[#bbb]">
+              궁금한 내용을 H-AI에게 물어보세요
             </span>
-            <button className="flex-shrink-0">
-              <Mic className="size-5 text-[#888]" />
+            <button type="button" className="shrink-0 p-0.5 text-[#888] transition-opacity hover:opacity-80" aria-label="음성 입력">
+              <Mic className="size-5" strokeWidth={1.75} />
             </button>
           </div>
         </div>
 
-        {/* Chips — 4 rows matching Figma layout */}
-        <div className="px-5 space-y-2">
-          {chipRows.map((row, rowIdx) => (
-            <div key={rowIdx} className="flex gap-2">
-              {row.map(({ label, Icon, isMain }) => (
-                <button
-                  key={label}
-                  onClick={isMain ? onStartRecommendation : undefined}
-                  className={`flex items-center gap-1.5 px-3 h-8 rounded-2xl border text-[12px] font-semibold transition-colors whitespace-nowrap ${
-                    isMain
-                      ? "border-[#3780ff] bg-[#f0f7ff] text-[#3780ff] hover:bg-[#e0efff]"
-                      : "border-[#e5e5e5] bg-white text-[#666] hover:border-[#ccc]"
-                  }`}
-                >
-                  <Icon className="size-3.5 flex-shrink-0" />
-                  {label}
-                </button>
-              ))}
-            </div>
+        {/* 바로가기 칩 */}
+        <div className="flex flex-wrap justify-center gap-2 px-5 pb-8">
+          {chips.map(({ label, Icon, isMain }) => (
+            <button
+              key={label}
+              type="button"
+              onClick={isMain ? onStartRecommendation : undefined}
+              className={`flex h-8 items-center gap-1.5 whitespace-nowrap rounded-2xl border px-3 text-[12px] font-semibold transition-colors ${
+                isMain
+                  ? "border-[#3780ff] bg-[#f0f7ff] text-[#3780ff] hover:bg-[#e0efff]"
+                  : "border-[#e5e5e5] bg-white text-[#666] hover:border-[#ccc]"
+              }`}
+            >
+              <Icon className="size-3.5 shrink-0" strokeWidth={isMain ? 2 : 1.75} />
+              {label}
+            </button>
           ))}
+        </div>
+
+        {/* 하단 안내 */}
+        <div className="mx-5 mb-8 rounded-[12px] bg-[#f5f6f8] px-4 py-3">
+          <p className="text-center text-[11px] leading-relaxed text-[#888]">
+            개인 정보와 관련된 질문은 입력 시 주의 바라며, 대화 내용은 하나투어 보안 정책에 따라 안전하게 관리됩니다.
+          </p>
         </div>
       </div>
     </div>

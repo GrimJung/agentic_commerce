@@ -63,15 +63,17 @@ function formatMonthDayWeekday(d: Date): string {
   return `${String(m).padStart(2, "0")}.${String(day).padStart(2, "0")}(${w})`;
 }
 
-/** 예: 인천출발 07.15(일) 20:30 ~ 07.22(토) 12:30 */
-function formatIncheonDepartureSchedule(pkg: PackageData): string {
+/** 일정 바: '인천출발' 옆에 붙는 시각 구간만 */
+function formatIncheonDepartureScheduleParts(pkg: PackageData): { timeRange: string } {
   const start = parsePackageStartDate(pkg.departure);
-  if (!start) return `인천출발 ${pkg.departure}`;
+  if (!start) return { timeRange: pkg.departure };
   const end = new Date(start);
   end.setDate(end.getDate() + packageNightsFromDuration(pkg.duration));
   const outT = pkg.outboundFlightTime ?? "20:30";
   const inT = pkg.returnFlightTime ?? "12:30";
-  return `인천출발 ${formatMonthDayWeekday(start)} ${outT} ~ ${formatMonthDayWeekday(end)} ${inT}`;
+  return {
+    timeRange: `${formatMonthDayWeekday(start)} ${outT} ~ ${formatMonthDayWeekday(end)} ${inT}`,
+  };
 }
 
 export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: PackageInlineDetailProps) {
@@ -95,21 +97,22 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
       aria-label="상품 상세 정보"
       className="space-y-2.5 w-full scroll-mt-[60px] outline-none focus-visible:ring-2 focus-visible:ring-[#3780ff]/30 focus-visible:ring-offset-2 rounded-lg"
     >
-      {/* 여행봇 안내 — 요약 카드 상단 (채팅 본문과 동일 톤) */}
-      <div className="space-y-1 text-[14px] leading-[1.5] text-[#111] font-['Pretendard',sans-serif]">
-        <p className="mb-0">상품 정보를 보기 쉽게 정리해드렸어요.</p>
-        <p>일정과 포함내역 등 핵심정보 기준으로 정리해봤어요.</p>
-      </div>
+      {/* 상품별 LLM 추천 요약 — PackageData.recommendReason */}
+      <p className="mx-0 mt-0 mb-2 text-[14px] leading-relaxed text-[#111] font-['Pretendard',sans-serif]">
+        {pkg.recommendReason}
+      </p>
 
-      {/* ── 1. 패키지 요약 카드 ───────────────────────── */}
+      {/* ── 1. 패키지 요약 카드 (캡처 UI: 이미지·출발확정 배지·평점행·일정 바·3×2 그리드·가격) ── */}
       <div className="rounded-[16px] overflow-hidden bg-white border border-[#f0f0f0] shadow-[0px_2px_12px_rgba(0,0,0,0.07)]">
 
-        {/* 이미지 영역 — 14px 내부 패딩, 120px 높이 */}
+        {/* 이미지 영역 */}
         <div className="relative mx-[14px] mt-[13px] h-[120px] rounded-[12px] overflow-hidden">
           <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover" />
-          {/* 패키지 배지 — #F6F2FB 배경, #5E2BB8 텍스트, radius 4px */}
-          <span className="absolute top-[9px] left-[9px] inline-flex items-center justify-center rounded-[4px] bg-[#F6F2FB] px-[6px] py-[4px] text-[10px] leading-[110%] text-[#5E2BB8]" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-            패키지
+          <span
+            className="absolute top-2 left-2 inline-flex items-center justify-center rounded-[4px] bg-[#2ecc71] px-[7px] py-[4px] text-[10px] font-semibold leading-[110%] text-white"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            출발확정
           </span>
           <button
             type="button"
@@ -130,60 +133,95 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
         </div>
 
         {/* 콘텐츠 영역 */}
-        <div className="mx-[14px]">
-          {/* 제목 — Inter 15px/600, #1A1A2E */}
-          <p className="mt-[6px] text-[15px] font-semibold leading-[16px] text-[#1A1A2E] line-clamp-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+        <div className="mx-[14px] mb-[13px]">
+          <p
+            className="mt-2 text-[15px] font-semibold leading-snug text-[#1A1A2E] line-clamp-2"
+            style={{ fontFamily: "'Pretendard', 'Inter', sans-serif" }}
+          >
             {pkg.title}
           </p>
 
-          {/* 출발확정 바 — #F0F0F0 배경, #EA362D 텍스트 10px */}
-          <div className="mt-[6px] flex items-center h-[23px] rounded-[3px] bg-[#F0F0F0] px-[7px]">
-            <span className="text-[10px] leading-[12px]" style={{ fontFamily: "'Inter', sans-serif" }}>
-              <span className="text-[#EA362D]">출발확정</span>
-              <span className="text-[#666666]">
-                {" "}
-                예약 {pkg.bookedCount ?? 6}명 / 잔여 {pkg.availableSeats}명
-              </span>
-            </span>
-          </div>
-
-          {/* 출발 날짜 — #525252, 11px/500 */}
-          <p className="mt-[6px] text-[11px] font-medium leading-[13px] text-[#525252]" style={{ fontFamily: "'Inter', sans-serif" }}>
-            {formatIncheonDepartureSchedule(pkg)}
-          </p>
-
-          {/* 2×2 정보 그리드 — 셀 border: #DCDCDC */}
-          <div className="mt-[6px] grid grid-cols-2 border-t border-[#DCDCDC]">
-            {[
-              { label: "기간", value: pkg.duration },
-              { label: "도시", value: pkg.destination.split(",")[0].trim() },
-              { label: "항공", value: `${pkg.airline}·직항` },
-              { label: "호텔", value: pkg.hotelGrade },
-            ].map(({ label, value }) => (
-              <div
-                key={label}
-                className="px-[10px] py-[4px] border-b border-[#DCDCDC] border-t-0 border-l-0 border-r-0"
+          {/* 평점 + 한줄평 | 예약/잔여 */}
+          <div className="mt-2 flex items-start justify-between gap-2">
+            <div className="flex min-w-0 flex-1 items-center gap-1">
+              <svg className="size-[14px] shrink-0 text-[#5e2bb8]" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+                <path d="M8 0L10.472 5.008L16 5.856L12 9.712L12.944 15.232L8 12.616L3.056 15.232L4 9.712L0 5.856L5.528 5.008L8 0Z" />
+              </svg>
+              <span
+                className="shrink-0 text-[13px] font-semibold tabular-nums text-[#1A1A2E]"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
               >
-                {/* 라벨 — #BBBBBB, 9px */}
-                <p className="text-[9px] leading-[11px] text-[#BBBBBB]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  {label}
-                </p>
-                {/* 값 — #1A1A2E, 12px/500 */}
-                <p className="mt-[4px] text-[12px] font-medium leading-[15px] text-[#1A1A2E] line-clamp-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  {value}
-                </p>
-              </div>
-            ))}
+                {Number.isInteger(pkg.rating) ? String(pkg.rating) : pkg.rating.toFixed(1)}
+              </span>
+              {pkg.ratingSnippet ? (
+                <span
+                  className="min-w-0 truncate text-[11px] font-normal text-[#666]"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                >
+                  {pkg.ratingSnippet}
+                </span>
+              ) : null}
+            </div>
+            <p
+              className="shrink-0 text-right text-[10px] leading-tight text-[#888]"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              예약 {pkg.bookedCount ?? 6}명 / 잔여 {pkg.availableSeats}명
+            </p>
           </div>
 
-          {/* 가격 영역 — #F7EDFF 배경, radius 10px */}
-          <div className="my-[13px] flex items-center justify-between rounded-[10px] bg-[#F7EDFF] px-[12px] h-[36px]">
-            <span className="text-[11px] leading-[13px] text-[#36264D]" style={{ fontFamily: "'Inter', sans-serif" }}>
-              1인 기준
+          {/* 인천출발 일정 하이라이트 바 */}
+          <div
+            className="mt-2.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 rounded-[8px] bg-[#f3f4f6] px-2.5 py-2"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            <span className="text-[12px] font-semibold text-[#3780ff]">인천출발</span>
+            <span className="text-[12px] font-medium text-[#1A1A2E] tabular-nums">
+              {formatIncheonDepartureScheduleParts(pkg).timeRange}
             </span>
-            <span className="text-[15px] font-bold leading-[16px] text-[#5C3FD3] tabular-nums" style={{ fontFamily: "'Inter', sans-serif" }}>
-              {pkg.price.toLocaleString()}원~
-            </span>
+          </div>
+
+          {/* 3×2 정보 그리드 */}
+          <div
+            className="mt-2.5 border-t border-[#ebebeb]"
+            style={{ fontFamily: "'Pretendard', 'Inter', sans-serif" }}
+          >
+            <div className="grid grid-cols-3">
+              {[
+                { label: "기간", value: pkg.duration },
+                { label: "방문도시", value: pkg.destination.split(",")[0].trim() },
+                { label: "자유일정", value: pkg.freeSchedule ?? "—" },
+              ].map(({ label, value }, i) => (
+                <div
+                  key={label}
+                  className={[
+                    "border-b border-[#ebebeb] px-2 py-2.5",
+                    i < 2 ? "border-r border-[#ebebeb]" : "",
+                  ].join(" ")}
+                >
+                  <p className="text-[9px] leading-[11px] text-[#aaa]">{label}</p>
+                  <p className="mt-1 text-[12px] font-semibold leading-[15px] text-[#1A1A2E] line-clamp-2">{value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-3">
+              {[
+                { label: "항공", value: `${pkg.airline}·직항` },
+                { label: "호텔", value: pkg.hotelGrade },
+                { label: "쇼핑", value: pkg.shopping ?? "—" },
+              ].map(({ label, value }, i) => (
+                <div
+                  key={label}
+                  className={[
+                    "px-2 py-2.5",
+                    i < 2 ? "border-r border-[#ebebeb]" : "",
+                  ].join(" ")}
+                >
+                  <p className="text-[9px] leading-[11px] text-[#aaa]">{label}</p>
+                  <p className="mt-1 text-[12px] font-semibold leading-[15px] text-[#1A1A2E] line-clamp-2">{value}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -247,7 +285,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
                   onClick={() => setShowFull(true)}
                   className="w-full py-2 rounded-full border border-[#e0e0e0] bg-white font-semibold font-['Pretendard:SemiBold',sans-serif] text-[12px] text-[#555] shadow-sm hover:bg-[#f5f5f5] transition-colors"
                 >
-                  더보기 ({itinerary.length - 2}개 일정 더 보기)
+                  일정 및 포함∙불포함 내역 더보기
                 </button>
               </div>
             </>
@@ -282,20 +320,18 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
             theme={SECTION_THEME.optional}
             items={["항공리턴변경(문의)", "객실 1인 사용 시 추가 비용"]}
           />
-        </div>
-      )}
-
-      {/* 펼친 상태: 접기 — 액션 버튼보다 한 단계 낮은 보조 컨트롤(작은 텍스트·무테두리) */}
-      {showFull && itinerary.length > 2 && (
-        <div className="flex justify-center -mt-1 mb-0.5">
-          <button
-            type="button"
-            onClick={() => setShowFull(false)}
-            className="py-1.5 px-3 text-[12px] font-medium font-['Pretendard',sans-serif] text-[#9a9a9a] hover:text-[#666] rounded-lg hover:bg-[#f3f3f3] transition-colors"
-            aria-label="일정 접기"
-          >
-            접기
-          </button>
+          {showFull && itinerary.length > 2 && (
+            <div className="px-4 pb-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowFull(false)}
+                className="w-full py-2 rounded-full border border-[#e0e0e0] bg-white font-semibold font-['Pretendard:SemiBold',sans-serif] text-[12px] text-[#555] shadow-sm hover:bg-[#f5f5f5] transition-colors"
+                aria-label="일정 접기"
+              >
+                접기
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -313,7 +349,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
           onClick={onBooking}
           className="flex-1 py-3 rounded-full bg-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif] text-[13px] text-white hover:bg-[#4e239a] active:bg-[#3e1c7a] transition-colors shadow-sm"
         >
-          상품 예약하기
+          금액 확인하기
         </button>
       </div>
 
@@ -330,9 +366,6 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
           </span>
           <span className="font-['Pretendard:Bold',sans-serif] text-[rgba(55,127,255,1)]">H-AI TIP</span>
         </p>
-        {pkg.recommendReason ? (
-          <p className="mt-1.5 text-[14px] leading-relaxed text-[#333] m-0">{pkg.recommendReason}</p>
-        ) : null}
         <p className="mt-2 text-[14px] leading-relaxed text-[#444] m-0">관련해서 이런 질문도 이어갈 수 있어요.</p>
         <ul className="mt-1.5 space-y-1.5 pl-0.5 text-[14px] text-[#333] list-none m-0 p-0">
           <li>• 포함·불포함 항목만 짧게 정리해줘.</li>
