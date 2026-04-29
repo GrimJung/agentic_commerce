@@ -3,7 +3,7 @@
 > **목적**: 신규 로직 적용 전, 기존 **[항공+호텔]** 상품(`fitSearchMode === "combo"`, `FITPackageData`)의 예약·결제 UI·플로우를 기록해 **필요 시 원복**할 수 있게 합니다.  
 > **Archive 기준일**: 2026-03-23  
 > **권장**: 작업 시작 직전 `git rev-parse HEAD` 로 커밋 해시를 이 문서 상단에 추가해 두세요.  
-> **이후 참고 (2026-04)**: 패키지 전용 `PackageBookingSheet`·`PaymentSheet`에 **AgentToast**(스크롤·인터랙션 연동 컨텍스트 토스트)가 추가되었습니다. **이 문서 본문의 FIT 조합 플로우·상태 표는 위 Archive 기준일 스냅샷**으로 유지하며, 최신 전체 UI는 루트 `README.md`와 `src/app/components/`를 참고하세요.
+> **이후 참고 (2026-04 ~ 04-28)**: 패키지 전용 `PackageBookingSheet`·`PaymentSheet`에 **AgentToast**(스크롤·인터랙션 연동), 예약 인원·결제 금액 확인·결제 완료·스타일 정리가 반영되었습니다. **이 문서 본문의 FIT 조합 플로우·상태 표는 위 Archive 기준일 스냅샷**으로 유지하며, 최신 전체 UI는 루트 `README.md` 변경 이력과 `src/app/components/`를 참고하세요.
 
 ---
 

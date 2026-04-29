@@ -95,7 +95,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
       tabIndex={-1}
       role="region"
       aria-label="상품 상세 정보"
-      className="space-y-2.5 w-full scroll-mt-[60px] outline-none focus-visible:ring-2 focus-visible:ring-[#3780ff]/30 focus-visible:ring-offset-2 rounded-lg"
+      className="space-y-2.5 w-full scroll-mt-[60px] outline-none focus-visible:ring-2 focus-visible:ring-[#6329C4]/30 focus-visible:ring-offset-2 rounded-lg"
     >
       {/* 상품별 LLM 추천 요약 — PackageData.recommendReason */}
       <p className="mx-0 mt-0 mb-2 text-[14px] leading-relaxed text-[#111] font-['Pretendard',sans-serif]">
@@ -144,7 +144,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
           {/* 평점 + 한줄평 | 예약/잔여 */}
           <div className="mt-2 flex items-start justify-between gap-2">
             <div className="flex min-w-0 flex-1 items-center gap-1">
-              <svg className="size-[14px] shrink-0 text-[#5e2bb8]" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+              <svg className="size-[14px] shrink-0 text-[#4a1f94]" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
                 <path d="M8 0L10.472 5.008L16 5.856L12 9.712L12.944 15.232L8 12.616L3.056 15.232L4 9.712L0 5.856L5.528 5.008L8 0Z" />
               </svg>
               <span
@@ -175,7 +175,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
             className="mt-2.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 rounded-[8px] bg-[#f3f4f6] px-2.5 py-2"
             style={{ fontFamily: "'Pretendard', sans-serif" }}
           >
-            <span className="text-[12px] font-semibold text-[#3780ff]">인천출발</span>
+            <span className="text-[12px] font-semibold text-[#6329C4]">인천출발</span>
             <span className="text-[12px] font-medium text-[#1A1A2E] tabular-nums">
               {formatIncheonDepartureScheduleParts(pkg).timeRange}
             </span>
@@ -347,7 +347,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
         <button
           type="button"
           onClick={onBooking}
-          className="flex-1 py-3 rounded-full bg-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif] text-[13px] text-white hover:bg-[#4e239a] active:bg-[#3e1c7a] transition-colors shadow-sm"
+          className="flex-1 py-3 rounded-full bg-[#4a1f94] font-['Pretendard:SemiBold',sans-serif] text-[13px] text-white hover:bg-[#4e239a] active:bg-[#3e1c7a] transition-colors shadow-sm"
         >
           금액 확인하기
         </button>

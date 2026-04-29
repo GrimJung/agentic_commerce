@@ -20,7 +20,7 @@ function PackageTravelPrepHaiFab({ onOpenChat }: { onOpenChat: () => void }) {
             여행준비를 도와드릴 수 있어요
           </p>
           <span
-            className="absolute -bottom-1 right-5 size-0 border-l-[7px] border-r-[7px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#3780ff]"
+            className="absolute -bottom-1 right-5 size-0 border-l-[7px] border-r-[7px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#6329C4]"
             aria-hidden
           />
         </div>
@@ -90,7 +90,7 @@ export function BookingConfirmation({
   const summaryBlock = (
     <>
       {/* 상단 성공 배너 */}
-      <div className="w-full bg-[#3780ff] px-5 pt-8 pb-14 flex items-start justify-between gap-4">
+      <div className="w-full bg-[#6329C4] px-5 pt-8 pb-14 flex items-start justify-between gap-4">
         <div>
           <p className="text-white text-[20px] font-['Pretendard:Bold',sans-serif] leading-snug">
             {displayName}
@@ -100,7 +100,7 @@ export function BookingConfirmation({
           </p>
         </div>
         <div className="size-12 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
-          <svg className="size-7 text-[#3780ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="size-7 text-[#6329C4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </div>
@@ -196,7 +196,7 @@ function PackageCompletionPromoSections() {
     <div className="w-full space-y-4 px-4 pb-6 pt-2">
       {/* 여행자 정보 나중 입력 안내 */}
       <section className="rounded-[16px] border border-[#eee] bg-white px-4 py-5 shadow-sm">
-        <p className="mb-3 inline-flex items-center gap-1 rounded-full bg-[#f3f0ff] px-3 py-1 text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#5e2bb8]">
+        <p className="mb-3 inline-flex items-center gap-1 rounded-full bg-[#f3f0ff] px-3 py-1 text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#4a1f94]">
           잠깐만요! <span aria-hidden>🖐️</span>
         </p>
         <h2 className="text-[16px] font-['Pretendard:Bold',sans-serif] leading-snug text-[#111]">
@@ -208,7 +208,7 @@ function PackageCompletionPromoSections() {
         </p>
         <button
           type="button"
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#e0e0e0] bg-white py-3.5 text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#3780ff] transition-colors hover:bg-[#f8fbff]"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#e0e0e0] bg-white py-3.5 text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#6329C4] transition-colors hover:bg-[#f8fbff]"
         >
           <PencilLine className="size-[18px] shrink-0" strokeWidth={2} />
           여행자정보 입력하기
@@ -223,9 +223,9 @@ function PackageCompletionPromoSections() {
         </p>
         <div className="pointer-events-none absolute -right-1 bottom-0 top-0 flex w-[38%] items-center justify-end pr-2">
           <div className="relative flex size-[72px] items-center justify-center">
-            <span className="absolute size-14 rounded-full bg-[#3780ff]/25" />
-            <span className="absolute right-2 top-2 size-10 rounded-full bg-[#3780ff]/35" />
-            <span className="relative flex size-12 items-center justify-center rounded-full bg-[#3780ff] text-[18px] font-bold text-white shadow-md">
+            <span className="absolute size-14 rounded-full bg-[#6329C4]/25" />
+            <span className="absolute right-2 top-2 size-10 rounded-full bg-[#6329C4]/35" />
+            <span className="relative flex size-12 items-center justify-center rounded-full bg-[#6329C4] text-[18px] font-bold text-white shadow-md">
               m
             </span>
           </div>
@@ -276,7 +276,7 @@ function Row({ label, value, highlight }: { label: string; value: string; highli
   return (
     <div className="flex items-start justify-between gap-3">
       <span className="text-[13px] text-[#999] shrink-0">{label}</span>
-      <span className={`text-right text-[13px] leading-snug ${highlight ? "font-['Pretendard:Bold',sans-serif] text-[#3780ff]" : "font-['Pretendard:SemiBold',sans-serif] text-[#111]"}`}>
+      <span className={`text-right text-[13px] leading-snug ${highlight ? "font-['Pretendard:Bold',sans-serif] text-[#6329C4]" : "font-['Pretendard:SemiBold',sans-serif] text-[#111]"}`}>
         {value}
       </span>
     </div>

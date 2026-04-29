@@ -95,28 +95,28 @@ export function HotelRefundPolicySheet({
 
               <ul className="space-y-3 mb-4 text-[13px] leading-[1.55]">
                 <li>
-                  <span className="text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
+                  <span className="text-[#4a1f94] font-['Pretendard:SemiBold',sans-serif]">
                     {d6} 16시 까지
                   </span>
                   <br />
                   <span className="text-[#111]">취소수수료 없음</span>
                 </li>
                 <li>
-                  <span className="text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
+                  <span className="text-[#4a1f94] font-['Pretendard:SemiBold',sans-serif]">
                     {d5} 16시 까지 취소 시,
                   </span>
                   <br />
                   <span className="text-[#111]">취소수수료 546원 부과</span>
                 </li>
                 <li>
-                  <span className="text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
+                  <span className="text-[#4a1f94] font-['Pretendard:SemiBold',sans-serif]">
                     {d1} 16시 까지 취소 시,
                   </span>
                   <br />
                   <span className="text-[#111]">취소수수료 1,092원 부과</span>
                 </li>
                 <li>
-                  <span className="text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
+                  <span className="text-[#4a1f94] font-['Pretendard:SemiBold',sans-serif]">
                     {checkInLabel} 16시 까지 취소 시,
                   </span>
                   <br />

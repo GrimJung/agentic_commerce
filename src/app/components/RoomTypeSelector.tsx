@@ -498,7 +498,7 @@ export function RoomTypeSelector({ hotelName, roomTypes, stayDateRange = "06.07~
                   <button
                     type="button"
                     onClick={handleNonRefundableConfirm}
-                    className="flex-1 py-2.5 rounded-[12px] bg-[#7b3ff2] text-white text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+                    className="flex-1 py-2.5 rounded-[12px] bg-[#6329C4] text-white text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#4a1f94] transition-colors"
                   >
                     확인
                   </button>
@@ -564,7 +564,7 @@ export function RoomTypeSelector({ hotelName, roomTypes, stayDateRange = "06.07~
                     {benefitsRoom.amenities.length > 0 ? (
                       benefitsRoom.amenities.map((amenity, i) => (
                         <div key={i} className="flex flex-col gap-1">
-                          <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#5e2bb8]">
+                          <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#4a1f94]">
                             혜택{i + 1}.
                           </p>
                           <p className="pl-4 text-[13px] text-[#111] font-normal">
@@ -575,7 +575,7 @@ export function RoomTypeSelector({ hotelName, roomTypes, stayDateRange = "06.07~
                     ) : (
                       <>
                         <div className="flex flex-col gap-1">
-                          <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#5e2bb8]">
+                          <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#4a1f94]">
                             혜택1.
                           </p>
                           <p className="pl-4 text-[13px] text-[#111] font-normal">
@@ -583,7 +583,7 @@ export function RoomTypeSelector({ hotelName, roomTypes, stayDateRange = "06.07~
                           </p>
                         </div>
                         <div className="flex flex-col gap-1">
-                          <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#5e2bb8]">
+                          <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#4a1f94]">
                             혜택2.
                           </p>
                           <p className="pl-4 text-[13px] text-[#111] font-normal">

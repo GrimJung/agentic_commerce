@@ -68,16 +68,16 @@ export function FlightCard({ flight, rank, onClick, onBooking }: FlightCardProps
     >
       <div className="flex items-center mb-3">
         <div className="flex items-center gap-2">
-          <div className="size-6 rounded-full bg-[#7b3ff2] flex items-center justify-center text-white text-[12px] font-['Pretendard:Bold',sans-serif]">
+          <div className="size-6 rounded-full bg-[#6329C4] flex items-center justify-center text-white text-[12px] font-['Pretendard:Bold',sans-serif]">
             {rank}
           </div>
-          <span className="text-[12px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">추천 항공편</span>
+          <span className="text-[12px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">추천 항공편</span>
         </div>
       </div>
 
       {/* AI 추천 이유 */}
       <div className="flex gap-2 bg-[#f5f0ff] rounded-[8px] px-3 py-2.5 mb-[5px]">
-        <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#7b3ff2]" />
+        <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#6329C4]" />
         <p className="text-[13px] leading-[1.5] text-[#555] line-clamp-2">
           {flight.recommendReason}
         </p>
@@ -149,7 +149,7 @@ export function FlightCard({ flight, rank, onClick, onBooking }: FlightCardProps
         </div>
         <div className="text-right">
           <span className="text-[11px] text-[#999] mr-1">삼성 iD GLOBAL 카드/성인1</span>
-          <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold">
+          <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#6329C4] font-semibold">
             {flight.price.toLocaleString()}원
           </span>
         </div>
@@ -162,7 +162,7 @@ export function FlightCard({ flight, rank, onClick, onBooking }: FlightCardProps
             e.stopPropagation();
             onClick();
           }}
-          className="flex-1 py-2.5 bg-white border border-[#2d6fdf] text-[#2d6fdf] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
+          className="flex-1 py-2.5 bg-white border border-[#5423AD] text-[#5423AD] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
         >
           상세보기
         </button>
@@ -171,7 +171,7 @@ export function FlightCard({ flight, rank, onClick, onBooking }: FlightCardProps
             e.stopPropagation();
             onBooking();
           }}
-          className="flex-1 py-2.5 bg-[#7b3ff2] text-white rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+          className="flex-1 py-2.5 bg-[#6329C4] text-white rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
         >
           예약하기
         </button>

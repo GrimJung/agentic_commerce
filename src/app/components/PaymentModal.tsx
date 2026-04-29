@@ -52,7 +52,7 @@ export function PaymentModal({ amount, onSuccess, onCancel }: PaymentModalProps)
           <div className="bg-[#f5f5f5] rounded-[16px] p-5 mb-6">
             <div className="flex justify-between items-center mb-2">
               <span className="text-[14px] text-[#666]">결제 금액</span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[24px] text-[#3780ff]">
+              <span className="font-['Pretendard:Bold',sans-serif] text-[24px] text-[#6329C4]">
                 {(amount / 10000).toFixed(0)}만원
               </span>
             </div>
@@ -68,12 +68,12 @@ export function PaymentModal({ amount, onSuccess, onCancel }: PaymentModalProps)
                 onClick={() => setPaymentMethod("card")}
                 className={`w-full flex items-center gap-4 p-4 rounded-[12px] border-2 transition-all ${
                   paymentMethod === "card"
-                    ? "border-[#3780ff] bg-[#f0f7ff]"
+                    ? "border-[#6329C4] bg-[#f0f7ff]"
                     : "border-[#e5e5e5] bg-white hover:border-[#ccc]"
                 }`}
               >
                 <div className={`size-10 rounded-full flex items-center justify-center ${
-                  paymentMethod === "card" ? "bg-[#3780ff]" : "bg-[#f5f5f5]"
+                  paymentMethod === "card" ? "bg-[#6329C4]" : "bg-[#f5f5f5]"
                 }`}>
                   <CreditCard className={`size-5 ${paymentMethod === "card" ? "text-white" : "text-[#666]"}`} />
                 </div>
@@ -84,7 +84,7 @@ export function PaymentModal({ amount, onSuccess, onCancel }: PaymentModalProps)
                   <p className="text-[12px] text-[#999]">국내외 모든 카드 사용 가능</p>
                 </div>
                 {paymentMethod === "card" && (
-                  <div className="size-5 rounded-full bg-[#3780ff] flex items-center justify-center">
+                  <div className="size-5 rounded-full bg-[#6329C4] flex items-center justify-center">
                     <svg className="size-3" viewBox="0 0 12 12" fill="none">
                       <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -96,12 +96,12 @@ export function PaymentModal({ amount, onSuccess, onCancel }: PaymentModalProps)
                 onClick={() => setPaymentMethod("mobile")}
                 className={`w-full flex items-center gap-4 p-4 rounded-[12px] border-2 transition-all ${
                   paymentMethod === "mobile"
-                    ? "border-[#3780ff] bg-[#f0f7ff]"
+                    ? "border-[#6329C4] bg-[#f0f7ff]"
                     : "border-[#e5e5e5] bg-white hover:border-[#ccc]"
                 }`}
               >
                 <div className={`size-10 rounded-full flex items-center justify-center ${
-                  paymentMethod === "mobile" ? "bg-[#3780ff]" : "bg-[#f5f5f5]"
+                  paymentMethod === "mobile" ? "bg-[#6329C4]" : "bg-[#f5f5f5]"
                 }`}>
                   <Smartphone className={`size-5 ${paymentMethod === "mobile" ? "text-white" : "text-[#666]"}`} />
                 </div>
@@ -112,7 +112,7 @@ export function PaymentModal({ amount, onSuccess, onCancel }: PaymentModalProps)
                   <p className="text-[12px] text-[#999]">카카오페이, 네이버페이 등</p>
                 </div>
                 {paymentMethod === "mobile" && (
-                  <div className="size-5 rounded-full bg-[#3780ff] flex items-center justify-center">
+                  <div className="size-5 rounded-full bg-[#6329C4] flex items-center justify-center">
                     <svg className="size-3" viewBox="0 0 12 12" fill="none">
                       <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -131,7 +131,7 @@ export function PaymentModal({ amount, onSuccess, onCancel }: PaymentModalProps)
           <button
             onClick={handlePayment}
             disabled={!paymentMethod || isProcessing}
-            className="w-full py-4 bg-[#3780ff] text-white rounded-[12px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#2d6fdf] transition-colors flex items-center justify-center gap-2"
+            className="w-full py-4 bg-[#6329C4] text-white rounded-[12px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5423AD] transition-colors flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>

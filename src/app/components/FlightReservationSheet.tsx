@@ -124,8 +124,8 @@ export function FlightReservationSheet({
           {isFitCombo ? (
             <div className="flex items-start">
               <div className="flex flex-col items-center shrink-0">
-                <span className="size-[25px] rounded-full bg-[#5e2bb8] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">1</span>
-                <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] font-bold text-[#5e2bb8] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />약관동의</span>
+                <span className="size-[25px] rounded-full bg-[#4a1f94] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">1</span>
+                <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] font-bold text-[#4a1f94] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />약관동의</span>
               </div>
               <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
               <div className="flex flex-col items-center shrink-0">
@@ -146,8 +146,8 @@ export function FlightReservationSheet({
           ) : (
             <div className="flex items-start">
               <div className="flex flex-col items-center shrink-0">
-                <span className="size-[25px] rounded-full bg-[#5e2bb8] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">1</span>
-                <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] font-bold text-[#5e2bb8] mt-[5px] mb-[5px] leading-[1.2]">약관동의</span>
+                <span className="size-[25px] rounded-full bg-[#4a1f94] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">1</span>
+                <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] font-bold text-[#4a1f94] mt-[5px] mb-[5px] leading-[1.2]">약관동의</span>
               </div>
               <div className="flex-1 h-px bg-[#e0e0e0] min-w-[24px] mx-1 mt-4" aria-hidden />
               <div className="flex flex-col items-center shrink-0">
@@ -167,7 +167,7 @@ export function FlightReservationSheet({
           {/* AI 취소수수료 안내 */}
           <div className="mb-4 space-y-2">
             <div className="flex items-start gap-3 bg-[#e8f0fe] rounded-[12px] px-4 py-3">
-              <svg className="size-5 shrink-0 mt-0.5 text-[#2d6fdf]" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="size-5 shrink-0 mt-0.5 text-[#5423AD]" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
               </svg>
               <p className="text-[14px] text-[#1a3a6e] leading-[1.6] font-['Pretendard:Medium',sans-serif]">
@@ -181,7 +181,7 @@ export function FlightReservationSheet({
               </svg>
               <p className="text-[14px] text-[#444] leading-[1.6] font-['Pretendard:Medium',sans-serif]">
                 이후 취소 수수료는<br />
-                <span className="text-[#2d6fdf] underline underline-offset-2 cursor-pointer">AI 항공사 취소수수료</span> 안내를 확인해 보세요.
+                <span className="text-[#5423AD] underline underline-offset-2 cursor-pointer">AI 항공사 취소수수료</span> 안내를 확인해 보세요.
               </p>
             </div>
             <p className="text-[13px] text-[#e03131] pl-1">
@@ -261,7 +261,7 @@ export function FlightReservationSheet({
                   <p className="text-[13px] text-[#666] mt-0.5">
                     {formatSeatClass(flight.seatClass)} ㆍ 위탁 수하물 포함(15kg)
                   </p>
-                  <p className="text-[13px] text-[#2d6fdf] mt-1">
+                  <p className="text-[13px] text-[#5423AD] mt-1">
                     {flight.flightDuration?.replace(/약\s*/, "").replace(/\s*소요\s*\([^)]*\)?/, "").trim() || flight.flightDuration} 비행
                   </p>
                 </div>
@@ -338,7 +338,7 @@ export function FlightReservationSheet({
                   <p className="text-[13px] text-[#666] mt-0.5">
                     {formatSeatClass(returnFlight.seatClass)} ㆍ 위탁 수하물 포함(15kg)
                   </p>
-                  <p className="text-[13px] text-[#2d6fdf] mt-1">
+                  <p className="text-[13px] text-[#5423AD] mt-1">
                     {returnFlight.flightDuration?.replace(/약\s*/, "").replace(/\s*소요\s*\([^)]*\)?/, "").trim() || returnFlight.flightDuration} 비행
                   </p>
                 </div>
@@ -398,13 +398,13 @@ export function FlightReservationSheet({
                 <div className="rounded-[10px] bg-[#f5f5f5] px-4 py-3 mt-3">
                   <div className="flex justify-between items-center">
                     <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111]">결제예정금액</span>
-                    <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#5e2bb8] font-bold">
+                    <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#4a1f94] font-bold">
                       {displayTotal.toLocaleString()}원
                     </span>
                   </div>
                   <p className="text-[12px] text-[#888] mt-1 text-right">유류할증료/제세공과금 포함</p>
                 </div>
-                <ul className="mt-4 text-[12px] text-[#5e2bb8] leading-[1.6] space-y-2 list-none pl-0">
+                <ul className="mt-4 text-[12px] text-[#4a1f94] leading-[1.6] space-y-2 list-none pl-0">
                   <li>* 유류할증료/제세공과금은 항공사 사정 및 환율변동에 의해 매일 변경되며 발권 당일 환율에 따라 적용됩니다.</li>
                   <li>* 여행사 발권대행 수수료는 항공료에 포함되며, 항공권 예약, 상담, 발권 업무의 서비스를 탑승자에게 제공하고 서비스의 대가로 받는 취급수수료입니다.</li>
                   <li>* 신용카드 결제 시 발권대행 수수료 금액은 항공권 결제 후 하나투어로 별도 승인됩니다.</li>
@@ -478,45 +478,45 @@ export function FlightReservationSheet({
                 type="checkbox"
                 checked={agreeAll}
                 onChange={(e) => handleAgreeAll(e.target.checked)}
-                className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]"
               />
               <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#111]">전체 동의</span>
             </label>
             <div className="space-y-2 mt-2">
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree1} onChange={(e) => setAgree1(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree1} onChange={(e) => setAgree1(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">요금 / 환불 규정 안내 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree2} onChange={(e) => setAgree2(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree2} onChange={(e) => setAgree2(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">개인정보 수집 및 이용 동의 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree3} onChange={(e) => setAgree3(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree3} onChange={(e) => setAgree3(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">개인정보 제3자 제공 동의 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree4} onChange={(e) => setAgree4(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree4} onChange={(e) => setAgree4(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">개인정보 국외 이전 동의 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree5} onChange={(e) => setAgree5(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree5} onChange={(e) => setAgree5(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">고유식별정보 수집 및 처리 동의 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree6} onChange={(e) => setAgree6(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree6} onChange={(e) => setAgree6(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">결제 및 발권동의 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree7} onChange={(e) => setAgree7(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree7} onChange={(e) => setAgree7(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">발권수수료 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree8} onChange={(e) => setAgree8(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree8} onChange={(e) => setAgree8(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">하나투어 항공 일반규정 (필수)</span>
               </label>
               <label className="flex items-center gap-3 py-2 cursor-pointer">
-                <input type="checkbox" checked={agree9} onChange={(e) => setAgree9(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]" />
+                <input type="checkbox" checked={agree9} onChange={(e) => setAgree9(e.target.checked)} className="size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]" />
                 <span className="text-[13px] text-[#666]">항공사 정보 동의 (필수)</span>
               </label>
             </div>
@@ -530,7 +530,7 @@ export function FlightReservationSheet({
             type="button"
             onClick={handleProceedToPayment}
             disabled={!canProceed}
-            className="w-full py-4 bg-[#5e2bb8] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5e2bb8] transition-colors"
+            className="w-full py-4 bg-[#4a1f94] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#4a1f94] transition-colors"
           >
             다음단계
           </button>

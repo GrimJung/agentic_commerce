@@ -92,12 +92,12 @@ export function FlightPaymentConditionSheet({
                 <div
                   className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${
                     selectedId === condition.id
-                      ? "border-[#7b3ff2]"
+                      ? "border-[#6329C4]"
                       : "border-[#ccc]"
                   }`}
                 >
                   {selectedId === condition.id && (
-                    <div className="size-[12px] rounded-full bg-[#7b3ff2]" />
+                    <div className="size-[12px] rounded-full bg-[#6329C4]" />
                   )}
                 </div>
                 <span className="text-[15px] text-[#111]">{condition.name}</span>
@@ -122,7 +122,7 @@ export function FlightPaymentConditionSheet({
           <button
             type="button"
             onClick={handleSelect}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+            className="w-full py-4 bg-[#6329C4] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
           >
             선택하기
           </button>

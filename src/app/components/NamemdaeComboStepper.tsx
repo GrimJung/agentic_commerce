@@ -23,9 +23,9 @@ export function NamemdaeComboStepper({ activeStep }: NamemdaeComboStepperProps) 
       <span
         className={`size-[26px] rounded-full flex items-center justify-center text-[13px] font-['Pretendard:SemiBold',sans-serif] shrink-0 ${
           done
-            ? "bg-[#5e2bb8] text-white"
+            ? "bg-[#4a1f94] text-white"
             : active
-              ? "bg-[#5e2bb8] text-white"
+              ? "bg-[#4a1f94] text-white"
               : "border border-[#c8c8c8] bg-white text-[#c8c8c8]"
         }`}
       >
@@ -42,7 +42,7 @@ export function NamemdaeComboStepper({ activeStep }: NamemdaeComboStepperProps) 
           done
             ? "text-[#4A2190] font-bold"
             : active
-              ? "text-[#5e2bb8] font-bold"
+              ? "text-[#4a1f94] font-bold"
               : "text-[#4f4f4f]"
         }`}
       >

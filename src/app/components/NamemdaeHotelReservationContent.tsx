@@ -16,7 +16,7 @@ import {
 import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
 import type { HotelBookingInfo } from "./BookingForm";
 
-const NOTICE_ACCENT = "text-[#5e2bb8]";
+const NOTICE_ACCENT = "text-[#4a1f94]";
 
 function parseHotelCheckInDate(checkIn: string): Date | null {
   const cleaned = checkIn.replace(/\([^)]*\)/g, "").trim();
@@ -180,7 +180,7 @@ function NamemdaeFlightHotelPayNoticeModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="w-full py-3.5 rounded-[30px] bg-[#5e2bb8] text-white text-[15px] font-['Pretendard:Bold',sans-serif] hover:bg-[rgba(74,33,144,1)] transition-colors"
+            className="w-full py-3.5 rounded-[30px] bg-[#4a1f94] text-white text-[15px] font-['Pretendard:Bold',sans-serif] hover:bg-[rgba(74,33,144,1)] transition-colors"
           >
             확인했습니다
           </button>
@@ -192,7 +192,7 @@ function NamemdaeFlightHotelPayNoticeModal({
 
 function RequiredBadge() {
   return (
-    <span className="shrink-0 px-2.5 py-0.5 rounded-full bg-[#7b3ff2] text-white text-[11px] font-['Pretendard:SemiBold',sans-serif]">
+    <span className="shrink-0 px-2.5 py-0.5 rounded-full bg-[#6329C4] text-white text-[11px] font-['Pretendard:SemiBold',sans-serif]">
       필수
     </span>
   );
@@ -323,7 +323,7 @@ function TermsCircleControl({
       <label
         htmlFor={id}
         className={`flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-[#007AFF] peer-focus-visible:ring-offset-1 ${
-          checked ? "border-white bg-[#5e2bb8]" : "border-[#d1d1d1] bg-white"
+          checked ? "border-white bg-[#4a1f94]" : "border-[#d1d1d1] bg-white"
         }`}
       >
         <Check
@@ -951,7 +951,7 @@ export function NamemdaeHotelReservationContent({
           type="button"
           onClick={handlePayClick}
           disabled={!canPay}
-          className="w-full py-4 bg-[#5e2bb8] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[rgba(74,33,144,1)] transition-colors"
+          className="w-full py-4 bg-[#4a1f94] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[rgba(74,33,144,1)] transition-colors"
         >
           {total.toLocaleString()}원 결제하기
         </button>

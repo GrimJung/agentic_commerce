@@ -7,7 +7,7 @@ export function AgentProgressMessage({ message, status = 'active' }: AgentProgre
   return (
     <div className="flex items-center gap-2">
       {status === 'active' ? (
-        <div className="inline-block size-4 border-2 border-[#7b3ff2] border-t-transparent rounded-full animate-spin" />
+        <div className="inline-block size-4 border-2 border-[#6329C4] border-t-transparent rounded-full animate-spin" />
       ) : (
         <svg className="size-4 text-[#22c55e]" viewBox="0 0 16 16" fill="none">
           <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.5" />

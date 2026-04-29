@@ -676,7 +676,7 @@ function MaskGroup() {
 function Frame4() {
   return (
     <div className="absolute bg-[#dbf9ff] h-[74px] left-[20px] rounded-[12px] top-[112px] w-[320px]">
-      <p className="absolute font-['pretendard:Semibold',sans-serif] leading-[1.5] left-[20px] not-italic text-[#3780ff] text-[14px] top-[17px] tracking-[-0.28px]">H-AI와 함께한 100만 번의 특별한 순간</p>
+      <p className="absolute font-['pretendard:Semibold',sans-serif] leading-[1.5] left-[20px] not-italic text-[#6329C4] text-[14px] top-[17px] tracking-[-0.28px]">H-AI와 함께한 100만 번의 특별한 순간</p>
       <p className="absolute font-['pretendard:Regular',sans-serif] leading-[1.4] left-[20px] not-italic text-[#61757e] text-[12px] top-[40px] w-[210px] whitespace-pre-wrap">여러분과 함께한 발자취를 확인해 보세요!</p>
       <MaskGroup />
     </div>

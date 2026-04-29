@@ -81,15 +81,15 @@ export function FlightPaymentSheet({
           {isFitCombo ? (
             <div className="flex items-start">
               <div className="flex flex-col items-center shrink-0">
-                <span className="size-[25px] rounded-full border border-[#5e2bb8] bg-white flex items-center justify-center text-[#5e2bb8] font-['Pretendard:SemiBold',sans-serif]">
+                <span className="size-[25px] rounded-full border border-[#4a1f94] bg-white flex items-center justify-center text-[#4a1f94] font-['Pretendard:SemiBold',sans-serif]">
                   <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
                 </span>
                 <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#4f4f4f] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />약관동의</span>
               </div>
               <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
               <div className="flex flex-col items-center shrink-0">
-                <span className="size-[25px] rounded-full bg-[#5e2bb8] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">2</span>
-                <span className="text-[12px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#5e2bb8] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />예약정보입력</span>
+                <span className="size-[25px] rounded-full bg-[#4a1f94] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">2</span>
+                <span className="text-[12px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#4a1f94] mt-[5px] mb-[5px] leading-[1.2] text-center">항공<br />예약정보입력</span>
               </div>
               <div className="flex-1 h-px bg-[#e0e0e0] min-w-[12px] mx-1 mt-4" aria-hidden />
               <div className="flex flex-col items-center shrink-0">
@@ -110,8 +110,8 @@ export function FlightPaymentSheet({
               </div>
               <div className="flex-1 h-px bg-[#e0e0e0] min-w-[24px] mx-1 mt-4" aria-hidden />
               <div className="flex flex-col items-center shrink-0">
-                <span className="size-[25px] rounded-full bg-[#5e2bb8] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">2</span>
-                <span className="text-[12px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#5e2bb8] mt-[5px] mb-[5px] leading-[1.2]">예약정보 입력</span>
+                <span className="size-[25px] rounded-full bg-[#4a1f94] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">2</span>
+                <span className="text-[12px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#4a1f94] mt-[5px] mb-[5px] leading-[1.2]">예약정보 입력</span>
               </div>
               <div className="flex-1 h-px bg-[#e0e0e0] min-w-[24px] mx-1 mt-4" aria-hidden />
               <div className="flex flex-col items-center shrink-0">
@@ -182,7 +182,7 @@ export function FlightPaymentSheet({
               <div className="text-[13px] text-[#666] leading-[1.6] space-y-2">
                 <p>항공사 사정에 따라 취소 및 시간 변경 수수료가 발생할 수 있습니다.</p>
                 <p>환불/변경 시 수수료 부과 시점은 운송약관을 확인해 주세요.</p>
-                <p><span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">항공권 결제 완료 시 마이페이지에서 확인 가능</span>합니다.</p>
+                <p><span className="text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">항공권 결제 완료 시 마이페이지에서 확인 가능</span>합니다.</p>
                 <p>운영시간 외 예약은 익일 처리될 수 있습니다.</p>
               </div>
             )}
@@ -227,29 +227,29 @@ export function FlightPaymentSheet({
               결제방식 선택
             </h3>
             <div className="space-y-3">
-              <label className={`flex items-start gap-3 p-4 rounded-[12px] border cursor-pointer ${paymentType === "immediate" ? "border-[#7b3ff2] bg-white" : "border-[#eee] bg-white"}`}>
+              <label className={`flex items-start gap-3 p-4 rounded-[12px] border cursor-pointer ${paymentType === "immediate" ? "border-[#6329C4] bg-white" : "border-[#eee] bg-white"}`}>
                 <input
                   type="radio"
                   name="paymentType"
                   checked={paymentType === "immediate"}
                   onChange={() => setPaymentType("immediate")}
-                  className="mt-0.5 size-5 text-[#7b3ff2]"
+                  className="mt-0.5 size-5 text-[#6329C4]"
                 />
                 <div>
-                  <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#5e2bb8]">즉시결제</p>
+                  <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#4a1f94]">즉시결제</p>
                   <p className="text-[12px] text-[#666] mt-0.5">결제 완료 후 예약이 확정되며, 예약 확인서와 E-티켓이 발행됩니다.</p>
                 </div>
               </label>
-              <label className={`flex items-start gap-3 p-4 rounded-[12px] border cursor-pointer ${paymentType === "later" ? "border-[#7b3ff2] bg-white" : "border-[#eee] bg-white"}`}>
+              <label className={`flex items-start gap-3 p-4 rounded-[12px] border cursor-pointer ${paymentType === "later" ? "border-[#6329C4] bg-white" : "border-[#eee] bg-white"}`}>
                 <input
                   type="radio"
                   name="paymentType"
                   checked={paymentType === "later"}
                   onChange={() => setPaymentType("later")}
-                  className="mt-0.5 size-5 text-[#7b3ff2]"
+                  className="mt-0.5 size-5 text-[#6329C4]"
                 />
                 <div>
-                  <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#5e2bb8]">나중에결제</p>
+                  <p className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#4a1f94]">나중에결제</p>
                   <p className="text-[12px] text-[#666] mt-0.5">예약 완료 후 24시간 내 결제할 수 있으며, 기간 내 미결제 시 예약이 자동 취소됩니다.</p>
                 </div>
               </label>
@@ -268,7 +268,7 @@ export function FlightPaymentSheet({
               </span>
               <span className="flex items-center gap-1.5">
                 {!paymentInfoOpen && (
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#7b3ff2]">
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#6329C4]">
                     {totalPrice.toLocaleString()}원
                   </span>
                 )}
@@ -277,7 +277,7 @@ export function FlightPaymentSheet({
             </button>
             {paymentInfoOpen && (
               <div className="pt-1 flex flex-col items-end text-right">
-                <p className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#5e2bb8]">
+                <p className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#4a1f94]">
                   {totalPrice.toLocaleString()}원
                 </p>
                 <p className="text-[13px] text-[#888] mt-0.5">유류할증료/제세공과금 포함</p>
@@ -306,7 +306,7 @@ export function FlightPaymentSheet({
           <button
             type="button"
             onClick={() => setShowConfirmPopup(true)}
-            className="w-full py-4 bg-[#5e2bb8] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#4a2190] transition-colors flex items-center justify-center"
+            className="w-full py-4 bg-[#4a1f94] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#4a2190] transition-colors flex items-center justify-center"
           >
             {paymentType === "later"
               ? "예약하기"
@@ -450,7 +450,7 @@ export function FlightPaymentSheet({
                     setShowPaymentDetailSheet(true);
                   }
                 }}
-                className="flex-1 py-3.5 bg-[#7b3ff2] text-white rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+                className="flex-1 py-3.5 bg-[#6329C4] text-white rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
               >
                 확인 완료
               </button>

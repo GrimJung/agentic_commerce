@@ -153,7 +153,7 @@ export function PostPaymentCrossSellStrip({ items, onSelectItem }: PostPaymentCr
           >
             <div className="relative h-[100px] w-full overflow-hidden bg-[#eee]">
               <img src={item.image} alt="" className="size-full object-cover" loading="lazy" />
-              <span className="absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold leading-tight text-white bg-[#3780ff]">
+              <span className="absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold leading-tight text-white bg-[#6329C4]">
                 {item.category}
               </span>
             </div>

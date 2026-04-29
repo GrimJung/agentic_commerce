@@ -367,15 +367,15 @@ export function PaymentSheet({
                   </button>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[17px] font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">
+                  <span className="text-[17px] font-['Pretendard:Bold',sans-serif] text-[#6329C4]">
                     115,185
                   </span>
-                  <span className="inline-flex items-center justify-center size-5 rounded-full border-2 border-[#7b3ff2] text-[#7b3ff2] text-[10px] font-bold">
+                  <span className="inline-flex items-center justify-center size-5 rounded-full border-2 border-[#6329C4] text-[#6329C4] text-[10px] font-bold">
                     m
                   </span>
                   <button
                     type="button"
-                    className="px-4 py-1.5 rounded-full border border-[#7b3ff2] text-[13px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f5f0ff] transition-colors"
+                    className="px-4 py-1.5 rounded-full border border-[#6329C4] text-[13px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f5f0ff] transition-colors"
                   >
                     전액사용
                   </button>
@@ -490,7 +490,7 @@ export function PaymentSheet({
             <div className="border-t border-[#eee] pt-3">
               <div className="flex justify-between items-baseline">
                 <span className="font-semibold font-['Pretendard:SemiBold',sans-serif] text-[16px] text-[#111]">최종 결제금액</span>
-                <span className="font-['Pretendard:Bold',sans-serif] font-bold text-[26px] text-[#5e2bb8] leading-none">
+                <span className="font-['Pretendard:Bold',sans-serif] font-bold text-[26px] text-[#4a1f94] leading-none">
                   {finalAmount.toLocaleString()}<span className="text-[18px]">원</span>
                 </span>
               </div>
@@ -521,11 +521,11 @@ export function PaymentSheet({
               {/* 신용카드 */}
               <label className="flex items-center gap-3 px-4 py-4 cursor-pointer" onClick={() => setPaymentMethod("card")}>
                 {/* 커스텀 라디오 */}
-                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center transition-colors ${paymentMethod === "card" ? "border-[#7b3ff2] bg-white" : "border-[#ccc] bg-white"}`}>
-                  {paymentMethod === "card" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center transition-colors ${paymentMethod === "card" ? "border-[#6329C4] bg-white" : "border-[#ccc] bg-white"}`}>
+                  {paymentMethod === "card" && <span className="size-3 rounded-full bg-[#6329C4]" />}
                 </span>
-                <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#7b3ff2]">신용카드</span>
-                <CreditCard className="size-5 text-[#7b3ff2]" />
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#6329C4]">신용카드</span>
+                <CreditCard className="size-5 text-[#6329C4]" />
               </label>
 
               {paymentMethod === "card" && (
@@ -541,13 +541,13 @@ export function PaymentSheet({
                       onClick={() => setSelectedCard("samsung")}
                       className={cn(
                         "relative rounded-[12px] border p-4 text-left transition-colors",
-                        selectedCard === "samsung" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"
+                        selectedCard === "samsung" ? "border-[#6329C4]" : "border-[#e5e5e5]"
                       )}
                     >
                       <span className={`absolute top-3 right-3 size-5 rounded-full border-2 flex items-center justify-center ${selectedCard === "samsung" ? "border-[#aaa]" : "border-[#ddd]"}`}>
                         {selectedCard === "samsung" && <Check className="size-3 text-[#aaa]" strokeWidth={2.5} />}
                       </span>
-                      <p className="text-[13px] font-['Pretendard:SemiBold',sans-serif] text-[#2563eb] mb-1">삼성카드</p>
+                      <p className="text-[13px] font-['Pretendard:SemiBold',sans-serif] text-[#5423AD] mb-1">삼성카드</p>
                       <p className="text-[13px] font-['Pretendard:Bold',sans-serif] text-[#111]">하나투어 삼성카드</p>
                       <p className="text-[11px] text-[#888] mt-1">12/24개월 라이트 할부</p>
                     </button>
@@ -556,7 +556,7 @@ export function PaymentSheet({
                       onClick={() => setSelectedCard("hana")}
                       className={cn(
                         "relative rounded-[12px] border p-4 text-left transition-colors",
-                        selectedCard === "hana" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"
+                        selectedCard === "hana" ? "border-[#6329C4]" : "border-[#e5e5e5]"
                       )}
                     >
                       <span className={`absolute top-3 right-3 size-5 rounded-full border-2 flex items-center justify-center ${selectedCard === "hana" ? "border-[#aaa]" : "border-[#ddd]"}`}>
@@ -592,8 +592,8 @@ export function PaymentSheet({
 
               {/* 무통장 입금 */}
               <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
-                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "bank" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
-                  {paymentMethod === "bank" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "bank" ? "border-[#6329C4]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "bank" && <span className="size-3 rounded-full bg-[#6329C4]" />}
                 </span>
                 <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">무통장 입금</span>
                 <svg className="size-6 shrink-0" viewBox="0 0 24 24" fill="none">
@@ -608,8 +608,8 @@ export function PaymentSheet({
 
               {/* 카카오페이 */}
               <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("kakao")}>
-                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "kakao" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
-                  {paymentMethod === "kakao" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "kakao" ? "border-[#6329C4]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "kakao" && <span className="size-3 rounded-full bg-[#6329C4]" />}
                 </span>
                 <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">카카오페이</span>
                 <span className="inline-flex items-center gap-0.5 bg-[#1a1200] text-[#fee500] text-[11px] font-bold px-2 py-1 rounded-full">
@@ -619,8 +619,8 @@ export function PaymentSheet({
 
               {/* 페이코 */}
               <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("payco")}>
-                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "payco" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
-                  {paymentMethod === "payco" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "payco" ? "border-[#6329C4]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "payco" && <span className="size-3 rounded-full bg-[#6329C4]" />}
                 </span>
                 <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">페이코</span>
                 <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#e53935] tracking-tight">PAYCO</span>
@@ -628,8 +628,8 @@ export function PaymentSheet({
 
               {/* 네이버페이 */}
               <label className="flex items-center gap-3 px-4 py-4 cursor-pointer border-t border-[#eee]" onClick={() => setPaymentMethod("naver")}>
-                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "naver" ? "border-[#7b3ff2]" : "border-[#ccc]"}`}>
-                  {paymentMethod === "naver" && <span className="size-3 rounded-full bg-[#7b3ff2]" />}
+                <span className={`shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center ${paymentMethod === "naver" ? "border-[#6329C4]" : "border-[#ccc]"}`}>
+                  {paymentMethod === "naver" && <span className="size-3 rounded-full bg-[#6329C4]" />}
                 </span>
                 <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">네이버페이</span>
                 <span className="inline-flex items-center gap-0.5 bg-[#03c75a] text-white text-[11px] font-bold px-2 py-1 rounded-full">
@@ -648,7 +648,7 @@ export function PaymentSheet({
               <span
                 className={cn(
                   "shrink-0 size-[22px] rounded-full border-2 flex items-center justify-center transition-colors",
-                  rememberPaymentMethod ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"
+                  rememberPaymentMethod ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"
                 )}
               >
                 {rememberPaymentMethod && <Check className="size-3.5 text-white" strokeWidth={2.5} />}
@@ -696,7 +696,7 @@ export function PaymentSheet({
                       value="등록"
                       checked={cashReceipt === "등록"}
                       onChange={() => setCashReceipt("등록")}
-                      className="size-5 border-2 border-[#c8c8c8] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                      className="size-5 border-2 border-[#c8c8c8] text-[#6329C4] focus:ring-[#6329C4]"
                     />
                     <span className="text-[14px] text-[#111]">등록</span>
                   </label>
@@ -707,7 +707,7 @@ export function PaymentSheet({
                       value="미등록"
                       checked={cashReceipt === "미등록"}
                       onChange={() => setCashReceipt("미등록")}
-                      className="size-5 border-2 border-[#7b3ff2] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                      className="size-5 border-2 border-[#6329C4] text-[#6329C4] focus:ring-[#6329C4]"
                     />
                     <span className="text-[14px] text-[#111]">미등록</span>
                   </label>
@@ -744,7 +744,7 @@ export function PaymentSheet({
                             className="w-full flex items-center gap-2 px-4 py-2.5 text-left text-[14px] text-[#111] hover:bg-[#f5f5f5]"
                           >
                             {cashReceiptType === option ? (
-                              <Check className="size-4 text-[#7b3ff2] shrink-0" />
+                              <Check className="size-4 text-[#6329C4] shrink-0" />
                             ) : (
                               <span className="size-4 shrink-0" />
                             )}
@@ -836,7 +836,7 @@ export function PaymentSheet({
               type="button"
               onClick={handlePay}
               disabled={isProcessing}
-              className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[rgba(94,43,184,1)] transition-colors"
+              className="w-full py-4 bg-[#6329C4] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#5423AD] transition-colors"
             >
               {isProcessing ? (
                 <span className="flex items-center justify-center gap-2">

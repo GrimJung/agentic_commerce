@@ -21,7 +21,7 @@ import { MyTravelerNotebookModal } from "./MyTravelerNotebookModal";
 
 function RequiredBadge() {
   return (
-    <span className="shrink-0 px-2 py-0.5 rounded-[4px] bg-[#7b3ff2] text-white text-[11px] font-['Pretendard:SemiBold',sans-serif]">
+    <span className="shrink-0 px-2 py-0.5 rounded-[4px] bg-[#6329C4] text-white text-[11px] font-['Pretendard:SemiBold',sans-serif]">
       필수
     </span>
   );
@@ -72,7 +72,7 @@ function VerifiedInput(props: ComponentProps<"input">) {
         className={`w-full px-4 py-3 pr-11 border border-[#e5e5e5] rounded-[10px] text-[14px] text-[#111] placeholder:text-[#bbb] ${className ?? ""}`}
       />
       {v.length > 0 && (
-        <Check className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-[#7b3ff2] pointer-events-none" aria-hidden />
+        <Check className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-[#6329C4] pointer-events-none" aria-hidden />
       )}
     </div>
   );
@@ -352,9 +352,9 @@ export function NamemdaeFlightReservationContent({
               type="checkbox"
               checked={sameAsBooker}
               onChange={(e) => setSameAsBooker(e.target.checked)}
-              className="size-4 rounded border-[#ccc] text-[#7b3ff2]"
+              className="size-4 rounded border-[#ccc] text-[#6329C4]"
             />
-            <span className="text-[13px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">예약자 정보와 동일합니다</span>
+            <span className="text-[13px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">예약자 정보와 동일합니다</span>
           </label>
           <div className="space-y-3 mb-6">
             <div className="flex items-center gap-3 min-w-0">
@@ -417,7 +417,7 @@ export function NamemdaeFlightReservationContent({
                     type="checkbox"
                     checked={passportLater}
                     onChange={(e) => setPassportLater(e.target.checked)}
-                    className="size-4 rounded border-[#ddd] text-[#7b3ff2] shrink-0"
+                    className="size-4 rounded border-[#ddd] text-[#6329C4] shrink-0"
                   />
                   <span className="text-[13px] text-[#999] font-['Pretendard:Medium',sans-serif] whitespace-nowrap">
                     여권정보 나중에 등록
@@ -563,7 +563,7 @@ export function NamemdaeFlightReservationContent({
                         type="checkbox"
                         checked={passportLaterP2}
                         onChange={(e) => setPassportLaterP2(e.target.checked)}
-                        className="size-4 rounded border-[#ddd] text-[#7b3ff2] shrink-0"
+                        className="size-4 rounded border-[#ddd] text-[#6329C4] shrink-0"
                       />
                       <span className="text-[13px] text-[#999] font-['Pretendard:Medium',sans-serif] whitespace-nowrap">
                         여권정보 나중에 등록
@@ -628,7 +628,7 @@ export function NamemdaeFlightReservationContent({
 
         {/* 정책 안내 박스 (항공 예약 단 안내와 동일 문구) */}
         <div className="rounded-[12px] bg-[#ededed] border border-[#e8e0ff] px-4 py-3 mb-3 space-y-2 text-[12px] leading-[1.5]">
-          <p className="text-[#7b3ff2]">
+          <p className="text-[#6329C4]">
             • 여권상 영문이름과 다른 경우 탑승이 불가하며, 예약 후에는 영문이름 변경이 불가하오니 실제 탑승하실분의 여권상 동일한 영문 성/이름, 성별을 정확히 입력해주시기 바랍니다.
             (영문 성/이름 입력시 띄어쓰기나 &quot;-&quot; 표시 없이 영문 스펠링만 정확히 입력해 주십시오)
           </p>
@@ -692,7 +692,7 @@ export function NamemdaeFlightReservationContent({
                   type="checkbox"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="mt-0.5 size-4 rounded border-[#ccc] text-[#7b3ff2]"
+                  className="mt-0.5 size-4 rounded border-[#ccc] text-[#6329C4]"
                 />
                 <span className="text-[13px] text-[#333]">(필수) 항공 운송·예약 관련 약관에 동의합니다.</span>
               </label>
@@ -701,7 +701,7 @@ export function NamemdaeFlightReservationContent({
                   type="checkbox"
                   checked={agreePrivacy}
                   onChange={(e) => setAgreePrivacy(e.target.checked)}
-                  className="mt-0.5 size-4 rounded border-[#ccc] text-[#7b3ff2]"
+                  className="mt-0.5 size-4 rounded border-[#ccc] text-[#6329C4]"
                 />
                 <span className="text-[13px] text-[#333]">(필수) 개인정보 수집·이용 및 제3자 제공에 동의합니다.</span>
               </label>
@@ -719,7 +719,7 @@ export function NamemdaeFlightReservationContent({
           <button
             type="button"
             onClick={onOpenScheduleDetail}
-            className="w-full py-3.5 px-4 border border-[#7b3ff2] text-[#7b3ff2] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f8f4ff]"
+            className="w-full py-3.5 px-4 border border-[#6329C4] text-[#6329C4] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] bg-white hover:bg-[#f8f4ff]"
           >
             요금/환불 규정 및 상세일정 보기
           </button>
@@ -731,7 +731,7 @@ export function NamemdaeFlightReservationContent({
           type="button"
           onClick={handleOpenFinalConfirm}
           disabled={!canNext}
-          className="w-full py-4 bg-[rgba(94,43,184,1)] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[rgba(74,33,144,1)] transition-colors"
+          className="w-full py-4 bg-[#6329C4] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#5423AD] transition-colors"
         >
           다음단계
         </button>
@@ -779,7 +779,7 @@ export function NamemdaeFlightReservationContent({
                 <section className="mb-5">
                   <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] mb-2">
                     탑승자 정보 총{" "}
-                    <span className="text-[#7b3ff2]">{passengerCount}명</span>
+                    <span className="text-[#6329C4]">{passengerCount}명</span>
                   </h3>
                   <div className="rounded-[10px] border border-[#eee] overflow-hidden">
                     <table className="w-full text-left text-[13px]">
@@ -861,7 +861,7 @@ export function NamemdaeFlightReservationContent({
                     </table>
                   </div>
                   <p className="mt-3 text-[12px] leading-[1.5]">
-                    <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">
+                    <span className="text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">
                       예약·발권 알림 및 상담
                     </span>
                     <span className="text-[#666]">
@@ -895,7 +895,7 @@ export function NamemdaeFlightReservationContent({
                 <button
                   type="button"
                   onClick={handleFinalConfirmComplete}
-                  className="flex-1 py-3.5 bg-[#7b3ff2] text-white rounded-[30px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+                  className="flex-1 py-3.5 bg-[#6329C4] text-white rounded-[30px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#4a1f94] transition-colors"
                 >
                   확인 완료
                 </button>

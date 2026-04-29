@@ -54,12 +54,12 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
           {/* 여행 동반자 / 테마 선택 탭 */}
           <div className="bg-white rounded-[14px] shadow-[0px_4px_7px_0px_rgba(0,0,0,0.1)] border-b border-[#e5e7eb] mb-4">
             <div className="flex h-[65px]">
-              <button className="flex-1 flex flex-col items-center justify-center gap-1 border-b-[3px] border-[#7b3ff2]">
+              <button className="flex-1 flex flex-col items-center justify-center gap-1 border-b-[3px] border-[#6329C4]">
                 <svg className="size-4" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" stroke="#7b3ff2" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 16V14C2 12.9391 2.42143 11.9217 3.17157 11.1716C3.92172 10.4214 4.93913 10 6 10H10C11.0609 10 12.0783 10.4214 12.8284 11.1716C13.5786 11.9217 14 12.9391 14 14V16" stroke="#7b3ff2" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" stroke="#6329C4" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 16V14C2 12.9391 2.42143 11.9217 3.17157 11.1716C3.92172 10.4214 4.93913 10 6 10H10C11.0609 10 12.0783 10.4214 12.8284 11.1716C13.5786 11.9217 14 12.9391 14 14V16" stroke="#6329C4" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <span className="text-[14px] text-[#7b3ff2] font-['Pretendard:Bold',sans-serif]">여행 동반자</span>
+                <span className="text-[14px] text-[#6329C4] font-['Pretendard:Bold',sans-serif]">여행 동반자</span>
               </button>
               <button className="flex-1 flex flex-col items-center justify-center gap-1">
                 <svg className="size-4" viewBox="0 0 16 16" fill="none">
@@ -73,7 +73,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
 
           {/* 동반자 태그 선택 */}
           <div className="flex gap-3 mb-4 overflow-x-auto pb-2">
-            <div className="px-4 py-2 bg-gradient-to-b from-[#6976ff] to-[#7b3ff2] rounded-full">
+            <div className="px-4 py-2 bg-gradient-to-b from-[#7c4ddb] to-[#6329C4] rounded-full">
               <span className="text-[13px] text-white">아이 동반</span>
             </div>
             <div className="px-4 py-2 bg-[#e9e5fb] rounded-full">
@@ -89,7 +89,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
 
           {/* AI 브리핑 */}
           <div className="bg-white rounded-[10px] p-4 mb-4 border border-[#f0f0f0]">
-            <p className="text-[15px] text-[#7b3ff2] font-['Pretendard:Bold',sans-serif] mb-3">
+            <p className="text-[15px] text-[#6329C4] font-['Pretendard:Bold',sans-serif] mb-3">
               "아이와 함께라면 이동 부담이 적고 호텔 내 부대시설 활용도가 높은 상품이 적합합니다."
             </p>
             <div className="space-y-2">
@@ -97,7 +97,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                 <span className="text-[16px] text-[#00d9c0]">•</span>
                 <div className="flex items-start gap-2">
                   <div className="size-5 bg-[rgba(123,63,242,0.1)] rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-[11px] text-[#7b3ff2]">A</span>
+                    <span className="text-[11px] text-[#6329C4]">A</span>
                   </div>
                   <p className="text-[14px] text-[#364153] leading-[1.5]">
                     키즈 풀과 워터파크가 있는 리조트형 호텔로 아이들이 즐길 거리가 풍부합니다
@@ -108,7 +108,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                 <span className="text-[16px] text-[#00d9c0]">•</span>
                 <div className="flex items-start gap-2">
                   <div className="size-5 bg-[rgba(123,63,242,0.1)] rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-[11px] text-[#7b3ff2]">B</span>
+                    <span className="text-[11px] text-[#6329C4]">B</span>
                   </div>
                   <p className="text-[14px] text-[#364153] leading-[1.5]">
                     이동 시간이 가장 짧고 자유시간이 많아 아이들 체력 관리에 유리합니다
@@ -119,7 +119,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                 <span className="text-[16px] text-[#00d9c0]">•</span>
                 <div className="flex items-start gap-2">
                   <div className="size-5 bg-[rgba(123,63,242,0.1)] rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-[11px] text-[#7b3ff2]">C</span>
+                    <span className="text-[11px] text-[#6329C4]">C</span>
                   </div>
                   <p className="text-[14px] text-[#364153] leading-[1.5]">
                     가족 단위 여행객을 위한 패밀리룸 구성으로 편안한 휴식이 가능합니다
@@ -141,12 +141,12 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                     <td key={pkg.id} className="p-3 text-center border-l border-[#e5e7eb]">
                       <div className="flex flex-col items-center gap-2">
                         <div className="size-6 bg-[rgba(123,63,242,0.1)] rounded-full flex items-center justify-center">
-                          <span className="text-[#7b3ff2] text-[12px] font-['Pretendard:Bold',sans-serif]">
+                          <span className="text-[#6329C4] text-[12px] font-['Pretendard:Bold',sans-serif]">
                             {labels[index]}
                           </span>
                         </div>
                         <div className="text-center">
-                          <p className="text-[13px] font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">
+                          <p className="text-[13px] font-['Pretendard:Bold',sans-serif] text-[#6329C4]">
                             {(pkg.price / 10000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                           </p>
                           <p className="text-[11px] text-[#6a7282]">만원</p>
@@ -233,7 +233,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                   <div className="flex gap-3 mb-3">
                     <div className="relative">
                       <img src={pkg.image} alt={pkg.title} className="w-[80px] h-[80px] object-cover rounded-[8px]" />
-                      <div className="absolute -top-2 -left-2 size-6 bg-[#7b3ff2] rounded-full flex items-center justify-center shadow-sm">
+                      <div className="absolute -top-2 -left-2 size-6 bg-[#6329C4] rounded-full flex items-center justify-center shadow-sm">
                         <span className="text-white text-[12px] font-['Pretendard:Bold',sans-serif]">
                           {labels[index]}
                         </span>
@@ -245,7 +245,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                       </h4>
                       <p className="text-[12px] text-[#999] mb-2">{pkg.duration}</p>
                       <div className="flex items-baseline gap-1">
-                        <span className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#3780ff]">
+                        <span className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#6329C4]">
                           {(pkg.price / 10000).toFixed(0)}만원
                         </span>
                         <span className="text-[12px] text-[#999]">~</span>
@@ -254,7 +254,7 @@ export function PackageComparison({ packages, onClose, onSelect }: PackageCompar
                   </div>
                   <button
                     onClick={() => onSelect(pkg)}
-                    className="w-full py-2.5 bg-[#3780ff] text-white rounded-[8px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#2d6fdf] transition-colors"
+                    className="w-full py-2.5 bg-[#6329C4] text-white rounded-[8px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
                   >
                     이 상품 선택하기
                   </button>

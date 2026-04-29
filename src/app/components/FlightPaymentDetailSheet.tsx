@@ -125,10 +125,10 @@ export function FlightPaymentDetailSheet({
               <button
                 type="button"
                 onClick={() => setInsuranceOption("join")}
-                className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${insuranceOption === "join" ? "border-[#7b3ff2] bg-white" : "border-[#e5e5e5] bg-white"}`}
+                className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${insuranceOption === "join" ? "border-[#6329C4] bg-white" : "border-[#e5e5e5] bg-white"}`}
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceOption === "join" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceOption === "join" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                     {insuranceOption === "join" && (
                       <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
                         <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -139,24 +139,24 @@ export function FlightPaymentDetailSheet({
                 </div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-[13px] text-[#555]">총 보험료</span>
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">20,170원</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">20,170원</span>
                   <span className="text-[#ddd]">|</span>
                   <span className="text-[13px] text-[#555]">가입인원</span>
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">2명</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">2명</span>
                   <span className="text-[#ddd]">|</span>
                   <span className="text-[13px] text-[#555]">총</span>
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">3일</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">3일</span>
                 </div>
                 <p className="text-[12px] text-[#888] mb-3">2026.05.20 00:00 ~ 2026.05.22 23:59</p>
                 <div className="bg-[#f8f5ff] rounded-[10px] px-3 py-2.5 space-y-1.5">
                   <p className="text-[12px] text-[#666]">
-                    • 여행 중 휴대품 손해 <span className="text-[#7b3ff2]">100만원</span> 보장 한도 (품목당 <span className="text-[#7b3ff2]">20만원</span>)
+                    • 여행 중 휴대품 손해 <span className="text-[#6329C4]">100만원</span> 보장 한도 (품목당 <span className="text-[#6329C4]">20만원</span>)
                   </p>
                   <p className="text-[12px] text-[#666]">
-                    • 항공기 및 수화물 지연 <span className="text-[#7b3ff2]">20만원</span> 보장 한도
+                    • 항공기 및 수화물 지연 <span className="text-[#6329C4]">20만원</span> 보장 한도
                   </p>
                   <p className="text-[12px] text-[#666]">
-                    • 해외상해/질병 의료비 <span className="text-[#7b3ff2]">5천만원</span> 보장 한도
+                    • 해외상해/질병 의료비 <span className="text-[#6329C4]">5천만원</span> 보장 한도
                   </p>
                 </div>
               </button>
@@ -164,10 +164,10 @@ export function FlightPaymentDetailSheet({
               <button
                 type="button"
                 onClick={() => setInsuranceOption("later")}
-                className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${insuranceOption === "later" ? "border-[#7b3ff2] bg-white" : "border-[#e5e5e5] bg-white"}`}
+                className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${insuranceOption === "later" ? "border-[#6329C4] bg-white" : "border-[#e5e5e5] bg-white"}`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceOption === "later" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceOption === "later" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                     {insuranceOption === "later" && (
                       <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
                         <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -195,7 +195,7 @@ export function FlightPaymentDetailSheet({
                   </li>
                   <li className="flex gap-2 text-[12px] leading-[1.6]">
                     <span className="shrink-0 text-[#555]">•</span>
-                    <span className="font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2]">항공권 변경 및 예약취소 시 여행자 보험은 별도로 변경 및 취소를 진행하셔야 합니다.</span>
+                    <span className="font-['Pretendard:SemiBold',sans-serif] text-[#6329C4]">항공권 변경 및 예약취소 시 여행자 보험은 별도로 변경 및 취소를 진행하셔야 합니다.</span>
                   </li>
                   <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
                     <span className="shrink-0">•</span>
@@ -211,7 +211,7 @@ export function FlightPaymentDetailSheet({
                   </li>
                   <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
                     <span className="shrink-0">•</span>
-                    <span>자세한 사항은 <span className="text-[#2d6fdf] underline underline-offset-2 cursor-pointer">보험 가입 시 유의사항</span>을 확인해 주시기 바랍니다.</span>
+                    <span>자세한 사항은 <span className="text-[#5423AD] underline underline-offset-2 cursor-pointer">보험 가입 시 유의사항</span>을 확인해 주시기 바랍니다.</span>
                   </li>
                 </ul>
               </div>
@@ -235,7 +235,7 @@ export function FlightPaymentDetailSheet({
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="bg-white/90 rounded-full px-5 py-2.5 text-[13px] text-[#555] shadow-sm">
-                      <span className="font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">가입 버튼 클릭 시</span> 확인 가능해요
+                      <span className="font-['Pretendard:Bold',sans-serif] text-[#6329C4]">가입 버튼 클릭 시</span> 확인 가능해요
                     </span>
                   </div>
                 </div>
@@ -251,10 +251,10 @@ export function FlightPaymentDetailSheet({
               <button
                 type="button"
                 onClick={() => setCancellationInsurance("join")}
-                className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${cancellationInsurance === "join" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"}`}
+                className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${cancellationInsurance === "join" ? "border-[#6329C4]" : "border-[#e5e5e5]"}`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationInsurance === "join" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationInsurance === "join" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                     {cancellationInsurance === "join" && (
                       <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
                         <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -266,20 +266,20 @@ export function FlightPaymentDetailSheet({
                 <p className="text-[13px] text-[#555] pl-8 mb-3">취소 걱정 없이 항공권 구매하세요!</p>
                 <div className="flex items-center gap-2 pl-8">
                   <span className="text-[13px] text-[#555]">총 보험료</span>
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">0원</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">0원</span>
                   <span className="text-[#ddd]">|</span>
                   <span className="text-[13px] text-[#555]">가입인원</span>
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">2명</span>
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">2명</span>
                 </div>
               </button>
               {/* 미가입 카드 */}
               <button
                 type="button"
                 onClick={() => setCancellationInsurance("skip")}
-                className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${cancellationInsurance === "skip" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"}`}
+                className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${cancellationInsurance === "skip" ? "border-[#6329C4]" : "border-[#e5e5e5]"}`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationInsurance === "skip" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+                  <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationInsurance === "skip" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                     {cancellationInsurance === "skip" && (
                       <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none">
                         <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -331,7 +331,7 @@ export function FlightPaymentDetailSheet({
                 <ul className="space-y-1.5">
                   <li className="flex gap-2 text-[12px] leading-[1.6]">
                     <span className="shrink-0 text-[#666]">•</span>
-                    <span className="font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2]">항공권 변경(재발행) 시 보험은 더이상 유효하지 않으며, 직접 취소하셔야 합니다. (취소 후 재가입 불가)</span>
+                    <span className="font-['Pretendard:SemiBold',sans-serif] text-[#6329C4]">항공권 변경(재발행) 시 보험은 더이상 유효하지 않으며, 직접 취소하셔야 합니다. (취소 후 재가입 불가)</span>
                   </li>
                   <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>환불불가 운임 항공권은 취소 위약금 보상 보험을 가입하셔도 보장을 받으실 수 없습니다.</span></li>
                   <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]"><span className="shrink-0">•</span><span>보험 확인 및 취소 : 마이페이지 &gt; 예약내역 &gt; 나만의 혜택 &gt; 항공권 취소 위약금 보상 보험 상세</span></li>
@@ -367,7 +367,7 @@ export function FlightPaymentDetailSheet({
                     <span className="text-[14px] text-[#111]">마일리지</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[15px] font-semibold text-[#5e2bb8]">10,000,000m</span>
+                    <span className="text-[15px] font-semibold text-[#4a1f94]">10,000,000m</span>
                     <button
                       type="button"
                       className="px-3 py-1.5 rounded-full border border-[#ddd] text-[12px] text-[#666] bg-white hover:bg-[#f9f9f9] transition-colors"
@@ -431,7 +431,7 @@ export function FlightPaymentDetailSheet({
                   <li className="flex gap-2 text-[12px] leading-[1.6]">
                     <span className="shrink-0 text-[#555]">•</span>
                     <span>
-                      <span className="font-['Pretendard:SemiBold',sans-serif] text-[#5e2bb8]">쿠폰은 단독으로만 사용 가능</span>
+                      <span className="font-['Pretendard:SemiBold',sans-serif] text-[#4a1f94]">쿠폰은 단독으로만 사용 가능</span>
                       <span className="text-[#555]">합니다. 마일리지, 상품권, 기프트 카드와 중복 사용은 불가합니다.</span>
                     </span>
                   </li>
@@ -498,7 +498,7 @@ export function FlightPaymentDetailSheet({
                   <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] font-semibold text-[#111]">
                     최종 결제금액
                   </span>
-                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#5e2bb8]">
+                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#4a1f94]">
                     {finalAmount.toLocaleString()}원
                   </span>
                 </div>
@@ -524,12 +524,12 @@ export function FlightPaymentDetailSheet({
                     type="radio"
                     name="payMethod"
                     defaultChecked
-                    className="size-5 text-[#7b3ff2]"
+                    className="size-5 text-[#6329C4]"
                   />
-                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#5e2bb8]">
+                  <span className="font-['Pretendard:SemiBold',sans-serif] text-[14px] text-[#4a1f94]">
                     신용카드
                   </span>
-                  <CreditCard className="size-5 text-[#5e2bb8] shrink-0" />
+                  <CreditCard className="size-5 text-[#4a1f94] shrink-0" />
                 </label>
                 <div className="flex items-center justify-between text-[12px] text-[#666] py-2">
                   <span>신용카드정보 제공 항목</span>
@@ -647,7 +647,7 @@ export function FlightPaymentDetailSheet({
                         value="등록"
                         checked={cashReceipt === "등록"}
                         onChange={() => setCashReceipt("등록")}
-                        className="size-5 border-2 border-[#c8c8c8] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                        className="size-5 border-2 border-[#c8c8c8] text-[#6329C4] focus:ring-[#6329C4]"
                       />
                       <span className="text-[14px] text-[#111]">등록</span>
                     </label>
@@ -658,7 +658,7 @@ export function FlightPaymentDetailSheet({
                         value="미등록"
                         checked={cashReceipt === "미등록"}
                         onChange={() => setCashReceipt("미등록")}
-                        className="size-5 border-2 border-[#7b3ff2] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                        className="size-5 border-2 border-[#6329C4] text-[#6329C4] focus:ring-[#6329C4]"
                       />
                       <span className="text-[14px] text-[#111]">미등록</span>
                     </label>
@@ -698,7 +698,7 @@ export function FlightPaymentDetailSheet({
                               className="w-full flex items-center gap-2 px-4 py-2.5 text-left text-[14px] text-[#111] hover:bg-[#f5f5f5]"
                             >
                               {cashReceiptType === option ? (
-                                <Check className="size-4 text-[#7b3ff2] shrink-0" />
+                                <Check className="size-4 text-[#6329C4] shrink-0" />
                               ) : (
                                 <span className="size-4 shrink-0" />
                               )}
@@ -779,7 +779,7 @@ export function FlightPaymentDetailSheet({
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="w-full py-4 bg-[#5e2bb8] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#4a2190] transition-colors flex items-center justify-center disabled:opacity-70"
+              className="w-full py-4 bg-[#4a1f94] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#4a2190] transition-colors flex items-center justify-center disabled:opacity-70"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

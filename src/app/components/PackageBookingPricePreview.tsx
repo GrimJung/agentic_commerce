@@ -128,7 +128,7 @@ export function PackageBookingPriceSummaryBlock({
             </span>
             <span className="font-['Pretendard:Medium',sans-serif] text-[11px] text-[#555]">적용가</span>
           </div>
-          <span className="font-['Pretendard:Bold',sans-serif] text-[22px] font-bold leading-tight text-[#5e2bb8] tabular-nums">
+          <span className="font-['Pretendard:Bold',sans-serif] text-[22px] font-bold leading-tight text-[#4a1f94] tabular-nums">
             {finalPrice.toLocaleString()}원
           </span>
           <span className="font-['Pretendard:Medium',sans-serif] text-[13px] text-[#999] line-through tabular-nums decoration-[#bbb]">
@@ -164,7 +164,7 @@ export function PackageBookingPricePreview({
         <button
           type="button"
           onClick={onReserve}
-          className="min-w-0 flex-1 rounded-full bg-gradient-to-r from-[#7b5ce8] to-[#5e2bb8] py-3.5 font-['Pretendard:Bold',sans-serif] text-[14px] text-white shadow-[0_4px_14px_rgba(94,43,184,0.28)] transition-opacity hover:opacity-[0.96] active:opacity-90"
+          className="min-w-0 flex-1 rounded-full bg-gradient-to-r from-[#7c4ddb] to-[#6329C4] py-3.5 font-['Pretendard:Bold',sans-serif] text-[14px] text-white shadow-[0_4px_14px_rgba(99,41,196,0.28)] transition-opacity hover:opacity-[0.96] active:opacity-90"
         >
           예약하러 가기
         </button>

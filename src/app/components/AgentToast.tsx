@@ -91,7 +91,7 @@ const S = {
     fontSize: 13,
     cursor: 'pointer',
     maxWidth: 320,
-    boxShadow: '0 4px 16px rgba(94,43,184,0.25)',
+    boxShadow: '0 4px 16px rgba(99,41,196,0.25)',
     opacity: visible ? 1 : 0,
     transform: visible ? 'translateY(0)' : 'translateY(12px)',
     transition: 'opacity 0.3s, transform 0.3s',
@@ -126,10 +126,10 @@ const S = {
     bottom: 0,
     background: '#fff',
     borderRadius: visible ? 16 : 0,
-    border: visible ? '1.5px solid #5E2BB8' : 'none',
+    border: visible ? '1.5px solid #4a1f94' : 'none',
     padding: visible ? 16 : 0,
     zIndex: 200,
-    boxShadow: visible ? '0 8px 32px rgba(94,43,184,0.18)' : 'none',
+    boxShadow: visible ? '0 8px 32px rgba(99,41,196,0.18)' : 'none',
     opacity: visible ? 1 : 0,
     transform: visible ? 'translateY(0)' : 'translateY(8px)',
     transition: 'opacity 0.25s, transform 0.25s, padding 0.2s',
@@ -144,7 +144,7 @@ const S = {
     alignItems: 'center', marginBottom: 10,
   } as React.CSSProperties,
   panelTitle: {
-    fontSize: 13, fontWeight: 700, color: '#5E2BB8',
+    fontSize: 13, fontWeight: 700, color: '#4a1f94',
     display: 'flex', alignItems: 'center', gap: 6,
   } as React.CSSProperties,
   closeBtn: {
@@ -155,11 +155,11 @@ const S = {
   } as React.CSSProperties,
   highlight: {
     background: '#EEEAF8', borderRadius: 6, padding: '8px 10px',
-    marginTop: 8, fontSize: 12, color: '#5E2BB8', lineHeight: 1.5,
+    marginTop: 8, fontSize: 12, color: '#4a1f94', lineHeight: 1.5,
   } as React.CSSProperties,
   chipRow: { display: 'flex', gap: 6, flexWrap: 'wrap' as const, marginTop: 10 },
   chip: {
-    border: '1px solid #5E2BB8', color: '#5E2BB8', borderRadius: 20,
+    border: '1px solid #4a1f94', color: '#4a1f94', borderRadius: 20,
     padding: '5px 12px', fontSize: 11, cursor: 'pointer', background: '#fff',
   } as React.CSSProperties,
 };

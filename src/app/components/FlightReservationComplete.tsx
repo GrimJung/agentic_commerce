@@ -60,8 +60,8 @@ export function FlightReservationComplete({
             </div>
             <div className="flex-1 h-px bg-[#e0e0e0] min-w-[16px] mx-1 mt-4" aria-hidden />
             <div className="flex flex-col items-center shrink-0">
-              <span className="size-[25px] rounded-full bg-[#5e2bb8] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">3</span>
-              <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2] mt-[5px] mb-[5px] leading-[1.2]">{isPayLater ? "예약완료" : "결제완료"}</span>
+              <span className="size-[25px] rounded-full bg-[#4a1f94] flex items-center justify-center text-[13px] text-white font-['Pretendard:SemiBold',sans-serif]">3</span>
+              <span className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#6329C4] mt-[5px] mb-[5px] leading-[1.2]">{isPayLater ? "예약완료" : "결제완료"}</span>
             </div>
           </div>
         )}
@@ -70,7 +70,7 @@ export function FlightReservationComplete({
       <div className="flex-1 overflow-y-auto px-5 py-6">
         {/* 결제 완료 메시지 */}
         <div className="flex flex-col justify-center items-start text-center mb-[10px]">
-          <span className="w-5 h-5 rounded-full bg-[#5e2bb8] flex items-center justify-center text-white mb-[5px]">
+          <span className="w-5 h-5 rounded-full bg-[#4a1f94] flex items-center justify-center text-white mb-[5px]">
             <svg
               className="size-5"
               fill="none"
@@ -131,7 +131,7 @@ export function FlightReservationComplete({
             <>
               {/* 호텔 할인 토스트 말풍선 (버튼 위에 살짝 겹침) */}
               <div className="relative flex justify-center -mb-3 z-10">
-                <div className="relative flex flex-col justify-center items-center h-[30px] px-4 py-2.5 bg-white text-[#7b3ff2] rounded-[12px] text-[13px] font-['Pretendard:SemiBold',sans-serif] shadow-lg border border-[#e5e7eb]">
+                <div className="relative flex flex-col justify-center items-center h-[30px] px-4 py-2.5 bg-white text-[#6329C4] rounded-[12px] text-[13px] font-['Pretendard:SemiBold',sans-serif] shadow-lg border border-[#e5e7eb]">
                   지금 호텔도 예약하면 10% 할인
                   <span
                     className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-[6px] border-transparent border-t-white"
@@ -142,7 +142,7 @@ export function FlightReservationComplete({
               <button
                 type="button"
                 onClick={onProceedToHotel}
-                className="w-full py-4 bg-[#5e2bb8] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+                className="w-full py-4 bg-[#4a1f94] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
               >
                 이어서 호텔 예약하기
               </button>
@@ -151,7 +151,7 @@ export function FlightReservationComplete({
             <button
               type="button"
               onClick={onGoHome}
-              className="w-full py-4 bg-[#5e2bb8] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+              className="w-full py-4 bg-[#4a1f94] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
             >
               확인
             </button>
@@ -204,7 +204,7 @@ export function FlightReservationComplete({
                   setShowStopAlert(false);
                   onProceedToHotel?.();
                 }}
-                className="w-full py-3.5 bg-[#5e2bb8] text-white rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+                className="w-full py-3.5 bg-[#4a1f94] text-white rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
               >
                 이어서 호텔 예약하기
               </button>

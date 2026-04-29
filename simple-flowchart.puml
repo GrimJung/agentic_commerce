@@ -84,7 +84,7 @@ repeat
 repeat while (더 탐색?) is (yes) not (no)
 
 if (예약 타입?) then (패키지)
-  #FFF3E0:📋 **PackageBookingSheet**\nTravelerCountA2UI(스와이프 인원)\n+ PackageBookingPricePreview\n예약자·여행자·계약금/전액;
+  #FFF3E0:📋 **PackageBookingSheet**\nTravelerCountA2UI(스와이프 인원·phase)\n+ PackageBookingPricePreview\n예약자·여행자·인원·금액 확인·계약금/전액;
   :💬 **AgentToast**\n(booking-toast-config, 스크롤 구간);
   :💳 **PaymentSheet**\n쿠폰·무이자·결제수단;
   :💬 **AgentToast**\n(payment-toast-config, 카드 선택 등);
@@ -106,7 +106,8 @@ else (항공만)
 endif
 
 note right
-  문서 최종 업데이트: 2026-04-14
+  문서 최종 업데이트: 2026-04-28
+  2026-04-15~28: 예약인원·결제금액 확인, 토스트·결제완료·CSS·04.23 스타일
   PackageDetail: H-AI 요약 10px, 30% 자유시간 nowrap (2026-03-18)
   패키지: PackageBookingSheet → PaymentSheet + AgentToast
 end note

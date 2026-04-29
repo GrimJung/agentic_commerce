@@ -153,7 +153,7 @@ export function FITPackageDetail({
           <div className="px-5 py-4 flex items-center justify-between h-[55px]">
             <div className="flex items-center gap-2">
               <h2 className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#111]">항공+호텔 상세</h2>
-              <div className="relative flex flex-col items-center justify-center h-[25px] w-[150px] px-3 py-1.5 bg-[#f3efff] text-[#7b3ff2] rounded-[10px] text-[12px] font-['Pretendard:SemiBold',sans-serif] border border-[#e5e0f5] shadow-sm">
+              <div className="relative flex flex-col items-center justify-center h-[25px] w-[150px] px-3 py-1.5 bg-[#f3efff] text-[#6329C4] rounded-[10px] text-[12px] font-['Pretendard:SemiBold',sans-serif] border border-[#e5e0f5] shadow-sm">
                 함께 예약하면 더 저렴해요
                 <span
                   className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[5px] border-transparent border-r-[#e5e0f5]"
@@ -173,7 +173,7 @@ export function FITPackageDetail({
               className={cn(
                 "flex-1 flex flex-col justify-center items-center py-3 text-[15px] font-['Pretendard:SemiBold',sans-serif] transition-colors border-b-2 -mb-px",
                 activeTab === "flight"
-                  ? "text-[#7b3ff2] border-[#7b3ff2]"
+                  ? "text-[#6329C4] border-[#6329C4]"
                   : "text-[#666] border-transparent hover:text-[#111]"
               )}
             >
@@ -185,7 +185,7 @@ export function FITPackageDetail({
               className={cn(
                 "flex-1 flex flex-col justify-center items-center py-3 text-[15px] font-['Pretendard:SemiBold',sans-serif] transition-colors border-b-2 -mb-px",
                 activeTab === "hotel"
-                  ? "text-[#7b3ff2] border-[#7b3ff2]"
+                  ? "text-[#6329C4] border-[#6329C4]"
                   : "text-[#666] border-transparent hover:text-[#111]"
               )}
             >
@@ -202,7 +202,7 @@ export function FITPackageDetail({
               <h3 className="font-['Pretendard:Bold',sans-serif] text-[20px] text-[#111]">
                 {pkg.destination} 자유여행
               </h3>
-              <span className="px-2 py-0.5 rounded-[6px] text-[11px] font-['Pretendard:SemiBold',sans-serif] bg-[#ede9fe] text-[#5e2bb8]">
+              <span className="px-2 py-0.5 rounded-[6px] text-[11px] font-['Pretendard:SemiBold',sans-serif] bg-[#ede9fe] text-[#4a1f94]">
                 내맘대로
               </span>
             </div>
@@ -221,7 +221,7 @@ export function FITPackageDetail({
 
           {/* AI 추천 이유 */}
           <div className="flex gap-2 bg-[#f5f0ff] rounded-[8px] px-3 py-2.5 mb-2">
-            <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#7b3ff2]" />
+            <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#6329C4]" />
             <p className="text-[13px] leading-[1.5] text-[#555] line-clamp-2">
               {pkg.recommendReason}
             </p>
@@ -256,7 +256,7 @@ export function FITPackageDetail({
                   <div className="flex items-center justify-between gap-3 text-[12px] mb-0">
                     <span className="min-w-0 text-[#888]">
                       항공권 발권수수료{" "}
-                      <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
+                      <span className="text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
                     </span>
                     <span className="shrink-0 font-['Pretendard:SemiBold',sans-serif] tabular-nums text-[#111]">
                       {flightTicketingFee.toLocaleString()}원
@@ -265,7 +265,7 @@ export function FITPackageDetail({
                   <div className="flex items-center justify-between gap-3 text-[12px] mb-0">
                     <span className="min-w-0 text-[#888]">
                       항공권 유류할증료{" "}
-                      <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
+                      <span className="text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
                     </span>
                     <span className="shrink-0 font-['Pretendard:SemiBold',sans-serif] tabular-nums text-[#111]">
                       {flightFuelSurcharge.toLocaleString()}원
@@ -274,7 +274,7 @@ export function FITPackageDetail({
                   <div className="flex items-center justify-between gap-3 text-[12px] mb-0">
                     <span className="min-w-0 text-[#888]">
                       항공권 제세공과금{" "}
-                      <span className="text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
+                      <span className="text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">X {pax}</span>
                     </span>
                     <span className="shrink-0 font-['Pretendard:SemiBold',sans-serif] tabular-nums text-[#111]">
                       {flightTaxAndCharges.toLocaleString()}원
@@ -298,7 +298,7 @@ export function FITPackageDetail({
                     </li>
                     <li className="flex gap-2 mb-0">
                       <span className="shrink-0 text-[#999]">•</span>
-                      <span className="text-[#7b3ff2] font-['Pretendard:Medium',sans-serif]">
+                      <span className="text-[#6329C4] font-['Pretendard:Medium',sans-serif]">
                         카드정보는 1회 입력이나, 카드 승인금액은 항공, 호텔 각 상품 별도 승인 되오니 이용에 참고해주시기 바랍니다.
                       </span>
                     </li>
@@ -321,15 +321,15 @@ export function FITPackageDetail({
             {includedExpanded && (
               <div className="mt-1 pl-3 pr-3 py-2.5 space-y-1.5 shadow-none bg-[#f5f5f5] mb-5 text-[14px]">
                 <div className="flex gap-2 text-[12px]">
-                  <span className="text-[#7b3ff2]">✓</span>
+                  <span className="text-[#6329C4]">✓</span>
                   <span className="text-[#666]">왕복 항공권 ({formatSeatClass(pkg.flightInfo.seatClass)})</span>
                 </div>
                 <div className="flex gap-2 text-[12px]">
-                  <span className="text-[#7b3ff2]">✓</span>
+                  <span className="text-[#6329C4]">✓</span>
                   <span className="text-[#666]">숙박 ({pkg.hotelInfo.name})</span>
                 </div>
                 <div className="flex gap-2 text-[12px]">
-                  <span className="text-[#7b3ff2]">✓</span>
+                  <span className="text-[#6329C4]">✓</span>
                   <span className="text-[#666]">여행자 보험</span>
                 </div>
               </div>
@@ -364,7 +364,7 @@ export function FITPackageDetail({
           <button
             type="button"
             onClick={() => setShowRoomInfoBeforeBooking(true)}
-            className="w-full py-4 bg-[rgba(94,43,184,1)] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[rgba(94,43,184,1)] transition-colors"
+            className="w-full py-4 bg-[#6329C4] text-white rounded-[30px] text-[16px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
           >
             이 조합으로 예약하기
           </button>

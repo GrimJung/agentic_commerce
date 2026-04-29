@@ -68,7 +68,7 @@ export function MyTravelerNotebookModal({
             * 여행자 정보 추가 또는 수정은 마이페이지{" "}
             <button
               type="button"
-              className="text-[12px] text-[#7b3ff2] underline font-['Pretendard:SemiBold',sans-serif]"
+              className="text-[12px] text-[#6329C4] underline font-['Pretendard:SemiBold',sans-serif]"
               onClick={onClose}
             >
               [MY 여행자 관리]

@@ -102,7 +102,7 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
                   {/* 가는 날 */}
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="text-[14px] text-[#3780ff] font-['Pretendard:SemiBold',sans-serif]">가는 날</p>
+                      <p className="text-[14px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">가는 날</p>
                       <p className="text-[14px] text-[#111]">25년 11월 21일 (금)</p>
                     </div>
                     <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#111] font-bold">20:50 - 인천(ICN) 출발</p>
@@ -113,12 +113,12 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
                   {/* 오는 날 */}
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="text-[14px] text-[#3780ff] font-['Pretendard:SemiBold',sans-serif]">오는 날</p>
+                      <p className="text-[14px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">오는 날</p>
                       <p className="text-[14px] text-[#111]">25년 11월 27일 (목)</p>
                     </div>
                     <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#111] font-bold">20:50 - 인천(ICN) 출발</p>
                     <p className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#111] font-bold mb-1">
-                      17:20 - 프랑크푸르트 (FRA) 도착 <span className="text-[#3780ff]">+1</span>
+                      17:20 - 프랑크푸르트 (FRA) 도착 <span className="text-[#6329C4]">+1</span>
                     </p>
                     <p className="text-[13px] text-[#666]">대한항공 KE0945 | 직항 | 13시간 55분</p>
                   </div>
@@ -140,7 +140,7 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
             <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover" />
             {/* 좌측 상단 태그: pill 형태 */}
             <div className="absolute top-2 left-2 flex items-center gap-1">
-              <span className="px-[7px] py-1 rounded-full bg-[#5e2bb8] text-white text-[10px] font-['Pretendard:Bold',sans-serif] font-bold">
+              <span className="px-[7px] py-1 rounded-full bg-[#4a1f94] text-white text-[10px] font-['Pretendard:Bold',sans-serif] font-bold">
                 하나팩2.0
               </span>
               <span className="px-[7px] py-1 rounded-full bg-[#eaaa14] text-white text-[10px] font-['Pretendard:Bold',sans-serif] font-bold">
@@ -221,14 +221,14 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
               </h4>
               <button
                 type="button"
-                className="text-[12px] text-[#9c9ea0] font-medium hover:text-[#3780ff] hover:underline"
+                className="text-[12px] text-[#9c9ea0] font-medium hover:text-[#6329C4] hover:underline"
               >
                 난이도 측정기준 &gt;
               </button>
             </div>
             <div className="flex items-center gap-2 mb-[5px] text-left justify-center">
               <span className="text-[18px]" aria-hidden>🧐</span>
-              <span className="font-['Pretendard:SemiBold',sans-serif] text-[16px] text-[#3780ff] font-semibold">
+              <span className="font-['Pretendard:SemiBold',sans-serif] text-[16px] text-[#6329C4] font-semibold">
                 핵심 관광 집중형
               </span>
             </div>
@@ -278,7 +278,7 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
                   onClick={() => scrollToSlide(index)}
                   className={`shrink-0 px-4 py-2 rounded-full text-[14px] font-medium transition-colors ${
                     activeTab === tab
-                      ? "bg-[#5e2bb8] text-white"
+                      ? "bg-[#4a1f94] text-white"
                       : "bg-white text-[#666] border border-gray-200 hover:bg-gray-50"
                   }`}
                 >
@@ -313,7 +313,7 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
                 <div className="space-y-2">
                   {pkg.highlights.map((h, i) => (
                     <div key={i} className="flex gap-2">
-                      <span className="text-[#3780ff] text-[14px]">•</span>
+                      <span className="text-[#6329C4] text-[14px]">•</span>
                       <span className="text-[14px] text-[#666]">{h}</span>
                     </div>
                   ))}
@@ -363,7 +363,7 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
             {/* 포함내역 */}
             <div className="mb-5">
               <div className="flex items-center gap-2 mb-3">
-                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#2563EB] text-white text-[12px] font-bold shrink-0">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#5423AD] text-white text-[12px] font-bold shrink-0">
                   ✓
                 </span>
                 <h5 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] font-semibold">포함내역</h5>
@@ -415,7 +415,7 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
             {/* 선택경비 */}
             <div className="mb-2">
               <div className="flex items-center gap-2 mb-3">
-                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#2563EB] text-white text-[14px] font-bold shrink-0">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#5423AD] text-white text-[14px] font-bold shrink-0">
                   !
                 </span>
                 <h5 className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111] font-semibold">선택경비</h5>
@@ -437,13 +437,13 @@ export function PackageDetail({ package: pkg, onClose, onBooking }: PackageDetai
         <div className="sticky bottom-0 left-0 right-0 w-full px-5 flex items-end justify-between py-0 pb-[10px] mb-0 border-t border-[#f0f0f0] bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
           <div>
             <span className="text-[13px] text-[#666] block mb-0 mt-[10px]">성인 1명, 소아 1명</span>
-            <span className="font-['Pretendard:Bold',sans-serif] font-bold text-[24px] text-[#5e2bb8]">
+            <span className="font-['Pretendard:Bold',sans-serif] font-bold text-[24px] text-[#4a1f94]">
               {pkg.price.toLocaleString('ko-KR')}<span className="text-[14px] font-['Pretendard:Bold',sans-serif] text-[#666]">원</span>
             </span>
           </div>
           <button
             onClick={onBooking}
-            className="w-[200px] px-6 py-3 bg-[#5e2bb8] text-white rounded-[30px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+            className="w-[200px] px-6 py-3 bg-[#4a1f94] text-white rounded-[30px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#4a1f94] transition-colors"
           >
             예약하기
           </button>

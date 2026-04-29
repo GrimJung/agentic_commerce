@@ -161,7 +161,7 @@ export function FlightDetailContent({
         <div className="bg-[#f8f9fa] rounded-[12px] p-3 mb-4">
           {!hideBookingButton && (
             <div className="flex items-start justify-start gap-2 mb-[5px]">
-              <Plane className="size-4 text-[#7b3ff2]" />
+              <Plane className="size-4 text-[#6329C4]" />
               <span className="text-[13px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
                 항공
               </span>
@@ -236,7 +236,7 @@ export function FlightDetailContent({
               <span className="text-[11px] text-[#999]">
                 {cardLabel ?? "삼성 iD GLOBAL 카드"}/성인{flight.passengerCount}인 기준
               </span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold tabular-nums">
+              <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#6329C4] font-semibold tabular-nums">
                 {(priceOverride ?? flight.price).toLocaleString()}원
               </span>
               {onChangePaymentCondition ? (
@@ -295,11 +295,11 @@ export function FlightDetailContent({
                 직항, 총 {durationLabel(flight.flightDuration)}
               </p>
               {/* 타임라인 */}
-              <div className="relative border-l-2 border-[#2563eb] pl-4 ml-1">
+              <div className="relative border-l-2 border-[#5423AD] pl-4 ml-1">
                 {/* 출발 */}
                 <div className="flex gap-3 pb-3">
                   <div className="shrink-0 w-12 text-left">
-                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#2563eb]">{flight.departureTime}</p>
+                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#5423AD]">{flight.departureTime}</p>
                     <p className="text-[11px] text-[#666]">05.12(금)</p>
                   </div>
                   <div>
@@ -328,7 +328,7 @@ export function FlightDetailContent({
                 {/* 도착 */}
                 <div className="flex gap-3">
                   <div className="shrink-0 w-12 text-left">
-                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#2563eb]">{flight.arrivalTime}</p>
+                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#5423AD]">{flight.arrivalTime}</p>
                     <p className="text-[11px] text-[#666]">05.12(금)</p>
                   </div>
                   <div>
@@ -378,10 +378,10 @@ export function FlightDetailContent({
               <p className="text-[13px] text-[#666] mb-4">
                 직항, 총 {durationLabel(returnFlight.flightDuration.replace(" 소요", "").replace(/\(직항\)/, "").trim())}
               </p>
-              <div className="relative border-l-2 border-[#2563eb] pl-4 ml-1">
+              <div className="relative border-l-2 border-[#5423AD] pl-4 ml-1">
                 <div className="flex gap-3 pb-3">
                   <div className="shrink-0 w-12 text-left">
-                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#2563eb]">{returnFlight.departureTime}</p>
+                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#5423AD]">{returnFlight.departureTime}</p>
                     <p className="text-[11px] text-[#666]">05.14(목)</p>
                   </div>
                   <div>
@@ -408,7 +408,7 @@ export function FlightDetailContent({
                 </div>
                 <div className="flex gap-3">
                   <div className="shrink-0 w-12 text-left">
-                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#2563eb]">{returnFlight.arrivalTime}</p>
+                    <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#5423AD]">{returnFlight.arrivalTime}</p>
                     <p className="text-[11px] text-[#666]">05.14(목)</p>
                   </div>
                   <div>
@@ -458,7 +458,7 @@ export function FlightDetailContent({
         <div className="sticky bottom-0 bg-white border-t border-[#f0f0f0] px-5 py-4 shrink-0">
           <button
             onClick={onBooking}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#6930d9] transition-colors"
+            className="w-full py-4 bg-[#6329C4] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#5423AD] transition-colors"
           >
             예약하기
           </button>

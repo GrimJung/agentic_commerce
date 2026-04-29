@@ -84,7 +84,7 @@ function PostPaymentSuggestions({
           <span className="mr-1" aria-hidden>
             💡
           </span>
-          <span className="font-['Pretendard:Bold',sans-serif] text-[#3780ff]">H-AI TIP</span>
+          <span className="font-['Pretendard:Bold',sans-serif] text-[#6329C4]">H-AI TIP</span>
           <span className="text-[#444]"> 관련해서 이런 질문도 이어갈 수 있어요.</span>
         </p>
         <ul className="m-0 list-none space-y-1 p-0 font-['Pretendard',sans-serif] text-[14px] leading-relaxed text-[#111]">
@@ -181,14 +181,14 @@ function ChatInput({ onSend }: { onSend: (message: string) => void }) {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="궁금한 내용을 H-AI에게 물어보..."
-            className="w-full rounded-full border border-[#e5e5e5] bg-white py-3 pl-4 pr-[100px] text-[14px] text-[#111] placeholder:text-[#999] focus:outline-none focus:ring-2 focus:ring-[#3780ff]/25"
+            className="w-full rounded-full border border-[#e5e5e5] bg-white py-3 pl-4 pr-[100px] text-[14px] text-[#111] placeholder:text-[#999] focus:outline-none focus:ring-2 focus:ring-[#6329C4]/25"
           />
           <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2.5">
             <Mic className="pointer-events-none size-[18px] text-[#666]" strokeWidth={1.75} aria-hidden />
             <button
               type="button"
               aria-label="라이브"
-              className="size-[30px] shrink-0 rounded-[3.2rem] border-0 p-0 shadow-none outline-none focus-visible:ring-2 focus-visible:ring-[#3780ff]/40 focus-visible:ring-offset-2"
+              className="size-[30px] shrink-0 rounded-[3.2rem] border-0 p-0 shadow-none outline-none focus-visible:ring-2 focus-visible:ring-[#6329C4]/40 focus-visible:ring-offset-2"
               style={{
                 background:
                   "#111 url(https://image.hanatour.com/usr/static/svg/icon_live_white.svg) no-repeat 50% / 14px",
@@ -1807,8 +1807,8 @@ export default function App() {
                 아니면 새로운 여행지와 테마로 검색하시겠어요?
               </p>
               <DismissableButtons buttons={[
-                { label: "추천 검색하기", onClick: handlePersonaSearch, className: "flex-1 py-3 bg-gradient-to-r from-[#6976ff] to-[#7b3ff2] text-white rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:opacity-90 transition-opacity" },
-                { label: "직접 검색하기", onClick: handleDirectSearch, className: "flex-1 py-3 border border-[#e5e7eb] text-[#111] rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f5f5f5] transition-colors" }
+                { label: "추천 검색하기", onClick: handlePersonaSearch, className: "flex-1 py-3 bg-gradient-to-r from-[#7c4ddb] to-[#6329C4] text-white rounded-full text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:opacity-90 transition-opacity" },
+                { label: "직접 검색하기", onClick: handleDirectSearch, className: "flex-1 py-3 border border-[#e5e7eb] text-[#111] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f5f5f5] transition-colors" }
               ]} />
             </div>
           );
@@ -1820,8 +1820,8 @@ export default function App() {
                 자유여행을 선호하세요? 아니면 편한 패키지 상품을 추천해드릴까요?
               </p>
               <DismissableButtons buttons={[
-                { label: "자유여행", onClick: () => handleTravelTypeSelect("fit"), className: "flex-1 py-3 bg-[#7b3ff2] text-white rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors" },
-                { label: "패키지 상품", onClick: () => handleTravelTypeSelect("package"), className: "flex-1 py-3 bg-[#3780ff] text-white rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#2563eb] transition-colors" }
+                { label: "자유여행", onClick: () => handleTravelTypeSelect("fit"), className: "flex-1 py-3 bg-[#6329C4] text-white rounded-full text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors" },
+                { label: "패키지 상품", onClick: () => handleTravelTypeSelect("package"), className: "flex-1 py-3 bg-[#6329C4] text-white rounded-full text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors" }
               ]} />
             </div>
           );
@@ -1883,8 +1883,8 @@ export default function App() {
               자유여행을 선호하세요? 아니면 편한 패키지 상품을 추천해드릴까요?
             </p>
             <DismissableButtons buttons={[
-              { label: "자유여행", onClick: () => handleTravelTypeSelect("fit"), className: "flex-1 py-3 bg-[#7b3ff2] text-white rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors" },
-              { label: "패키지 상품", onClick: () => handleTravelTypeSelect("package"), className: "flex-1 py-3 bg-[#3780ff] text-white rounded-[12px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#2563eb] transition-colors" }
+              { label: "자유여행", onClick: () => handleTravelTypeSelect("fit"), className: "flex-1 py-3 bg-[#6329C4] text-white rounded-full text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors" },
+              { label: "패키지 상품", onClick: () => handleTravelTypeSelect("package"), className: "flex-1 py-3 bg-[#6329C4] text-white rounded-full text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors" }
             ]} />
           </div>
         )
@@ -2554,11 +2554,11 @@ export default function App() {
             tabIndex={-1}
             role="region"
             aria-label="추천 상품 목록"
-            className="px-5 space-y-4 mt-4 mb-4 scroll-mt-[60px] outline-none focus-visible:ring-2 focus-visible:ring-[#3780ff]/30 focus-visible:ring-offset-2 rounded-lg"
+            className="px-5 space-y-4 mt-4 mb-4 scroll-mt-[60px] outline-none focus-visible:ring-2 focus-visible:ring-[#6329C4]/30 focus-visible:ring-offset-2 rounded-lg"
           >
             {packageSearchMode === "package-only" && (
               <div className="space-y-1">
-                <h2 className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#3780ff]">H-AI 추천</h2>
+                <h2 className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">H-AI 추천</h2>
                 {!(
                   packageListPanel?.host === "main" &&
                   (packageListPanel.mode === "detail" || packageListPanel.mode === "booking")
@@ -2760,7 +2760,7 @@ export default function App() {
                 <div className="flex gap-2">
                   <button
                     onClick={handleFitCompare}
-                    className="flex-1 py-3 bg-white border-2 border-[#7b3ff2] text-[#7b3ff2] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
+                    className="flex-1 py-3 bg-white border-2 border-[#6329C4] text-[#6329C4] rounded-full text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f5f0ff] transition-colors"
                   >
                     조합 비교하기
                   </button>
@@ -2799,7 +2799,7 @@ export default function App() {
               <div className="flex gap-2">
                 <button
                   onClick={handleFlightCompare}
-                  className="flex-1 py-3 bg-white border-2 border-[#7b3ff2] text-[#7b3ff2] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
+                  className="flex-1 py-3 bg-white border-2 border-[#6329C4] text-[#6329C4] rounded-full text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f5f0ff] transition-colors"
                 >
                   항공편 비교하기
                 </button>
@@ -2843,7 +2843,7 @@ export default function App() {
               <div className="flex gap-2">
                 <button
                   onClick={handleHotelCompare}
-                  className="flex-1 py-3 bg-white border-2 border-[#7b3ff2] text-[#7b3ff2] rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
+                  className="flex-1 py-3 bg-white border-2 border-[#6329C4] text-[#6329C4] rounded-full text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f5f0ff] transition-colors"
                 >
                   호텔 비교하기
                 </button>
@@ -2913,7 +2913,7 @@ export default function App() {
                     </p>
                     <button
                       onClick={() => handleFITBooking()}
-                      className="w-full py-3 bg-[#7b3ff2] text-white rounded-[12px] text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+                      className="w-full py-3 bg-[#6329C4] text-white rounded-full text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
                     >
                       예약하기
                     </button>

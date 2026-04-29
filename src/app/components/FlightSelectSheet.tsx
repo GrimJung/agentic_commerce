@@ -275,7 +275,7 @@ export function FlightSelectSheet({
         {/* 총 개수 + 정렬 */}
         <div className="px-5 py-3 flex items-center justify-between">
           <p className="text-[14px] text-[#111]">
-            총 <span className="font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">{totalCount}</span>개
+            총 <span className="font-['Pretendard:Bold',sans-serif] text-[#6329C4]">{totalCount}</span>개
           </p>
           <button type="button" className="flex items-center gap-1 text-[13px] text-[#666]">
             가격 낮은순 <span className="text-[12px]">↕</span>
@@ -304,14 +304,14 @@ export function FlightSelectSheet({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   className={`rounded-[16px] overflow-hidden border ${
-                    isSelected ? "border-[#7b3ff2] border-[1.5px]" : "border-[#e5e5e5]"
+                    isSelected ? "border-[#6329C4] border-[1.5px]" : "border-[#e5e5e5]"
                   }`}
                 >
                   {/* 선택된 항공권 헤더 */}
                   {isSelected && (
-                    <div className="bg-[#7b3ff2] px-4 py-2.5 flex items-center gap-2">
+                    <div className="bg-[#6329C4] px-4 py-2.5 flex items-center gap-2">
                       <div className="size-[18px] rounded-full bg-white flex items-center justify-center">
-                        <svg className="size-3 text-[#7b3ff2]" viewBox="0 0 12 12" fill="none">
+                        <svg className="size-3 text-[#6329C4]" viewBox="0 0 12 12" fill="none">
                           <path d="M2.5 6L5 8.5L9.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
@@ -392,7 +392,7 @@ export function FlightSelectSheet({
                               e.stopPropagation();
                               onSelect(flight);
                             }}
-                            className="px-5 py-2 bg-[#7b3ff2] text-white rounded-full text-[13px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors flex flex-col items-center justify-center"
+                            className="px-5 py-2 bg-[#6329C4] text-white rounded-full text-[13px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors flex flex-col items-center justify-center"
                           >
                             변경하기
                           </button>

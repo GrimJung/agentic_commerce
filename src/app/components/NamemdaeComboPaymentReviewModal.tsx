@@ -7,7 +7,7 @@ import type { FlightData } from "./FlightCard";
 const PLACEHOLDER_HOTEL =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect fill='%23e5e5e5' width='120' height='120'/%3E%3Cpath fill='%23999' d='M60 32L28 52v36h64V52L60 32zm0 8l24 16v24H36V56l24-16z'/%3E%3C/svg%3E";
 
-const PURPLE = "#5e2bb8";
+const PURPLE = "#4a1f94";
 
 export interface NamemdaeComboPaymentReviewModalProps {
   open: boolean;
@@ -248,7 +248,7 @@ export function NamemdaeComboPaymentReviewModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="w-full rounded-[30px] bg-[#5e2bb8] py-3.5 text-[15px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[rgba(74,33,144,1)]"
+            className="w-full rounded-[30px] bg-[#4a1f94] py-3.5 text-[15px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[rgba(74,33,144,1)]"
           >
             {totalAmount.toLocaleString()}원 결제하기
           </button>

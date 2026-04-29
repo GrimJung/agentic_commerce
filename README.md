@@ -23,7 +23,7 @@
 - 🎫 **액티비티 추가**: 현지 투어·티켓 선택(ActivityTicketSelector)
 - 👤 **페르소나 기반 Smart-Fill**: 추천 검색 시 목적지·예산·테마 등 자동 채움. 추천 검색 시 인원은 자유여행과 동일하게 성인+아동만 표시, 아동 선택 시 나이 선택 박스 제공
 - 💬 **예약·결제 컨텍스트 토스트 (AgentToast)**: 패키지 `PackageBookingSheet`·`PaymentSheet`에서 스크롤 구간·일부 인터랙션(카드 선택 등)에 맞춰 하이(H-AI) 안내 토스트·상세 패널 표시. 설정은 `booking-toast-config.ts`, `payment-toast-config.ts`
-- 👥 **패키지 인원·가격 미리보기**: `TravelerCountA2UI`(스와이프형 단계 UI) + `PackageBookingPricePreview`로 인원 확정 전 예상 결제 금액·항공 일정 요약 표시
+- 👥 **패키지 인원·가격 미리보기**: `TravelerCountA2UI`(스와이프형 단계 UI·phase) + `PackageBookingPricePreview`로 **예약 인원·결제 금액 확인** 흐름에 맞춘 예상 결제 금액·항공 일정 요약 표시
 - 💳 **예약·결제**: 패키지는 `PackageBookingSheet` → `PaymentSheet` → 예약 확정·완료 UI; FIT·숙소·항공 등은 `BookingForm` / `FlightBookingSheet` 등 경로별 분기 후 `PaymentSheet` 또는 `PaymentModal` → `BookingConfirmation`(또는 시트 내 완료)
 
 ---
@@ -142,7 +142,7 @@ npm run preview
 - 액티비티 티켓 선택 후 예약 진행
 
 ### 6. 예약·결제
-- **패키지**: 상세에서 예약 시 `PackageBookingSheet`(예약자·여행자·금액·결제 방식 등) → 제출 시 `PaymentSheet` → 완료/확정. 시트 내 스크롤 시 **AgentToast**로 구간별 안내.
+- **패키지**: 상세에서 예약 시 `PackageBookingSheet`(예약자·여행자·인원·금액 확인·결제 방식 등) → 제출 시 `PaymentSheet` → 완료/확정. 시트 내 스크롤 시 **AgentToast**로 구간별 안내·토스트 보강.
 - **그 외(FIT·숙소 등)**: `BookingForm` 등 → `PaymentSheet` 또는 `PaymentModal` → `BookingConfirmation` 또는 시트 완료 화면.
 
 ---
@@ -202,6 +202,8 @@ git push -u origin main
 
 배포 후에도 `git push` 하면 Vercel이 자동으로 다시 배포됩니다.
 
+**Git 연동 오류 시:** Vercel 프로젝트 **Settings → Git**에 `Error: Project Link not found`가 보이면 **Reconnect**로 `GrimJung/agentic_commerce` 등 실제 레포를 다시 연결한 뒤, **Deployments**에서 최신 `main` 커밋으로 한 번 배포되는지 확인하세요. 연결만 복구된 직후에는 수동 **Redeploy** / **Create Deployment**가 필요할 수 있습니다.
+
 ---
 
 ## 📦 Archive (원복용 문서)
@@ -220,6 +222,7 @@ git push -u origin main
 
 | 일자 | 내용 |
 |------|------|
+| 2026-04-15 ~ 2026-04-28 | **예약·결제 단계**: 예약 인원 수·결제 금액 확인 흐름 정리·머지, 예약/결제 단계별 UI·토스트(`AgentToast`) 동작 다듬음, 토스트 팝업 추가 수정. **`TravelerCountA2UI`**: 스와이프(phase) 타입 정리. **결제 완료** 화면·CSS 싱크·전반 스타일 반영(04.23). **첫 프로덕션 배포**: GitHub `main` + Vercel 연동(연결 끊김 시 Settings → Git **Reconnect**). |
 | 2026-04-07 ~ 2026-04-14 | **AgentToast**: 패키지 예약·결제 시트에 스크롤·섹션 연동 토스트, 상세 패널(바깥 클릭·Escape 닫기, 구간 전환 시 자동 숨김). **토스트 구성**: 예약=`booker`·`traveler`·`price`·`payment`(계약금/전액); 결제=`coupon`·`installment`·`cta` + 삼성/하나 카드 선택 시 `interactionToastKey`. **패키지 UX**: `TravelerCountA2UI` 스와이프형 인원 단계, `PackageBookingPricePreview`와 결제 시트 할인 정책 정렬, 총액 행 타이포 조정. **샘플 PNG**: `public/samples/hai-toast/` 툴 전용 2종 정리. 결제 완료 등 화면 미세 조정. |
 | 2026-03-23 | **Archive**: 항공+호텔(FIT 조합) 예약·결제 프로세스를 `docs/archive/`에 저장 (신규 로직 작업 시 원복 참고) |
 | 2026-03-18 | **PackageDetail UI**: "H-AI 요약" 라벨 폰트 크기 12px → 10px 적용; "30% 자유시간 보장" 텍스트 줄바꿈 방지(`whitespace-nowrap`) 적용 |

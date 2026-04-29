@@ -66,7 +66,7 @@ function StepperRow({
           aria-label={`${title} 한 명 줄이기`}
           disabled={atMin}
           onClick={onDec}
-          className="flex size-9 items-center justify-center rounded-full border border-[#d4c4f0] bg-white text-[#5e2bb8] transition-opacity disabled:opacity-35 disabled:pointer-events-none hover:bg-[#faf8ff]"
+          className="flex size-9 items-center justify-center rounded-full border border-[#d4c4f0] bg-white text-[#4a1f94] transition-opacity disabled:opacity-35 disabled:pointer-events-none hover:bg-[#faf8ff]"
         >
           <Minus className="size-4" strokeWidth={2.25} />
         </button>
@@ -78,7 +78,7 @@ function StepperRow({
           aria-label={`${title} 한 명 늘리기`}
           disabled={atMax}
           onClick={onInc}
-          className="flex size-9 items-center justify-center rounded-full bg-[#5e2bb8] text-white shadow-[0_2px_8px_rgba(94,43,184,0.35)] transition-opacity disabled:opacity-35 disabled:pointer-events-none hover:bg-[#4e239a]"
+          className="flex size-9 items-center justify-center rounded-full bg-[#4a1f94] text-white shadow-[0_2px_8px_rgba(99,41,196,0.35)] transition-opacity disabled:opacity-35 disabled:pointer-events-none hover:bg-[#4e239a]"
         >
           <Plus className="size-4" strokeWidth={2.25} />
         </button>
@@ -177,7 +177,7 @@ export function TravelerCountA2UI({
                           return next;
                         });
                       }}
-                      className="w-full rounded-[10px] border border-[#e0d4f5] bg-white py-2 pl-2 pr-1 font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#111] shadow-sm outline-none focus:border-[#5e2bb8] focus:ring-1 focus:ring-[#5e2bb8]/30"
+                      className="w-full rounded-[10px] border border-[#e0d4f5] bg-white py-2 pl-2 pr-1 font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#111] shadow-sm outline-none focus:border-[#4a1f94] focus:ring-1 focus:ring-[#4a1f94]/30"
                     >
                       {CHILD_AGE_OPTIONS.map((y) => (
                         <option key={y} value={y}>
@@ -199,7 +199,7 @@ export function TravelerCountA2UI({
         <button
           type="button"
           onClick={confirmReserve}
-          className="min-w-0 flex-1 rounded-full bg-gradient-to-r from-[#7b5ce8] to-[#5e2bb8] py-3.5 font-['Pretendard:Bold',sans-serif] text-[14px] text-white shadow-[0_4px_14px_rgba(94,43,184,0.28)] transition-opacity hover:opacity-[0.96] active:opacity-90"
+          className="min-w-0 flex-1 rounded-full bg-gradient-to-r from-[#7c4ddb] to-[#6329C4] py-3.5 font-['Pretendard:Bold',sans-serif] text-[14px] text-white shadow-[0_4px_14px_rgba(99,41,196,0.28)] transition-opacity hover:opacity-[0.96] active:opacity-90"
         >
           예약하러 가기
         </button>

@@ -133,7 +133,7 @@ export function NamemdaePaymentCompleteBottomSheet({
             <button
               type="button"
               onClick={onDismiss}
-              className="w-full rounded-[30px] bg-[#5e2bb8] py-3.5 text-[14px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[rgba(74,33,144,1)]"
+              className="w-full rounded-[30px] bg-[#4a1f94] py-3.5 text-[14px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[rgba(74,33,144,1)]"
             >
               예약내역 확인하기
             </button>

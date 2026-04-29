@@ -263,15 +263,15 @@ export function BookingForm({
                         type="checkbox"
                         checked={sameAsPassenger}
                         onChange={(e) => handleSameAsPassenger(e.target.checked)}
-                        className="rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                        className="rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]"
                       />
-                      <span className="text-[13px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">항공 탑승객과 동일</span>
+                      <span className="text-[13px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">항공 탑승객과 동일</span>
                     </label>
                   )}
                 </div>
                 <h4 className="text-[14px] text-[#111] font-['Pretendard:SemiBold',sans-serif] mb-2 flex items-center justify-between gap-2">
                   <span className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-[#7b3ff2] text-white text-[12px]">객실1</span>
+                    <span className="px-2 py-0.5 rounded bg-[#6329C4] text-white text-[12px]">객실1</span>
                     <span className="text-[14px] text-[#111]">성인1</span>
                   </span>
                   <button
@@ -341,7 +341,7 @@ export function BookingForm({
 
                 <h4 className="text-[14px] text-[#111] font-['Pretendard:SemiBold',sans-serif] mt-5 mb-2 flex items-center justify-between gap-2">
                   <span className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-[#7b3ff2] text-white text-[12px]">객실1</span>
+                    <span className="px-2 py-0.5 rounded bg-[#6329C4] text-white text-[12px]">객실1</span>
                     <span className="text-[14px] text-[#111] font-['Pretendard:SemiBold',sans-serif]">성인2</span>
                   </span>
                   <button
@@ -408,7 +408,7 @@ export function BookingForm({
                         type="checkbox"
                         checked={requestChecks[opt.id] ?? false}
                         onChange={() => handleRequestToggle(opt.id)}
-                        className="rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                        className="rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]"
                       />
                       <span className="text-[13px] text-[#111]">{opt.label}</span>
                     </label>
@@ -446,7 +446,7 @@ export function BookingForm({
                     type="checkbox"
                     checked={agreeAllTerms}
                     onChange={(e) => setAgreeAllTerms(e.target.checked)}
-                    className="rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                    className="rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]"
                   />
                   <span className="text-[14px] text-[#111] font-['Pretendard:SemiBold',sans-serif]">필수 약관 전체 동의</span>
                 </label>
@@ -454,8 +454,8 @@ export function BookingForm({
                   {TERM_ITEMS.map((text, i) => (
                     <li key={i}>
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" defaultChecked className="rounded border-[#ddd] text-[#7b3ff2]" />
-                        <span className="text-[13px] text-[#2d6fdf] underline">{text}</span>
+                        <input type="checkbox" defaultChecked className="rounded border-[#ddd] text-[#6329C4]" />
+                        <span className="text-[13px] text-[#5423AD] underline">{text}</span>
                       </label>
                     </li>
                   ))}
@@ -469,7 +469,7 @@ export function BookingForm({
                 </h2>
                 <div className="flex items-center justify-between">
                   <span className="text-[14px] text-[#666]">총 상품 금액</span>
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#7b3ff2]">
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#6329C4]">
                     {totalAmount.toLocaleString()}원
                   </span>
                 </div>
@@ -497,27 +497,27 @@ export function BookingForm({
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#111]">여행자 목록</h3>
-                  <span className="text-[14px] text-[#7b3ff2]">총 {savedTravelers.length}건</span>
+                  <span className="text-[14px] text-[#6329C4]">총 {savedTravelers.length}건</span>
                 </div>
                 <div className="space-y-3 mb-4">
                   {savedTravelers.map((traveler) => (
                     <label
                       key={traveler.id}
-                      className="flex items-start gap-3 p-4 bg-white border-2 border-[#e5e7eb] rounded-[12px] cursor-pointer hover:border-[#7b3ff2] transition-colors"
+                      className="flex items-start gap-3 p-4 bg-white border-2 border-[#e5e7eb] rounded-[12px] cursor-pointer hover:border-[#6329C4] transition-colors"
                       style={{
-                        borderColor: selectedTravelers.includes(traveler.id) ? "#7b3ff2" : "#e5e7eb",
+                        borderColor: selectedTravelers.includes(traveler.id) ? "#6329C4" : "#e5e7eb",
                       }}
                     >
                       <input
                         type="checkbox"
                         checked={selectedTravelers.includes(traveler.id)}
                         onChange={() => handleTravelerToggle(traveler.id)}
-                        className="mt-1 size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+                        className="mt-1 size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]"
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] text-[#111]">{traveler.name}</span>
-                          <span className="px-2 py-0.5 bg-[#e9e5fb] text-[#7b3ff2] text-[11px] rounded-[4px]">나이정보</span>
+                          <span className="px-2 py-0.5 bg-[#e9e5fb] text-[#6329C4] text-[11px] rounded-[4px]">나이정보</span>
                         </div>
                         <p className="text-[13px] text-[#666] mb-1">
                           등록 정보 없음 | {traveler.birthDate} | {traveler.gender}
@@ -531,7 +531,7 @@ export function BookingForm({
                 </div>
                 <button
                   type="button"
-                  className="w-full py-4 border-2 border-[#e5e7eb] rounded-[12px] flex items-center justify-center gap-2 text-[15px] text-[#111] font-['Pretendard:SemiBold',sans-serif] hover:border-[#7b3ff2] hover:text-[#7b3ff2] transition-colors"
+                  className="w-full py-4 border-2 border-[#e5e7eb] rounded-[12px] flex items-center justify-center gap-2 text-[15px] text-[#111] font-['Pretendard:SemiBold',sans-serif] hover:border-[#6329C4] hover:text-[#6329C4] transition-colors"
                 >
                   <Plus className="size-5" />
                   새로운 여행자 등록하기
@@ -545,7 +545,7 @@ export function BookingForm({
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#f0f0f0] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] ">
             <button
               onClick={handleSubmit}
-              className="w-full py-4 bg-[#7b3ff2] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#6930d9] transition-colors"
+              className="w-full py-4 bg-[#6329C4] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#5423AD] transition-colors"
             >
               {totalAmount.toLocaleString()}원 결제하기
             </button>
@@ -555,7 +555,7 @@ export function BookingForm({
             <button
               onClick={handleSubmit}
               disabled={selectedTravelers.length === 0}
-              className="w-full py-4 bg-[#7b3ff2] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
+              className="w-full py-4 bg-[#6329C4] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5423AD] transition-colors"
             >
               {selectedTravelers.length > 0 ? `${selectedTravelers.length}명 선택 완료 결제 진행하기` : "여행자를 선택해주세요"}
             </button>

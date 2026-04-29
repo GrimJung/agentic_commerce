@@ -44,16 +44,16 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="size-6 rounded-full bg-[#7b3ff2] flex items-center justify-center text-white text-[12px] font-['Pretendard:Bold',sans-serif]">
+          <div className="size-6 rounded-full bg-[#6329C4] flex items-center justify-center text-white text-[12px] font-['Pretendard:Bold',sans-serif]">
             {rank}
           </div>
-          <span className="text-[12px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">추천 호텔</span>
+          <span className="text-[12px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">추천 호텔</span>
         </div>
       </div>
 
       {/* AI 추천 이유 */}
       <div className="flex gap-2 bg-[#f5f0ff] rounded-[8px] px-3 py-2.5 mb-[5px]">
-        <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#7b3ff2]" />
+        <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#6329C4]" />
         <p className="text-[13px] leading-[1.5] text-[#555] line-clamp-2">
           {hotel.recommendReason}
         </p>
@@ -81,14 +81,14 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
       {/* 호텔 정보 */}
       <div className="bg-[#f8f9fa] rounded-[12px] p-3 mb-3">
         <div className="flex items-center gap-2 mb-2">
-          <Building2 className="size-4 text-[#7b3ff2]" />
+          <Building2 className="size-4 text-[#6329C4]" />
           <span className="text-[13px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">호텔</span>
         </div>
         <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#111] mb-1 font-semibold">
           {hotel.name}
         </p>
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[12px] text-[#7b3ff2]">{hotel.grade}</span>
+          <span className="text-[12px] text-[#6329C4]">{hotel.grade}</span>
           <span className="text-[12px] text-[#666]">|</span>
           <span className="text-[12px] text-[#666]">{hotel.location}</span>
         </div>
@@ -96,7 +96,7 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
           <span className="text-[12px] text-[#666]">{hotel.roomType}</span>
           <div className="text-right">
             <span className="text-[11px] text-[#999] mr-1">객실1 기준</span>
-            <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">
+            <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">
               {hotel.price.toLocaleString()}원
             </span>
           </div>
@@ -110,7 +110,7 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
             e.stopPropagation();
             onClick();
           }}
-          className="flex-1 py-2.5 bg-white border border-[#5e2bb8] text-[#5e2bb8] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
+          className="flex-1 py-2.5 bg-white border border-[#4a1f94] text-[#4a1f94] rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#f8f4ff] transition-colors"
         >
           상세보기
         </button>
@@ -119,7 +119,7 @@ export function HotelCard({ hotel, rank, onClick, onBooking }: HotelCardProps) {
             e.stopPropagation();
             onBooking();
           }}
-          className="flex-1 py-2.5 bg-[#7b3ff2] text-white rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+          className="flex-1 py-2.5 bg-[#6329C4] text-white rounded-[30px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#4a1f94] transition-colors"
         >
           예약하기
         </button>

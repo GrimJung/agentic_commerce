@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
 import { motion } from "motion/react";
-import { Calendar } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import { TravelDatePickerSheet } from "./TravelDatePickerSheet";
+
+const LABEL = "#666666";
 
 function getOneMonthLaterRange(): { start: string; end: string } {
   const now = new Date();
@@ -18,7 +20,7 @@ interface PreferenceInputProps {
     budget: string;
     destination: string;
     travelers: number;
-    searchMode?: 'combo' | 'flight' | 'hotel';
+    searchMode?: "combo" | "flight" | "hotel";
     travelPeriodDisplay?: string;
     adults?: number;
     children?: number;
@@ -31,7 +33,23 @@ interface PreferenceInputProps {
   initialTheme?: string;
 }
 
-export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFlow = false, initialDestination = "도쿄", initialBudget = "", initialTheme = "" }: PreferenceInputProps) {
+const chipBase =
+  "px-4 py-2 rounded-full text-[14px] font-['Pretendard:Medium',sans-serif] transition-colors border border-solid";
+
+const fieldShell =
+  "w-full px-4 py-3 rounded-[14px] bg-[#F2F4F7] text-[14px] text-[#111] border-0 focus:outline-none focus:ring-2 focus:ring-[#6329C4]/20";
+
+const ctaBase =
+  "w-full py-3.5 rounded-full bg-[#6329C4] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] hover:bg-[#5423AD] disabled:opacity-50 disabled:hover:bg-[#6329C4] disabled:cursor-not-allowed transition-colors shadow-sm";
+
+export function PreferenceInput({
+  onSubmit,
+  mode = "package",
+  personaRecommendFlow: _personaRecommendFlow = false,
+  initialDestination = "도쿄",
+  initialBudget = "",
+  initialTheme = "",
+}: PreferenceInputProps) {
   const [theme, setTheme] = useState(initialTheme);
   const [budget, setBudget] = useState(initialBudget);
   const [destination, setDestination] = useState(initialDestination);
@@ -44,13 +62,14 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
   const themes = ["휴양", "문화탐방", "자연경관", "레저/액티비티", "쇼핑"];
   const budgets = ["100만원 이하", "100-200만원", "200-300만원", "300만원 이상"];
 
-  const travelPeriodDisplay = travelPeriodStart && travelPeriodEnd
-    ? `${travelPeriodStart.slice(5, 7)}.${travelPeriodStart.slice(8, 10)}~${travelPeriodEnd.slice(5, 7)}.${travelPeriodEnd.slice(8, 10)}`
-    : undefined;
+  const travelPeriodDisplay =
+    travelPeriodStart && travelPeriodEnd
+      ? `${travelPeriodStart.slice(5, 7)}.${travelPeriodStart.slice(8, 10)}~${travelPeriodEnd.slice(5, 7)}.${travelPeriodEnd.slice(8, 10)}`
+      : undefined;
 
   const defaultParty = { travelers: 1, adults: 1, children: 0 };
 
-  const handleSubmit = (submitMode: 'combo' | 'flight' | 'hotel') => {
+  const handleSubmit = (submitMode: "combo" | "flight" | "hotel") => {
     if (budget || destination || theme) {
       onSubmit({
         theme,
@@ -70,51 +89,63 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
         budget,
         destination,
         ...defaultParty,
-        searchMode: 'combo',
+        searchMode: "combo",
         travelPeriodDisplay,
       });
     }
   };
 
-  const isValid = theme || budget || destination;
+  const isValid = Boolean(theme || budget || destination);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[16px] p-5 shadow-sm border border-[#e5e5e5] mx-5 mb-4"
+      className="rounded-[20px] border border-[#E8EAED] bg-white p-5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] mx-5 mb-4"
     >
-      <h3 className="font-['Pretendard:SemiBold',sans-serif] text-[16px] text-[#111] mb-4">
+      <h3 className="font-['Pretendard:Bold',sans-serif] text-[17px] leading-snug text-[#000] mb-4">
         {mode === "fit" ? "자유여행 정보를 알려주세요" : "선호하시는 여행 정보를 알려주세요"}
       </h3>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <label className="block text-[14px] text-[#666] mb-2">여행지</label>
-          <input
-            type="text"
-            placeholder="예: 발리, 파리, 도쿄"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            className="w-full px-4 py-3 rounded-[12px] bg-[#f5f5f5] text-[14px] focus:outline-none focus:ring-2 focus:ring-[#7b3ff2]"
-            style={{
-              outlineColor: mode === "fit" ? "#7b3ff2" : "#3780ff"
-            }}
-          />
+          <label className="block text-[13px] font-medium mb-2" style={{ color: LABEL }}>
+            여행지
+          </label>
+          <div className="relative">
+            <MapPin
+              className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#888]"
+              strokeWidth={1.5}
+              aria-hidden
+            />
+            <input
+              type="text"
+              placeholder="예: 발리, 파리, 도쿄"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              className={`${fieldShell} pl-11 placeholder:text-[#999]`}
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-[14px] text-[#666] mb-2">여행시기</label>
+          <label className="block text-[13px] font-medium mb-2" style={{ color: LABEL }}>
+            여행시기
+          </label>
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}
-            className="w-full px-4 py-3 rounded-[12px] bg-[#f5f5f5] text-[14px] text-[#111] flex items-center gap-2 text-left hover:bg-[#eee] transition-colors"
+            className={`${fieldShell} flex items-center gap-2 text-left hover:opacity-95`}
           >
-            <Calendar className="size-4 text-[#666] shrink-0" strokeWidth={1.5} />
+            <Calendar className="size-[18px] shrink-0 text-[#888]" strokeWidth={1.5} />
             <span>
               다음달
               {travelPeriodStart && travelPeriodEnd && (
-                <> | {travelPeriodStart.slice(5, 7)}.{travelPeriodStart.slice(8, 10)}~{travelPeriodEnd.slice(5, 7)}.{travelPeriodEnd.slice(8, 10)}</>
+                <>
+                  {" "}
+                  | {travelPeriodStart.slice(5, 7)}.{travelPeriodStart.slice(8, 10)}~{travelPeriodEnd.slice(5, 7)}.
+                  {travelPeriodEnd.slice(8, 10)}
+                </>
               )}
             </span>
           </button>
@@ -131,16 +162,20 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
         </div>
 
         <div>
-          <label className="block text-[14px] text-[#666] mb-2">여행 테마</label>
+          <label className="block text-[13px] font-medium mb-2" style={{ color: LABEL }}>
+            여행 테마
+          </label>
           <div className="flex flex-wrap gap-2">
             {themes.map((t) => (
               <button
                 key={t}
+                type="button"
                 onClick={() => setTheme(t)}
-                className={`px-4 py-2 rounded-full text-[14px] transition-colors ${theme === t
-                    ? mode === "fit" ? "bg-[#7b3ff2] text-white" : "bg-[#3780ff] text-white"
-                    : "bg-[#f5f5f5] text-[#666] hover:bg-[#e5e5e5]"
-                  }`}
+                className={`${chipBase} ${
+                  theme === t
+                    ? "border-[#6329C4] bg-white text-[#6329C4]"
+                    : "border-transparent bg-[#F2F4F7] text-[#333]"
+                }`}
               >
                 {t}
               </button>
@@ -149,18 +184,20 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
         </div>
 
         <div>
-          <label className="block text-[14px] text-[#666] mb-2">예산 (1인 기준)</label>
+          <label className="block text-[13px] font-medium mb-2" style={{ color: LABEL }}>
+            예산 (1인 기준)
+          </label>
           <div className="grid grid-cols-2 gap-2">
             {budgets.map((b) => (
               <button
                 key={b}
+                type="button"
                 onClick={() => setBudget(b)}
-                className={`px-4 py-3 rounded-[12px] text-[14px] transition-colors ${budget === b
-                    ? mode === "fit"
-                      ? "bg-[#7b3ff2] text-white"
-                      : "bg-[#3780ff] text-white"
-                    : "bg-[#f5f5f5] text-[#666] hover:bg-[#e5e5e5]"
-                  }`}
+                className={`${chipBase} py-2.5 text-[13px] leading-tight ${
+                  budget === b
+                    ? "border-[#6329C4] bg-white text-[#6329C4]"
+                    : "border-transparent bg-[#F2F4F7] text-[#333]"
+                }`}
               >
                 {b}
               </button>
@@ -168,39 +205,21 @@ export function PreferenceInput({ onSubmit, mode = "package", personaRecommendFl
           </div>
         </div>
 
-        {/* 패키지 모드: 단일 버튼 */}
         {mode === "package" && (
-          <button
-            onClick={handlePackageSubmit}
-            disabled={!isValid}
-            className="w-full py-3 rounded-[12px] bg-[#3780ff] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#2d6fdf] transition-colors"
-          >
+          <button type="button" onClick={handlePackageSubmit} disabled={!isValid} className={ctaBase}>
             여행 상품 추천받기
           </button>
         )}
 
-        {/* 자유여행 모드: 3개 버튼 */}
         {mode === "fit" && (
-          <div className="space-y-2">
-            <button
-              onClick={() => handleSubmit('combo')}
-              disabled={!isValid}
-              className="w-full py-3 rounded-[12px] bg-[#7b3ff2] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
-            >
+          <div className="space-y-2.5">
+            <button type="button" onClick={() => handleSubmit("combo")} disabled={!isValid} className={ctaBase}>
               항공+호텔 조합 검색하기
             </button>
-            <button
-              onClick={() => handleSubmit('flight')}
-              disabled={!isValid}
-              className="w-full py-3 rounded-[12px] bg-[#7b3ff2] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
-            >
+            <button type="button" onClick={() => handleSubmit("flight")} disabled={!isValid} className={ctaBase}>
               항공만 검색하기
             </button>
-            <button
-              onClick={() => handleSubmit('hotel')}
-              disabled={!isValid}
-              className="w-full py-3 rounded-[12px] bg-[#7b3ff2] text-white font-['Pretendard:SemiBold',sans-serif] text-[15px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#6930d9] transition-colors"
-            >
+            <button type="button" onClick={() => handleSubmit("hotel")} disabled={!isValid} className={ctaBase}>
               호텔만 검색하기
             </button>
           </div>

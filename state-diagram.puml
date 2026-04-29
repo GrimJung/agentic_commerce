@@ -98,8 +98,8 @@ state room_type <<booking>> {
 state package_sheet <<booking>> {
   [*] --> PackageBooking
   PackageBooking : PackageBookingSheet\n(통합 예약 바텀시트)
-  PackageBooking : TravelerCountA2UI\n(스와이프 인원 + 가격 미리보기)
-  PackageBooking : 예약자·여행자·총액·계약금/전액
+  PackageBooking : TravelerCountA2UI\n(스와이프 인원·phase + 가격 미리보기)
+  PackageBooking : 예약자·여행자·인원·금액 확인·총액·계약금/전액
   PackageBooking : **AgentToast** + booking-toast-config\n(스크롤 구간 트리거)
   PackageBooking --> payment : 제출 → PaymentSheet
 }
@@ -207,6 +207,7 @@ note bottom of packages
   (2026-03-18 반영)
   패키지 예약: PackageBookingSheet → PaymentSheet
   + AgentToast (2026-04 반영)
+  문서 동기화: 2026-04-28 (인원·금액 확인, 토스트·결제완료·스타일 04.23)
 end note
 
 @enduml

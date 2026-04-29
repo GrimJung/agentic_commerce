@@ -1,6 +1,10 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* H-AI 브랜드 (UI 가이드: 보라 #6329C4, 필드/칩 배경 #F2F4F7) */
+  --brand-primary: #6329c4;
+  --brand-primary-hover: #5423ad;
+  --brand-muted-surface: #f2f4f7;
   --font-size: 16px;
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
@@ -8,19 +12,19 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
-  --primary-foreground: oklch(1 0 0);
+  --primary: #6329c4;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #030213;
   --muted: #ececf0;
-  --muted-foreground: #717182;
-  --accent: #e9ebef;
+  --muted-foreground: #666666;
+  --accent: #f2f4f7;
   --accent-foreground: #030213;
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
+  --border: rgba(0, 0, 0, 0.08);
   --input: transparent;
-  --input-background: #f3f3f5;
+  --input-background: #f2f4f7;
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;

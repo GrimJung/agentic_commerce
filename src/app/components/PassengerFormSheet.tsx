@@ -100,7 +100,7 @@ export function PassengerFormSheet({
           >
             <span
               className={`size-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                sameAsBooker ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ddd] bg-white"
+                sameAsBooker ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ddd] bg-white"
               }`}
             >
               {sameAsBooker && <span className="text-white text-[10px]">✓</span>}
@@ -231,7 +231,7 @@ export function PassengerFormSheet({
                   type="checkbox"
                   checked={passportLater}
                   onChange={(e) => setPassportLater(e.target.checked)}
-                  className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                  className="size-4 rounded border-[#ddd] text-[#6329C4]"
                 />
                 <span className="text-[13px] text-[#999]">여권정보 나중에 등록</span>
                 <CircleAlert className="size-4 text-[#999]" />
@@ -305,7 +305,7 @@ export function PassengerFormSheet({
           <button
             type="button"
             onClick={handleConfirm}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#6930d9] transition-colors"
+            className="w-full py-4 bg-[#6329C4] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#5423AD] transition-colors"
           >
             저장하기
           </button>

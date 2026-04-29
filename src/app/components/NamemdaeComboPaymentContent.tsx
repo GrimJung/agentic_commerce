@@ -139,10 +139,10 @@ export function NamemdaeComboPaymentContent({
           <button
             type="button"
             onClick={() => setInsuranceChoice("subscribe")}
-            className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${insuranceChoice === "subscribe" ? "border-[#7b3ff2] bg-white" : "border-[#e5e5e5] bg-white"}`}
+            className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${insuranceChoice === "subscribe" ? "border-[#6329C4] bg-white" : "border-[#e5e5e5] bg-white"}`}
           >
             <div className="flex items-center gap-2 mb-3">
-              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceChoice === "subscribe" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceChoice === "subscribe" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                 {insuranceChoice === "subscribe" && (
                   <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none" aria-hidden>
                     <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -153,34 +153,34 @@ export function NamemdaeComboPaymentContent({
             </div>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-[13px] text-[#555]">총 보험료</span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">28,240원</span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">28,240원</span>
               <span className="text-[#ddd]">|</span>
               <span className="text-[13px] text-[#555]">가입인원</span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">2명</span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">2명</span>
               <span className="text-[#ddd]">|</span>
               <span className="text-[13px] text-[#555]">총</span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">4일</span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">4일</span>
             </div>
             <p className="text-[12px] text-[#888] mb-3">2026.05.25 00:00 ~ 2026.05.28 23:59</p>
             <div className="bg-[#f8f5ff] rounded-[10px] px-3 py-2.5 space-y-1.5">
               <p className="text-[12px] text-[#666]">
-                • 휴대품 분실 한도 <span className="text-[#7b3ff2]">100만원</span> (1품목 <span className="text-[#7b3ff2]">20만원</span>)
+                • 휴대품 분실 한도 <span className="text-[#6329C4]">100만원</span> (1품목 <span className="text-[#6329C4]">20만원</span>)
               </p>
               <p className="text-[12px] text-[#666]">
-                • 항공·수하물 지연 <span className="text-[#7b3ff2]">20만원</span> 한도
+                • 항공·수하물 지연 <span className="text-[#6329C4]">20만원</span> 한도
               </p>
               <p className="text-[12px] text-[#666]">
-                • 해외 상해·질병 의료비 <span className="text-[#7b3ff2]">5천만원</span> 한도
+                • 해외 상해·질병 의료비 <span className="text-[#6329C4]">5천만원</span> 한도
               </p>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setInsuranceChoice("later")}
-            className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${insuranceChoice === "later" ? "border-[#7b3ff2] bg-white" : "border-[#e5e5e5] bg-white"}`}
+            className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${insuranceChoice === "later" ? "border-[#6329C4] bg-white" : "border-[#e5e5e5] bg-white"}`}
           >
             <div className="flex items-center gap-2 mb-1">
-              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceChoice === "later" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${insuranceChoice === "later" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                 {insuranceChoice === "later" && (
                   <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none" aria-hidden>
                     <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -207,7 +207,7 @@ export function NamemdaeComboPaymentContent({
               </li>
               <li className="flex gap-2 text-[12px] leading-[1.6]">
                 <span className="shrink-0 text-[#555]">•</span>
-                <span className="font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2]">항공권 변경 및 예약취소 시 여행자 보험은 별도로 변경 및 취소를 진행하셔야 합니다.</span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[#6329C4]">항공권 변경 및 예약취소 시 여행자 보험은 별도로 변경 및 취소를 진행하셔야 합니다.</span>
               </li>
               <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
                 <span className="shrink-0">•</span>
@@ -223,7 +223,7 @@ export function NamemdaeComboPaymentContent({
               </li>
               <li className="flex gap-2 text-[12px] text-[#555] leading-[1.6]">
                 <span className="shrink-0">•</span>
-                <span>자세한 사항은 <span className="text-[#2d6fdf] underline underline-offset-2 cursor-pointer">보험 가입 시 유의사항</span>을 확인해 주시기 바랍니다.</span>
+                <span>자세한 사항은 <span className="text-[#5423AD] underline underline-offset-2 cursor-pointer">보험 가입 시 유의사항</span>을 확인해 주시기 바랍니다.</span>
               </li>
             </ul>
           </div>
@@ -245,7 +245,7 @@ export function NamemdaeComboPaymentContent({
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="bg-white/90 rounded-full px-5 py-2.5 text-[13px] text-[#555] shadow-sm">
-                  <span className="font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">가입 버튼 클릭 시</span> 확인 가능해요
+                  <span className="font-['Pretendard:Bold',sans-serif] text-[#6329C4]">가입 버튼 클릭 시</span> 확인 가능해요
                 </span>
               </div>
             </div>
@@ -260,10 +260,10 @@ export function NamemdaeComboPaymentContent({
           <button
             type="button"
             onClick={() => setCancellationPenaltyChoice("enroll")}
-            className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${cancellationPenaltyChoice === "enroll" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"}`}
+            className={`w-full text-left rounded-[16px] border-2 p-4 mb-3 transition-colors ${cancellationPenaltyChoice === "enroll" ? "border-[#6329C4]" : "border-[#e5e5e5]"}`}
           >
             <div className="flex items-center gap-2 mb-2">
-              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationPenaltyChoice === "enroll" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationPenaltyChoice === "enroll" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                 {cancellationPenaltyChoice === "enroll" && (
                   <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none" aria-hidden>
                     <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -275,19 +275,19 @@ export function NamemdaeComboPaymentContent({
             <p className="text-[13px] text-[#555] pl-8 mb-3">취소 걱정 없이 항공권 구매하세요!</p>
             <div className="flex items-center gap-2 pl-8 flex-wrap">
               <span className="text-[13px] text-[#555]">총 보험료</span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">0원</span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">0원</span>
               <span className="text-[#ddd]">|</span>
               <span className="text-[13px] text-[#555]">가입인원</span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#7b3ff2]">2명</span>
+              <span className="font-['Pretendard:Bold',sans-serif] text-[14px] text-[#6329C4]">2명</span>
             </div>
           </button>
           <button
             type="button"
             onClick={() => setCancellationPenaltyChoice("skip")}
-            className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${cancellationPenaltyChoice === "skip" ? "border-[#7b3ff2]" : "border-[#e5e5e5]"}`}
+            className={`w-full text-left rounded-[16px] border-2 p-4 transition-colors ${cancellationPenaltyChoice === "skip" ? "border-[#6329C4]" : "border-[#e5e5e5]"}`}
           >
             <div className="flex items-center gap-2 mb-2">
-              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationPenaltyChoice === "skip" ? "border-[#7b3ff2] bg-[#7b3ff2]" : "border-[#ccc] bg-white"}`}>
+              <div className={`size-[22px] rounded-full border-2 flex items-center justify-center shrink-0 ${cancellationPenaltyChoice === "skip" ? "border-[#6329C4] bg-[#6329C4]" : "border-[#ccc] bg-white"}`}>
                 {cancellationPenaltyChoice === "skip" && (
                   <svg className="size-3.5 text-white" viewBox="0 0 14 14" fill="none" aria-hidden>
                     <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -331,7 +331,7 @@ export function NamemdaeComboPaymentContent({
             <ul className="space-y-1.5">
               <li className="flex gap-2 text-[12px] leading-[1.6]">
                 <span className="shrink-0 text-[#666]">•</span>
-                <span className="font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2]">항공권 변경(재발행) 시 보험은 더이상 유효하지 않으며, 직접 취소하셔야 합니다. (취소 후 재가입 불가)</span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[#6329C4]">항공권 변경(재발행) 시 보험은 더이상 유효하지 않으며, 직접 취소하셔야 합니다. (취소 후 재가입 불가)</span>
               </li>
               <li className="flex gap-2 text-[12px] text-[#666] leading-[1.6]">
                 <span className="shrink-0">•</span>
@@ -375,7 +375,7 @@ export function NamemdaeComboPaymentContent({
               <span className="text-[14px] text-[#111]">마일리지</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[15px] font-semibold text-[#5e2bb8] tabular-nums font-['Pretendard:Bold',sans-serif]">
+              <span className="text-[15px] font-semibold text-[#4a1f94] tabular-nums font-['Pretendard:Bold',sans-serif]">
                 10,000,000m
               </span>
               <button
@@ -438,7 +438,7 @@ export function NamemdaeComboPaymentContent({
             <li className="flex gap-2 text-[12px] leading-[1.6]">
               <span className="shrink-0 text-[#555]">•</span>
               <span>
-                <span className="font-['Pretendard:SemiBold',sans-serif] text-[#5e2bb8]">쿠폰은 단독으로만 사용 가능</span>
+                <span className="font-['Pretendard:SemiBold',sans-serif] text-[#4a1f94]">쿠폰은 단독으로만 사용 가능</span>
                 <span className="text-[#555]">합니다. 마일리지, 상품권, 기프트 카드와 중복 사용은 불가합니다.</span>
               </span>
             </li>
@@ -499,7 +499,7 @@ export function NamemdaeComboPaymentContent({
               <span className="font-['Pretendard:SemiBold',sans-serif] text-[15px] font-semibold text-[#111]">
                 최종 결제금액
               </span>
-              <span className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#5e2bb8] tabular-nums">
+              <span className="font-['Pretendard:SemiBold',sans-serif] text-[20px] text-[#4a1f94] tabular-nums">
                 {finalAmount.toLocaleString()}원
               </span>
             </div>
@@ -595,7 +595,7 @@ export function NamemdaeComboPaymentContent({
               주의사항
             </h4>
             <p className="mb-3 text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">승인 정보</p>
-            <p className="mb-4 text-[13px] text-[#5e2bb8] leading-[1.5] font-['Pretendard:Medium',sans-serif]">
+            <p className="mb-4 text-[13px] text-[#4a1f94] leading-[1.5] font-['Pretendard:Medium',sans-serif]">
               • 카드정보는 1회 입력이나, 카드 승인금액은 항공, 호텔 각 상품 별도 승인 되오니 이용에 참고해주시기 바랍니다.
             </p>
             <h4 className="font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#111] mb-3">
@@ -644,7 +644,7 @@ export function NamemdaeComboPaymentContent({
                   name="namemdaeCashReceipt"
                   checked={cashReceiptReg === "register"}
                   onChange={() => setCashReceiptReg("register")}
-                  className="size-5 border-2 border-[#c8c8c8] text-[#7b3ff2] accent-[#7b3ff2] focus:ring-[#7b3ff2]"
+                  className="size-5 border-2 border-[#c8c8c8] text-[#6329C4] accent-[#6329C4] focus:ring-[#6329C4]"
                 />
                 <span className="text-[14px] text-[#111]">등록</span>
               </label>
@@ -654,7 +654,7 @@ export function NamemdaeComboPaymentContent({
                   name="namemdaeCashReceipt"
                   checked={cashReceiptReg === "unregistered"}
                   onChange={() => setCashReceiptReg("unregistered")}
-                  className="size-5 border-2 border-[#c8c8c8] text-[#7b3ff2] accent-[#7b3ff2] focus:ring-[#7b3ff2]"
+                  className="size-5 border-2 border-[#c8c8c8] text-[#6329C4] accent-[#6329C4] focus:ring-[#6329C4]"
                 />
                 <span className="text-[14px] text-[#111]">미등록</span>
               </label>
@@ -667,7 +667,7 @@ export function NamemdaeComboPaymentContent({
         <button
           type="button"
           onClick={() => setSplitCardSheetOpen(true)}
-          className="w-full py-4 bg-[#5e2bb8] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#4a2190] transition-colors"
+          className="w-full py-4 bg-[#4a1f94] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#4a2190] transition-colors"
         >
           {finalAmount.toLocaleString()}원 · 결제하기
         </button>
@@ -759,7 +759,7 @@ export function NamemdaeComboPaymentContent({
                   onPayComplete();
                   setPaymentCompleteLoading(true);
                 }}
-                className="min-w-0 flex-1 rounded-[30px] py-3.5 text-[15px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[#4a2190] bg-[#5e2bb8]"
+                className="min-w-0 flex-1 rounded-[30px] py-3.5 text-[15px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[#4a2190] bg-[#4a1f94]"
               >
                 결제하기
               </button>
@@ -823,7 +823,7 @@ export function NamemdaeComboPaymentContent({
                   setSplitCardSheetOpen(false);
                   setFinalPaymentConfirmOpen(true);
                 }}
-                className="w-full rounded-[30px] py-3.5 text-[16px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[#4a2190] bg-[#5e2bb8]"
+                className="w-full rounded-[30px] py-3.5 text-[16px] font-['Pretendard:Bold',sans-serif] text-white transition-colors hover:bg-[#4a2190] bg-[#4a1f94]"
               >
                 동의
               </button>

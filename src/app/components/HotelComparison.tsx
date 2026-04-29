@@ -52,7 +52,7 @@ export function HotelComparison({ hotels, onClose, onSelect }: HotelComparisonPr
           <div className="px-5">
           {/* 태그 */}
           <div className="flex gap-3 mb-4 overflow-x-auto pb-2">
-            <div className="px-4 py-2 bg-gradient-to-b from-[#6976ff] to-[#7b3ff2] rounded-full">
+            <div className="px-4 py-2 bg-gradient-to-b from-[#7c4ddb] to-[#6329C4] rounded-full">
               <span className="text-[13px] text-white">위치 우선</span>
             </div>
             <div className="px-4 py-2 bg-[#e9e5fb] rounded-full">
@@ -65,7 +65,7 @@ export function HotelComparison({ hotels, onClose, onSelect }: HotelComparisonPr
 
           {/* AI 브리핑 */}
           <div className="bg-white rounded-[10px] p-4 mb-4 border border-[#f0f0f0]">
-            <p className="text-[15px] text-[#7b3ff2] font-['Pretendard:Bold',sans-serif] mb-3">
+            <p className="text-[15px] text-[#6329C4] font-['Pretendard:Bold',sans-serif] mb-3">
               "호텔의 등급, 위치, 가격을 종합 비교해 드립니다."
             </p>
             <div className="space-y-2">
@@ -74,7 +74,7 @@ export function HotelComparison({ hotels, onClose, onSelect }: HotelComparisonPr
                   <span className="text-[16px] text-[#00d9c0]">•</span>
                   <div className="flex items-start gap-2">
                     <div className="size-5 bg-[rgba(123,63,242,0.1)] rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-[11px] text-[#7b3ff2]">{labels[index]}</span>
+                      <span className="text-[11px] text-[#6329C4]">{labels[index]}</span>
                     </div>
                     <p className="text-[14px] text-[#364153] leading-[1.5]">
                       {hotel.name} ({hotel.grade}), {hotel.location}, {(hotel.price / 10000).toFixed(0)}만원
@@ -97,12 +97,12 @@ export function HotelComparison({ hotels, onClose, onSelect }: HotelComparisonPr
                     <td key={hotel.id} className="p-3 text-center border-l border-[#e5e7eb]">
                       <div className="flex flex-col items-center gap-2">
                         <div className="size-6 bg-[rgba(123,63,242,0.1)] rounded-full flex items-center justify-center">
-                          <span className="text-[#7b3ff2] text-[12px] font-['Pretendard:Bold',sans-serif]">
+                          <span className="text-[#6329C4] text-[12px] font-['Pretendard:Bold',sans-serif]">
                             {labels[index]}
                           </span>
                         </div>
                         <div className="text-center">
-                          <p className="text-[13px] font-['Pretendard:Bold',sans-serif] text-[#7b3ff2]">
+                          <p className="text-[13px] font-['Pretendard:Bold',sans-serif] text-[#6329C4]">
                             {(hotel.price / 10000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                           </p>
                           <p className="text-[11px] text-[#6a7282]">만원</p>
@@ -163,7 +163,7 @@ export function HotelComparison({ hotels, onClose, onSelect }: HotelComparisonPr
                           <span className="text-[12px] text-[#666]">{hotel.grade}</span>
                         </div>
                       )}
-                      <div className="absolute -top-2 -left-2 size-6 bg-[#7b3ff2] rounded-full flex items-center justify-center shadow-sm">
+                      <div className="absolute -top-2 -left-2 size-6 bg-[#6329C4] rounded-full flex items-center justify-center shadow-sm">
                         <span className="text-white text-[12px] font-['Pretendard:Bold',sans-serif]">
                           {labels[index]}
                         </span>
@@ -176,7 +176,7 @@ export function HotelComparison({ hotels, onClose, onSelect }: HotelComparisonPr
                       <p className="text-[12px] text-[#999] mb-1">{hotel.grade} · {hotel.location}</p>
                       <p className="text-[12px] text-[#999] mb-2">{hotel.roomType}</p>
                       <div className="flex items-baseline gap-1">
-                        <span className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#7b3ff2]">
+                        <span className="font-['Pretendard:Bold',sans-serif] text-[18px] text-[#6329C4]">
                           {(hotel.price / 10000).toFixed(0)}만원
                         </span>
                       </div>
@@ -184,7 +184,7 @@ export function HotelComparison({ hotels, onClose, onSelect }: HotelComparisonPr
                   </div>
                   <button
                     onClick={() => onSelect(hotel)}
-                    className="w-full py-2.5 bg-[#7b3ff2] text-white rounded-[8px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#6930d9] transition-colors"
+                    className="w-full py-2.5 bg-[#6329C4] text-white rounded-[8px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5423AD] transition-colors"
                   >
                     이 호텔 선택하기
                   </button>

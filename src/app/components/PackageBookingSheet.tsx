@@ -230,7 +230,7 @@ export function PackageBookingSheet({
                     {formatDepartureDisplay(pkg.departure)}
                   </p>
                 </div>
-                <span className="h-[25px] px-3 flex flex-col items-center justify-center rounded-full bg-[#5e2bb8] text-white text-[13px] font-['Pretendard:SemiBold',sans-serif] shrink-0">
+                <span className="h-[25px] px-3 flex flex-col items-center justify-center rounded-full bg-[#4a1f94] text-white text-[13px] font-['Pretendard:SemiBold',sans-serif] shrink-0">
                   {formatDurationBadge(pkg.duration)}
                 </span>
                 <div className="text-center flex-1 min-w-0">
@@ -283,7 +283,7 @@ export function PackageBookingSheet({
                     <button
                       type="button"
                       onClick={() => setShowFlightDetail(false)}
-                      className="text-[15px] font-normal text-[#2d6fdf] font-['Pretendard:Regular',sans-serif]"
+                      className="text-[15px] font-normal text-[#5423AD] font-['Pretendard:Regular',sans-serif]"
                     >
                       항공정보닫기
                     </button>
@@ -294,7 +294,7 @@ export function PackageBookingSheet({
                   <button
                     type="button"
                     onClick={() => setShowFlightDetail(true)}
-                    className="text-[13px] text-[#2d6fdf] font-['Pretendard:SemiBold',sans-serif]"
+                    className="text-[13px] text-[#5423AD] font-['Pretendard:SemiBold',sans-serif]"
                   >
                     항공정보확인
                   </button>
@@ -309,7 +309,7 @@ export function PackageBookingSheet({
               <AccordionTrigger className="group w-full px-4 py-4 text-[18px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span>이용호텔 및 선택관광</span>
                 <span className="flex items-center gap-1 shrink-0">
-                  <span className="text-[14px] font-['Pretendard:Medium',sans-serif] text-[#5e2bb8]">선택가능</span>
+                  <span className="text-[14px] font-['Pretendard:Medium',sans-serif] text-[#4a1f94]">선택가능</span>
                   <ChevronDown className="size-4 text-[#111] shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 </span>
               </AccordionTrigger>
@@ -347,7 +347,7 @@ export function PackageBookingSheet({
               <AccordionTrigger className="group w-full px-4 py-4 text-[18px] font-bold font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   예약자정보
-                  <span className="px-1.5 py-0.5 rounded-[8px_8px_8px_0] bg-[#5e2bb8] text-white text-[11px] font-medium">필수</span>
+                  <span className="px-1.5 py-0.5 rounded-[8px_8px_8px_0] bg-[#4a1f94] text-white text-[11px] font-medium">필수</span>
                 </span>
                 <span className="flex items-center gap-1 shrink-0">
                   <span className="text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#8b6fd4]">{defaultBooker.name}</span>
@@ -382,7 +382,7 @@ export function PackageBookingSheet({
               <AccordionTrigger className="w-full px-4 py-4 font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline [&>svg]:size-5">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   여행자정보
-                  <span className="px-1.5 py-0.5 rounded-[8px_8px_8px_0] bg-[#5e2bb8] text-white text-[11px] font-medium">필수</span>
+                  <span className="px-1.5 py-0.5 rounded-[8px_8px_8px_0] bg-[#4a1f94] text-white text-[11px] font-medium">필수</span>
                 </span>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4 border-0 border-b-8 border-b-[#f0f0f0]">
@@ -394,12 +394,12 @@ export function PackageBookingSheet({
                       <div className="relative flex flex-col items-center">
                         <div
                           id="traveler-later-hint"
-                          className="rounded-full border border-[#5e2bb8] bg-white px-3 py-1.5 text-[12px] font-['Pretendard:Medium',sans-serif] text-[#5e2bb8] shadow-[0_2px_10px_rgba(94,43,184,0.12)] text-center leading-tight"
+                          className="rounded-full border border-[#4a1f94] bg-white px-3 py-1.5 text-[12px] font-['Pretendard:Medium',sans-serif] text-[#4a1f94] shadow-[0_2px_10px_rgba(99,41,196,0.12)] text-center leading-tight"
                         >
                           나중에 입력도 가능해요
                         </div>
                         <div
-                          className="absolute left-1/2 top-full -mt-1 -translate-x-1/2 size-2 rotate-45 border-r border-b border-[#5e2bb8] bg-white shadow-[2px_2px_4px_rgba(94,43,184,0.08)]"
+                          className="absolute left-1/2 top-full -mt-1 -translate-x-1/2 size-2 rotate-45 border-r border-b border-[#4a1f94] bg-white shadow-[2px_2px_4px_rgba(99,41,196,0.08)]"
                           aria-hidden
                         />
                       </div>
@@ -412,7 +412,7 @@ export function PackageBookingSheet({
                       className={cn(
                         "flex-1 py-2.5 text-[13px] font-['Pretendard:SemiBold',sans-serif] rounded-[10px]",
                         travelerTab === "now"
-                          ? "border border-[#5e2bb8] bg-[#f4f0fa] text-[#5e2bb8]"
+                          ? "border border-[#4a1f94] bg-[#f4f0fa] text-[#4a1f94]"
                           : "border-0 bg-white text-[#666]"
                       )}
                     >
@@ -425,7 +425,7 @@ export function PackageBookingSheet({
                       className={cn(
                         "flex-1 py-2.5 text-[13px] font-['Pretendard:SemiBold',sans-serif] rounded-[10px]",
                         travelerTab === "later"
-                          ? "border border-[#5e2bb8] bg-[#f4f0fa] text-[#5e2bb8]"
+                          ? "border border-[#4a1f94] bg-[#f4f0fa] text-[#4a1f94]"
                           : "border-0 bg-white text-[#666]"
                       )}
                     >
@@ -457,7 +457,7 @@ export function PackageBookingSheet({
                           type="checkbox"
                           checked={sameAsBooker}
                           onChange={(e) => setSameAsBooker(e.target.checked)}
-                          className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                          className="size-4 rounded border-[#ddd] text-[#6329C4]"
                         />
                         <span>예약자와 동일</span>
                       </label>
@@ -467,7 +467,7 @@ export function PackageBookingSheet({
                         aria-label="MY 여행자 수첩 열기"
                       >
                         <User
-                          className="size-4 shrink-0 border border-[#5e2bb8] rounded p-0.5"
+                          className="size-4 shrink-0 border border-[#4a1f94] rounded p-0.5"
                           strokeWidth={1.5}
                           aria-hidden
                         />
@@ -492,7 +492,7 @@ export function PackageBookingSheet({
                             aria-pressed={travelerGender === "남"}
                             className={cn(
                               "w-[76px] py-2.5 rounded-l-[8px] rounded-r-none text-[14px] font-medium border",
-                              travelerGender === "남" ? "bg-[#7b3ff2] text-white border-[#7b3ff2]" : "bg-white text-[#666] border-[#e5e5e5]"
+                              travelerGender === "남" ? "bg-[#6329C4] text-white border-[#6329C4]" : "bg-white text-[#666] border-[#e5e5e5]"
                             )}
                           >
                             남
@@ -504,7 +504,7 @@ export function PackageBookingSheet({
                             aria-pressed={travelerGender === "여"}
                             className={cn(
                               "w-[76px] py-2.5 rounded-r-[8px] rounded-l-none -ml-px text-[14px] font-medium border",
-                              travelerGender === "여" ? "bg-[#7b3ff2] text-white border-[#7b3ff2]" : "bg-white text-[#666] border-[#e5e5e5]"
+                              travelerGender === "여" ? "bg-[#6329C4] text-white border-[#6329C4]" : "bg-white text-[#666] border-[#e5e5e5]"
                             )}
                           >
                             여
@@ -539,12 +539,12 @@ export function PackageBookingSheet({
               <AccordionTrigger className="group w-full px-4 py-4 text-[15px] font-['Pretendard:SemiBold',sans-serif] text-[#111] hover:no-underline flex items-center justify-between [&>svg]:hidden">
                 <span className="flex items-center gap-2 text-[18px] font-bold">
                   약관 및 개인정보 동의
-                  <span className="px-1.5 py-0.5 rounded-[8px_8px_8px_0] bg-[#5e2bb8] text-white text-[11px] font-medium">필수</span>
+                  <span className="px-1.5 py-0.5 rounded-[8px_8px_8px_0] bg-[#4a1f94] text-white text-[11px] font-medium">필수</span>
                 </span>
                 <span className="flex items-center gap-1 shrink-0">
                   <span className={cn(
                     "text-[14px] font-['Pretendard:Medium',sans-serif]",
-                    allRequiredAgreed ? "text-[#3780ff]" : "text-[#999]"
+                    allRequiredAgreed ? "text-[#6329C4]" : "text-[#999]"
                   )}>
                     {allRequiredAgreed ? "동의" : "미동의"}
                   </span>
@@ -557,7 +557,7 @@ export function PackageBookingSheet({
                     type="checkbox"
                     checked={agreeAll}
                     onChange={(e) => handleAgreeAll(e.target.checked)}
-                    className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                    className="size-4 rounded border-[#ddd] text-[#6329C4]"
                   />
                   <span className="text-[14px] font-['Pretendard:SemiBold',sans-serif] text-[#111]">
                     전체 동의
@@ -569,54 +569,54 @@ export function PackageBookingSheet({
                       type="checkbox"
                       checked={agreeOverseasTravel}
                       onChange={(e) => setAgreeOverseasTravel(e.target.checked)}
-                      className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                      className="size-4 rounded border-[#ddd] text-[#6329C4]"
                     />
-                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] font-normal text-[#3780ff] underline">국외여행 표준약관 동의</button></span>
+                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] font-normal text-[#6329C4] underline">국외여행 표준약관 동의</button></span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer text-[12px]">
                     <input
                       type="checkbox"
                       checked={agreePrivacy}
                       onChange={(e) => setAgreePrivacy(e.target.checked)}
-                      className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                      className="size-4 rounded border-[#ddd] text-[#6329C4]"
                     />
-                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#3780ff] underline">개인정보 수집 및 이용 동의</button></span>
+                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#6329C4] underline">개인정보 수집 및 이용 동의</button></span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer text-[12px]">
                     <input
                       type="checkbox"
                       checked={agreeUniqueId}
                       onChange={(e) => setAgreeUniqueId(e.target.checked)}
-                      className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                      className="size-4 rounded border-[#ddd] text-[#6329C4]"
                     />
-                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#3780ff] underline">고유식별정보 수집 및 처리 동의</button></span>
+                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#6329C4] underline">고유식별정보 수집 및 처리 동의</button></span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer text-[12px]">
                     <input
                       type="checkbox"
                       checked={agreeThirdParty}
                       onChange={(e) => setAgreeThirdParty(e.target.checked)}
-                      className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                      className="size-4 rounded border-[#ddd] text-[#6329C4]"
                     />
-                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#3780ff] underline">개인정보 제3자 제공 동의</button></span>
+                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#6329C4] underline">개인정보 제3자 제공 동의</button></span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer text-[12px]">
                     <input
                       type="checkbox"
                       checked={agreeSensitive}
                       onChange={(e) => setAgreeSensitive(e.target.checked)}
-                      className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                      className="size-4 rounded border-[#ddd] text-[#6329C4]"
                     />
-                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#3780ff] underline">민감정보 수집 및 이용 동의</button></span>
+                    <span className="text-[13px]">(필수) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#6329C4] underline">민감정보 수집 및 이용 동의</button></span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer text-[12px]">
                     <input
                       type="checkbox"
                       checked={agreeLocation}
                       onChange={(e) => setAgreeLocation(e.target.checked)}
-                      className="size-4 rounded border-[#ddd] text-[#7b3ff2]"
+                      className="size-4 rounded border-[#ddd] text-[#6329C4]"
                     />
-                    <span className="text-[13px]">(선택) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#3780ff] underline">위치정보 이용약관 동의</button></span>
+                    <span className="text-[13px]">(선택) <button type="button" onClick={(e) => e.stopPropagation()} className="text-[13px] text-[#6329C4] underline">위치정보 이용약관 동의</button></span>
                   </label>
                 </div>
               </AccordionContent>
@@ -655,7 +655,7 @@ export function PackageBookingSheet({
                     <div className="font-['Pretendard:SemiBold',sans-serif] text-[#111] text-left text-[18px] font-semibold shrink-0">
                       최종 결제금액
                     </div>
-                    <p className="font-['Pretendard:Bold',sans-serif] text-[22px] font-bold text-[#5e2bb8] m-0 whitespace-nowrap text-right min-w-0">
+                    <p className="font-['Pretendard:Bold',sans-serif] text-[22px] font-bold text-[#4a1f94] m-0 whitespace-nowrap text-right min-w-0">
                       {finalPrice.toLocaleString()}원
                     </p>
                   </div>
@@ -711,7 +711,7 @@ export function PackageBookingSheet({
               type="button"
               onClick={handlePayFull}
               disabled={!allRequiredAgreed}
-              className="flex flex-1 flex-col items-center justify-center gap-0 rounded-[30px] bg-[#5e2bb8] py-2 font-['Pretendard:SemiBold',sans-serif] text-white transition-colors hover:bg-[#4a2299] disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex flex-1 flex-col items-center justify-center gap-0 rounded-[30px] bg-[#4a1f94] py-2 font-['Pretendard:SemiBold',sans-serif] text-white transition-colors hover:bg-[#4a2299] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span className="text-[11px] font-['Pretendard:Medium',sans-serif] leading-tight text-white">전액 결제</span>
               <span className="text-[14px] font-['Pretendard:Bold',sans-serif] leading-tight text-white">{finalPrice.toLocaleString()}원</span>

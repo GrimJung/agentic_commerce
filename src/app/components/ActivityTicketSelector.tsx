@@ -36,7 +36,7 @@ export function ActivityTicketSelector({ tickets, onComplete }: ActivityTicketSe
     <div className="px-5 space-y-4">
       <div className="bg-gradient-to-r from-[#f0ebff] to-[#faf8ff] rounded-[12px] p-4">
         <div className="flex items-center gap-2 mb-2">
-          <Ticket className="size-5 text-[#7b3ff2]" />
+          <Ticket className="size-5 text-[#6329C4]" />
           <h3 className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#111]">
             추천 액티비티 & 입장권
           </h3>
@@ -53,16 +53,16 @@ export function ActivityTicketSelector({ tickets, onComplete }: ActivityTicketSe
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="flex gap-3 p-3 bg-white border-2 rounded-[12px] cursor-pointer hover:border-[#7b3ff2] transition-colors"
+            className="flex gap-3 p-3 bg-white border-2 rounded-[12px] cursor-pointer hover:border-[#6329C4] transition-colors"
             style={{
-              borderColor: selectedTickets.includes(ticket.id) ? "#7b3ff2" : "#e5e7eb"
+              borderColor: selectedTickets.includes(ticket.id) ? "#6329C4" : "#e5e7eb"
             }}
           >
             <input
               type="checkbox"
               checked={selectedTickets.includes(ticket.id)}
               onChange={() => handleToggle(ticket.id)}
-              className="mt-1 size-5 rounded border-[#ddd] text-[#7b3ff2] focus:ring-[#7b3ff2]"
+              className="mt-1 size-5 rounded border-[#ddd] text-[#6329C4] focus:ring-[#6329C4]"
             />
             <img 
               src={ticket.image} 
@@ -71,7 +71,7 @@ export function ActivityTicketSelector({ tickets, onComplete }: ActivityTicketSe
             />
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="px-2 py-0.5 bg-[#e9e5fb] text-[#7b3ff2] text-[11px] rounded-[4px] font-['Pretendard:SemiBold',sans-serif]">
+                <span className="px-2 py-0.5 bg-[#e9e5fb] text-[#6329C4] text-[11px] rounded-[4px] font-['Pretendard:SemiBold',sans-serif]">
                   {ticket.category}
                 </span>
               </div>
@@ -88,7 +88,7 @@ export function ActivityTicketSelector({ tickets, onComplete }: ActivityTicketSe
                   <span className="text-[11px] text-[#666]">{ticket.duration}</span>
                 </div>
               </div>
-              <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#7b3ff2]">
+              <p className="font-['Pretendard:Bold',sans-serif] text-[15px] text-[#6329C4]">
                 {ticket.price.toLocaleString()}원
               </p>
             </div>
@@ -113,7 +113,7 @@ export function ActivityTicketSelector({ tickets, onComplete }: ActivityTicketSe
         </div>
         <button
           onClick={() => onComplete(selectedTickets)}
-          className="w-full py-4 bg-[#7b3ff2] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#6930d9] transition-colors"
+          className="w-full py-4 bg-[#6329C4] text-white rounded-[12px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#5423AD] transition-colors"
         >
           {selectedTickets.length > 0 ? "선택 완료" : "건너뛰기"}
         </button>

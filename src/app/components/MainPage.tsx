@@ -46,11 +46,11 @@ export function MainPage({ onStartRecommendation }: MainPageProps) {
         <div className="px-4 pt-3">
           <button
             type="button"
-            className="flex w-full items-center gap-2.5 rounded-[20px] bg-[#f3f4f6] px-3 py-2.5 text-left transition-colors hover:bg-[#eceef2]"
+            className="flex w-full items-center gap-2.5 rounded-[20px] bg-[#F2F4F7] px-3 py-2.5 text-left transition-colors hover:bg-[#e8ecf2]"
           >
             <div className="relative shrink-0 text-[#555]">
               <Bell className="size-[18px]" strokeWidth={1.75} aria-hidden />
-              <span className="absolute -right-1 -top-0.5 rounded px-[3px] py-px text-[8px] font-bold leading-none text-white bg-[#3780ff]">
+              <span className="absolute -right-1 -top-0.5 rounded px-[3px] py-px text-[8px] font-bold leading-none text-white bg-[#6329C4]">
                 NEW
               </span>
             </div>
@@ -101,8 +101,8 @@ export function MainPage({ onStartRecommendation }: MainPageProps) {
               onClick={isMain ? onStartRecommendation : undefined}
               className={`flex h-8 items-center gap-1.5 whitespace-nowrap rounded-2xl border px-3 text-[12px] font-semibold transition-colors ${
                 isMain
-                  ? "border-[#3780ff] bg-[#f0f7ff] text-[#3780ff] hover:bg-[#e0efff]"
-                  : "border-[#e5e5e5] bg-white text-[#666] hover:border-[#ccc]"
+                  ? "border-[#6329C4] bg-[#f5f0ff] text-[#6329C4] hover:bg-[#ede5fa]"
+                  : "border-[#e5e5e5] bg-[#F2F4F7] text-[#666] hover:border-[#d0d4dd]"
               }`}
             >
               <Icon className="size-3.5 shrink-0" strokeWidth={isMain ? 2 : 1.75} />

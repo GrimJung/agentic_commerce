@@ -86,7 +86,7 @@ export function PackageCard({ package: pkg, onClick, onBooking }: PackageCardPro
             {pkg.title}
           </h3>
           <div className="mt-1.5 flex items-center gap-1">
-            <svg className="size-[14px] shrink-0 text-[#5e2bb8]" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+            <svg className="size-[14px] shrink-0 text-[#4a1f94]" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
               <path d="M8 0L10.472 5.008L16 5.856L12 9.712L12.944 15.232L8 12.616L3.056 15.232L4 9.712L0 5.856L5.528 5.008L8 0Z" />
             </svg>
             <span className="font-['Pretendard:SemiBold',sans-serif] text-[13px] text-[#444] tabular-nums">

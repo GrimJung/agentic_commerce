@@ -70,7 +70,7 @@ export function RoomInfoNoticePopup({
               <button
                 type="button"
                 onClick={onConfirm}
-                className="w-full py-3 rounded-[30px] bg-[#5e2bb8] text-white text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#4a1f94] transition-colors"
+                className="w-full py-3 rounded-[30px] bg-[#4a1f94] text-white text-[15px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#4a1f94] transition-colors"
               >
                 확인
               </button>

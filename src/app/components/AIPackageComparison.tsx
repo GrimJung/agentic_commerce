@@ -275,12 +275,12 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                     <p className="text-center font-bold mt-1.5 text-[12px] text-[#101828] line-clamp-1 truncate w-full">
                       {row.name}
                     </p>
-                    <p className="text-[14px] font-semibold mt-0" style={{ color: "#5E2BB8" }}>
+                    <p className="text-[14px] font-semibold mt-0" style={{ color: "#4a1f94" }}>
                       {row.priceStr}
                       <span className="text-[11px] text-gray-500 font-medium ml-0.5">원</span>
                     </p>
                     <span
-                      className="inline-block mt-0.5 px-2 py-0.5 rounded-[20px] text-[10px] font-medium border border-[#3B82F6] text-[#2563EB]"
+                      className="inline-block mt-0.5 px-2 py-0.5 rounded-[20px] text-[10px] font-medium border border-[#3B82F6] text-[#5423AD]"
                       aria-label="예약 가능 여부"
                     >
                       {index === 0 ? "출발확정" : "예약가능"}
@@ -436,8 +436,8 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                         className={`
                           flex flex-col justify-center items-center flex-shrink-0 px-3 py-2 rounded-full border text-[13px] transition-all h-[30px]
                           ${isSelected
-                            ? "bg-gradient-to-r from-[#6976FF] to-[#7B3FF2] border-transparent text-white"
-                            : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#7B3FF2]"
+                            ? "bg-gradient-to-r from-[#7c4ddb] to-[#6329C4] border-transparent text-white"
+                            : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#6329C4]"
                           }
                         `}
                       >
@@ -479,8 +479,8 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                             className={`
                               flex flex-col justify-center items-center flex-shrink-0 px-3 py-2 rounded-full border text-[13px] transition-all h-[30px]
                               ${isSelected
-                                ? "bg-gradient-to-r from-[#6976FF] to-[#7B3FF2] border-transparent text-white"
-                                : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#7B3FF2]"
+                                ? "bg-gradient-to-r from-[#7c4ddb] to-[#6329C4] border-transparent text-white"
+                                : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#6329C4]"
                               }
                             `}
                           >
@@ -510,8 +510,8 @@ export function AIPackageComparison({ packages, onClose, onSelect }: AIPackageCo
                             className={`
                               flex flex-col justify-center items-center flex-shrink-0 px-3 py-2 rounded-full border text-[13px] transition-all h-[30px]
                               ${isSelected
-                                ? "bg-gradient-to-r from-[#6976FF] to-[#7B3FF2] border-transparent text-white"
-                                : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#7B3FF2]"
+                                ? "bg-gradient-to-r from-[#7c4ddb] to-[#6329C4] border-transparent text-white"
+                                : "bg-gray-100 border-gray-200 text-gray-600 hover:border-[#6329C4]"
                               }
                             `}
                           >

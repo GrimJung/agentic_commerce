@@ -87,19 +87,19 @@ export function FITPackageCard({
       <div className="p-4">
         {/* 순위 배지 */}
         <div className="flex items-center gap-2 mb-1.5">
-          <div className="size-6 rounded-full bg-gradient-to-br from-[#7b3ff2] to-[#b794f6] flex items-center justify-center">
+          <div className="size-6 rounded-full bg-gradient-to-br from-[#6329C4] to-[#b794f6] flex items-center justify-center">
             <span className="text-white text-[13px] font-['Pretendard:Bold',sans-serif]">
               {rank}
             </span>
           </div>
-          <span className="text-[13px] text-[#7b3ff2] font-['Pretendard:Bold',sans-serif]">
+          <span className="text-[13px] text-[#6329C4] font-['Pretendard:Bold',sans-serif]">
             항공+호텔
           </span>
         </div>
 
         {/* AI 추천 이유 */}
         <div className="flex gap-2 bg-[#f5f0ff] rounded-[8px] px-3 py-2.5 mb-[5px]">
-          <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#7b3ff2]" />
+          <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#6329C4]" />
           <p className="text-[13px] leading-[1.5] text-[#555] line-clamp-2">
             {pkg.recommendReason}
           </p>
@@ -125,7 +125,7 @@ export function FITPackageCard({
         {/* 항공 정보 */}
         <div className="bg-[#f8f9fa] rounded-[12px] p-3 mb-1.5">
           <div className="flex items-start justify-start gap-2 mb-[5px]">
-            <Plane className="size-4 text-[#7b3ff2]" />
+            <Plane className="size-4 text-[#6329C4]" />
             <span className="text-[13px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
               항공
             </span>
@@ -203,7 +203,7 @@ export function FITPackageCard({
             <span className="text-[11px] text-[#999] mr-1">
               삼성 iD GLOBAL 카드/성인1
             </span>
-            <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold">
+            <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#6329C4] font-semibold">
               {pkg.flightInfo.price.toLocaleString()}원
             </span>
           </div>
@@ -212,7 +212,7 @@ export function FITPackageCard({
         {/* 호텔 정보 */}
         <div className="bg-[#f8f9fa] rounded-[12px] p-3 mb-1.5">
           <div className="flex items-start justify-start gap-2 mb-[5px]">
-            <Building2 className="size-4 text-[#7b3ff2]" />
+            <Building2 className="size-4 text-[#6329C4]" />
             <span className="text-[13px] text-[#666] font-['Pretendard:SemiBold',sans-serif]">
               호텔
             </span>
@@ -221,7 +221,7 @@ export function FITPackageCard({
             {pkg.hotelInfo.name}
           </p>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-[12px] text-[#7b3ff2]">
+            <span className="text-[12px] text-[#6329C4]">
               {pkg.hotelInfo.grade}
             </span>
             <span className="text-[12px] text-[#666]">|</span>
@@ -237,7 +237,7 @@ export function FITPackageCard({
               <span className="text-[11px] text-[#999] mr-1">
                 1인당 항공+호텔 예약시
               </span>
-              <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#7b3ff2] font-semibold">
+              <span className="font-['Pretendard:Bold',sans-serif] text-[16px] text-[#6329C4] font-semibold">
                 {pkg.hotelInfo.price.toLocaleString()}원
               </span>
             </div>
@@ -264,7 +264,7 @@ export function FITPackageCard({
             e.stopPropagation();
             onClick();
           }}
-          className="w-full py-3 bg-[#5c2bb4] text-white rounded-[35px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#5e2bb8] transition-colors"
+          className="w-full py-3 bg-[#5c2bb4] text-white rounded-[35px] text-[14px] font-['Pretendard:SemiBold',sans-serif] hover:bg-[#4a1f94] transition-colors"
         >
           조합 확인하기
         </button>

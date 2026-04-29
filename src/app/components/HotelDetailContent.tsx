@@ -181,22 +181,22 @@ export function HotelDetailContent({
 
         {!hideBookingButton && (
           <div className="flex gap-2 bg-[#f5f0ff] rounded-[8px] px-3 py-2.5 mb-4">
-            <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#7b3ff2]" />
+            <span className="shrink-0 w-[3px] self-stretch rounded-full bg-[#6329C4]" />
             <p className="text-[13px] leading-[1.5] text-[#555] line-clamp-2">{hotel.recommendReason}</p>
           </div>
         )}
 
         <div className="mb-[10px]">
-          <span className="mb-0 block text-[13px] text-[#7b3ff2] font-['Pretendard:SemiBold',sans-serif]">
+          <span className="mb-0 block text-[13px] text-[#6329C4] font-['Pretendard:SemiBold',sans-serif]">
             {hotel.grade}
           </span>
           <h3 className="font-['Pretendard:Bold',sans-serif] text-[20px] text-[#111] mb-0">{hotel.name}</h3>
           {hotel.nameEn ? <p className="text-[13px] text-[#666] mb-2">{hotel.nameEn}</p> : null}
           <div className="mb-3">
-            <p className="text-[#5e2bb8] text-[14px] font-['Pretendard:SemiBold',sans-serif] text-left px-0 py-0.5">
-              <span className="text-[22px] leading-none align-middle text-[#5e2bb8]">&ldquo;</span>
+            <p className="text-[#4a1f94] text-[14px] font-['Pretendard:SemiBold',sans-serif] text-left px-0 py-0.5">
+              <span className="text-[22px] leading-none align-middle text-[#4a1f94]">&ldquo;</span>
               <span className="bg-[#e9e5fb] rounded-[2px] px-0.5 py-0.5">{hotel.location} 부근에 위치</span>
-              <span className="text-[22px] leading-none align-middle text-[#5e2bb8]">&rdquo;</span>
+              <span className="text-[22px] leading-none align-middle text-[#4a1f94]">&rdquo;</span>
             </p>
           </div>
           <div className="flex items-center gap-[5px]">
@@ -209,7 +209,7 @@ export function HotelDetailContent({
         </div>
 
         <div className="bg-[#f8f9fa] rounded-[16px] p-4 mb-4">
-          <p className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#7b3ff2] mb-2">객실 정보</p>
+          <p className="text-[12px] font-['Pretendard:SemiBold',sans-serif] text-[#6329C4] mb-2">객실 정보</p>
           <ul className="space-y-0 text-[16px] text-[#111] font-medium">
             <li className="text-left mb-0 leading-[20px]">{selectedRoom ? selectedRoom.name : hotel.roomType}, 금연 (No Room Cleaning Service)</li>
             <li className="text-left mb-0">
@@ -232,7 +232,7 @@ export function HotelDetailContent({
             <div className="flex items-center justify-between gap-3 mb-3">
               <div className="text-right flex-1">
                 <span className="text-[12px] text-[#666] mr-1">1박 기준</span>
-                <span className="font-['Pretendard:Bold',sans-serif] text-[18px] font-semibold text-[#5e2bb8]">
+                <span className="font-['Pretendard:Bold',sans-serif] text-[18px] font-semibold text-[#4a1f94]">
                   {(selectedRoom ? selectedRoom.priceFrom : hotel.price).toLocaleString()}원
                 </span>
               </div>
@@ -260,7 +260,7 @@ export function HotelDetailContent({
                   const addr = hotel.address ?? hotel.location;
                   if (addr && navigator.clipboard) navigator.clipboard.writeText(addr);
                 }}
-                className="ml-2 text-[13px] text-[#7b3ff2] underline"
+                className="ml-2 text-[13px] text-[#6329C4] underline"
               >
                 주소 복사
               </button>
@@ -329,7 +329,7 @@ export function HotelDetailContent({
               <div className="relative">
                 <div className="text-[13px] text-[#666] leading-[1.5] line-clamp-3 opacity-80">
                   <span className="inline-flex items-center gap-1">
-                    <Check className="size-3.5 text-[#7b3ff2] shrink-0" />
+                    <Check className="size-3.5 text-[#6329C4] shrink-0" />
                     [주의사항] 4박 이상 검색시에만 업그레이드 된 객실을 조회하실 수 있습니다.
                   </span>
                   <br />
@@ -376,7 +376,7 @@ export function HotelDetailContent({
               </p>
               <div className="mb-4">
                 <p className="flex items-start gap-2 text-[13px] text-[#666] leading-[1.6] mb-2">
-                  <Check className="size-3.5 text-[#7b3ff2] shrink-0 mt-1" />
+                  <Check className="size-3.5 text-[#6329C4] shrink-0 mt-1" />
                   <span>
                     <strong className="text-[#111]">[주의사항]</strong> 4박 이상 검색시에만 업그레이드 된 객실을
                     조회하실 수 있습니다.
@@ -486,7 +486,7 @@ export function HotelDetailContent({
         <div className="sticky bottom-0 bg-white border-t border-[#f0f0f0] px-5 py-4">
           <button
             onClick={onBooking}
-            className="w-full py-4 bg-[#7b3ff2] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#5d2bb4] transition-colors"
+            className="w-full py-4 bg-[#6329C4] text-white rounded-[30px] text-[16px] font-['Pretendard:Bold',sans-serif] hover:bg-[#4a1f94] transition-colors"
           >
             객실 선택하기
           </button>
