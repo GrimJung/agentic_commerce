@@ -56,6 +56,51 @@ function packageNightsFromDuration(duration: string): number {
   return m ? parseInt(m[1], 10) : 1;
 }
 
+/** 상단 카드: 방문 도시·숙박 요약 (캡처형 `발리(3) → 싱가포르(1)` 등) */
+function formatVisitRouteSummary(pkg: PackageData): string {
+  const nights = packageNightsFromDuration(pkg.duration);
+  const parts = pkg.destination.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+  const primary = parts[0] ?? pkg.destination.trim();
+  if (parts.length < 2) return `${primary}(${nights})`;
+
+  const second = parts[1];
+  const countryLike =
+    /^(인도네시아|프랑스|일본|그리스|태국|베트남|미국|중국|스페인|이탈리아|호주|캐나다|영국)$/.test(second) ||
+    second.length > 8;
+  if (countryLike) {
+    if (primary.includes("발리") && second.includes("인도네시아")) {
+      const n1 = Math.max(1, nights - 1);
+      return `발리(${n1}) → 싱가포르(1)`;
+    }
+    return `${primary}(${nights})`;
+  }
+  const n2 = 1;
+  const n1 = Math.max(1, nights - n2);
+  return `${primary}(${n1}) → ${second}(${n2})`;
+}
+
+function hasOptionalTourHighlight(pkg: PackageData): boolean {
+  return pkg.highlights.some((h) => /선택|옵션|유료\s*관광|디즈니/.test(h));
+}
+
+function buildSummaryTagPills(pkg: PackageData): { emphasis: string[]; muted: string[] } {
+  const flightWord = pkg.flightType?.includes("경유") ? "경유" : "직항";
+  const emphasis: string[] = [
+    pkg.duration,
+    pkg.airline,
+    flightWord,
+    pkg.hotelGrade,
+    "단체여행",
+  ];
+  if (hasOptionalTourHighlight(pkg)) emphasis.push("선택관광 있음");
+  else if (pkg.freeSchedule === "있음") emphasis.push("자유일정 있음");
+
+  const shop = (pkg.shopping ?? "—").replace(/\s/g, "");
+  const muted: string[] = [`쇼핑${shop === "없음" ? "없음" : shop}`];
+  muted.push("가이드경비 없음");
+  return { emphasis, muted };
+}
+
 function formatMonthDayWeekday(d: Date): string {
   const m = d.getMonth() + 1;
   const day = d.getDate();
@@ -82,6 +127,7 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
   const rootRef = useRef<HTMLDivElement>(null);
   const itinerary = buildItinerary(pkg);
   const visible = showFull ? itinerary : itinerary.slice(0, 2);
+  const summaryTags = buildSummaryTagPills(pkg);
 
   useLayoutEffect(() => {
     scheduleScrollPackageSwipeFollowup();
@@ -102,14 +148,13 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
         {pkg.recommendReason}
       </p>
 
-      {/* ── 1. 패키지 요약 카드 (캡처 UI: 이미지·출발확정 배지·평점행·일정 바·3×2 그리드·가격) ── */}
-      <div className="rounded-[16px] overflow-hidden bg-white border border-[#f0f0f0] shadow-[0px_2px_12px_rgba(0,0,0,0.07)]">
-
-        {/* 이미지 영역 */}
-        <div className="relative mx-[14px] mt-[13px] h-[120px] rounded-[12px] overflow-hidden">
-          <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover" />
+      {/* ── 1. 패키지 요약 카드 (캡처 UI: 풀블리드 이미지·일정 바·위치 한 줄·필 태그) ── */}
+      <div className="overflow-hidden rounded-[24px] border border-[#f0f0f0] bg-white shadow-[0px_4px_12px_rgba(0,0,0,0.05)]">
+        {/* 이미지 영역 — 카드 상단 풀폭, 모서리는 카드 overflow로 맞춤 */}
+        <div className="relative h-[152px] w-full overflow-hidden">
+          <img src={pkg.image} alt={pkg.title} className="size-full object-cover" />
           <span
-            className="absolute top-2 left-2 inline-flex items-center justify-center rounded-[4px] bg-[#2ecc71] px-[7px] py-[4px] text-[10px] font-semibold leading-[110%] text-white"
+            className="absolute left-3 top-3 inline-flex items-center justify-center rounded-md bg-[#22c55e] px-2 py-1 text-[11px] font-semibold leading-none text-white"
             style={{ fontFamily: "'Pretendard', sans-serif" }}
           >
             출발확정
@@ -119,109 +164,90 @@ export function PackageInlineDetail({ package: pkg, onGoBack, onBooking }: Packa
             aria-label={liked ? "찜 해제" : "찜하기"}
             aria-pressed={liked}
             onClick={() => setLiked((v) => !v)}
-            className="absolute bottom-1.5 right-1.5 flex size-8 items-center justify-center rounded-full bg-transparent p-0 transition-opacity hover:opacity-90 active:opacity-80"
+            className="absolute bottom-2.5 right-2.5 flex size-9 items-center justify-center rounded-full bg-transparent p-0 transition-opacity hover:opacity-95 active:opacity-90"
           >
             <img
               src={liked ? icLikeFilled : icLikeOutline}
               alt=""
-              width={24}
-              height={24}
-              className="size-6 select-none pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.28)]"
+              width={22}
+              height={22}
+              className="size-[22px] select-none pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.28)]"
               draggable={false}
             />
           </button>
         </div>
 
         {/* 콘텐츠 영역 */}
-        <div className="mx-[14px] mb-[13px]">
+        <div className="px-5 pb-5 pt-3.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
           <p
-            className="mt-2 text-[15px] font-semibold leading-snug text-[#1A1A2E] line-clamp-2"
+            className="text-[16px] font-semibold leading-snug tracking-[-0.02em] text-[#111] line-clamp-2"
             style={{ fontFamily: "'Pretendard', 'Inter', sans-serif" }}
           >
             {pkg.title}
           </p>
 
           {/* 평점 + 한줄평 | 예약/잔여 */}
-          <div className="mt-2 flex items-start justify-between gap-2">
+          <div className="mt-2.5 flex items-center justify-between gap-3">
             <div className="flex min-w-0 flex-1 items-center gap-1">
-              <svg className="size-[14px] shrink-0 text-[#4a1f94]" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+              <svg className="size-[15px] shrink-0 text-[#6329C4]" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
                 <path d="M8 0L10.472 5.008L16 5.856L12 9.712L12.944 15.232L8 12.616L3.056 15.232L4 9.712L0 5.856L5.528 5.008L8 0Z" />
               </svg>
-              <span
-                className="shrink-0 text-[13px] font-semibold tabular-nums text-[#1A1A2E]"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
-              >
+              <span className="shrink-0 text-[14px] font-bold tabular-nums text-[#111]">
                 {Number.isInteger(pkg.rating) ? String(pkg.rating) : pkg.rating.toFixed(1)}
               </span>
               {pkg.ratingSnippet ? (
-                <span
-                  className="min-w-0 truncate text-[11px] font-normal text-[#666]"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
-                >
-                  {pkg.ratingSnippet}
-                </span>
+                <span className="min-w-0 truncate text-[12px] font-normal text-[#666]">{pkg.ratingSnippet}</span>
               ) : null}
             </div>
-            <p
-              className="shrink-0 text-right text-[10px] leading-tight text-[#888]"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
-            >
-              예약 {pkg.bookedCount ?? 6}명 / 잔여 {pkg.availableSeats}명
+            <p className="shrink-0 text-right text-[11px] leading-tight text-[#888] tabular-nums">
+              예약 {pkg.bookedCount ?? 6}명/잔여 {pkg.availableSeats}명
             </p>
           </div>
 
           {/* 인천출발 일정 하이라이트 바 */}
-          <div
-            className="mt-2.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 rounded-[8px] bg-[#f3f4f6] px-2.5 py-2"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
-          >
-            <span className="text-[12px] font-semibold text-[#6329C4]">인천출발</span>
-            <span className="text-[12px] font-medium text-[#1A1A2E] tabular-nums">
+          <div className="mt-3 flex flex-nowrap items-center justify-center gap-x-1.5 gap-y-1 text-left rounded-xl bg-[#f3f4f6] px-3 py-2.5">
+            <span className="text-[13px] font-semibold text-[#2563eb]">인천출발</span>
+            <span className="text-[13px] font-medium leading-snug text-[#111] tabular-nums">
               {formatIncheonDepartureScheduleParts(pkg).timeRange}
             </span>
           </div>
 
-          {/* 3×2 정보 그리드 */}
-          <div
-            className="mt-2.5 border-t border-[#ebebeb]"
-            style={{ fontFamily: "'Pretendard', 'Inter', sans-serif" }}
-          >
-            <div className="grid grid-cols-3">
-              {[
-                { label: "기간", value: pkg.duration },
-                { label: "방문도시", value: pkg.destination.split(",")[0].trim() },
-                { label: "자유일정", value: pkg.freeSchedule ?? "—" },
-              ].map(({ label, value }, i) => (
-                <div
-                  key={label}
-                  className={[
-                    "border-b border-[#ebebeb] px-2 py-2.5",
-                    i < 2 ? "border-r border-[#ebebeb]" : "",
-                  ].join(" ")}
-                >
-                  <p className="text-[9px] leading-[11px] text-[#aaa]">{label}</p>
-                  <p className="mt-1 text-[12px] font-semibold leading-[15px] text-[#1A1A2E] line-clamp-2">{value}</p>
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-3">
-              {[
-                { label: "항공", value: `${pkg.airline}·직항` },
-                { label: "호텔", value: pkg.hotelGrade },
-                { label: "쇼핑", value: pkg.shopping ?? "—" },
-              ].map(({ label, value }, i) => (
-                <div
-                  key={label}
-                  className={[
-                    "px-2 py-2.5",
-                    i < 2 ? "border-r border-[#ebebeb]" : "",
-                  ].join(" ")}
-                >
-                  <p className="text-[9px] leading-[11px] text-[#aaa]">{label}</p>
-                  <p className="mt-1 text-[12px] font-semibold leading-[15px] text-[#1A1A2E] line-clamp-2">{value}</p>
-                </div>
-              ))}
-            </div>
+          {/* 위치 한 줄 + 구분선 */}
+          <div className="mt-3 flex items-center gap-1.5 border-b border-[#ebebeb] pb-3">
+            <svg
+              className="size-[18px] shrink-0 text-[#111]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10Z" />
+              <circle cx="12" cy="11" r="2.5" fill="currentColor" stroke="none" />
+            </svg>
+            <span className="min-w-0 text-[13px] font-medium text-[#111]">{formatVisitRouteSummary(pkg)}</span>
+          </div>
+
+          {/* 필 태그 */}
+          <div className="mt-3 flex flex-wrap gap-2">
+            {summaryTags.emphasis.map((t) => (
+              <span
+                key={t}
+                className="inline-flex items-center rounded-full border border-[#6329C4]/40 bg-[#f5f0ff] px-2.5 py-1 text-[11px] font-semibold text-[#6329C4]"
+              >
+                {t}
+              </span>
+            ))}
+            {summaryTags.muted.map((t) => (
+              <span
+                key={t}
+                className="inline-flex items-center rounded-full border border-[#e5e5e5] bg-[#f7f7f7] px-2.5 py-1 text-[11px] font-medium text-[#888]"
+              >
+                {t}
+              </span>
+            ))}
           </div>
         </div>
       </div>
